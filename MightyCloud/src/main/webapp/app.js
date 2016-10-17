@@ -1,3 +1,13 @@
+function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+    document.getElementById("PageContainer").style.marginLeft = "250px";
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("PageContainer").style.marginLeft= "0";
+}
+
 var mightyApp = angular.module('mighty', ['ngRoute']);
 
 mightyApp.config(function($routeProvider) {

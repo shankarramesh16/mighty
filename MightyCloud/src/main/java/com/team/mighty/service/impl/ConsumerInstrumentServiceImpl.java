@@ -21,6 +21,7 @@ import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
+import com.team.mighty.dto.UserDeviceRegistrationDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
@@ -51,7 +52,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException("Invalid Request, User Login Request is empty", HttpStatus.BAD_REQUEST);
 		}
 		
-		if(userLoginDTO.getUserId() <=0 || (userLoginDTO.getPhoneDeviceId().equals(null) || "".equals(userLoginDTO.getPhoneDeviceId()))) {
+		if(userLoginDTO.getUserId() <=0 || (userLoginDTO.getDeviceId().equals(null) || "".equals(userLoginDTO.getDeviceId()))) {
 			throw new MightyAppException("Invalid Request, User Id or Phone Device Id is empty", HttpStatus.BAD_REQUEST);
 		}
 		
@@ -67,18 +68,22 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException(" Phone device not found in system ", HttpStatus.NOT_FOUND);
 		}
 		
-		MightyDeviceUserMapping deviceMap = mightyDeviceUserMapDAO.checkUserAndPhoneDeviceId(mightyUserInfo.getId(), userLoginDTO.getPhoneDeviceId());
+		/*Set<MightyDeviceUserMapping> deviceMap = mightyDeviceUserMapDAO.checkUserAndPhoneDeviceId(mightyUserInfo.getId(), userLoginDTO.getDeviceId());
 		
 		if(deviceMap == null) {
 			throw new MightyAppException(" Phone device not found in system ", HttpStatus.NOT_FOUND);
 		}
-		
+		*/		
 		Iterator<MightyDeviceUserMapping> it = userMapping.iterator();
 		
 		List<String> lstMightyDevice = new ArrayList<String>();
 		
 		while(it.hasNext()) {
 			MightyDeviceUserMapping mightDeviceUser = it.next();
+			if(mightDeviceUser.getRegistrationStatus().equalsIgnoreCase(MightyAppConstants.IND_N)){
+				throw new MightyAppException(" User Registerd Device Status is In Active ", HttpStatus.UNAUTHORIZED);
+			}
+			
 			long mightyDeviceId = mightDeviceUser.getMightyDeviceId();
 			
 			MightyDeviceInfo mightyDeviceInfo = mightyDeviceInfoDAO.findOne(mightyDeviceId);
@@ -96,9 +101,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	@Transactional
-	private void registerUserAndDevice(ConsumerDeviceDTO consumerDeviceDto, MightyDeviceInfo mightyDeviceInfo) throws MightyAppException {
+	private MightyUserInfo registerUserAndDevice(ConsumerDeviceDTO consumerDeviceDto, MightyDeviceInfo mightyDeviceInfo) throws MightyAppException {
 		
-		MightyUserInfo mightyUserInfo = new MightyUserInfo();
+		MightyUserInfo mightyUserInfo = null;
 		String phoneDeviceId = consumerDeviceDto.getDeviceId();
 		if(consumerDeviceDto.getUserId() > 0 ) {
 			mightyUserInfo = consumerInstrumentDAO.findOne(consumerDeviceDto.getUserId());
@@ -113,7 +118,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 					mightyDeviceInfo.setIsRegistered(MightyAppConstants.IND_Y);
 					mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
 					mightyDeviceInfoDAO.save(mightyDeviceInfo);
-					return ;
+					return mightyUserInfo;
 				} else if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_Y)) {
 					throw new MightyAppException(" User Id, Device Id and Phone Device is already registered", HttpStatus.CONFLICT);
 				}
@@ -129,7 +134,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			mightyDeviceInfo.setIsRegistered(MightyAppConstants.IND_Y);
 			mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
 			mightyDeviceInfoDAO.save(mightyDeviceInfo);
-			return ;
+			return mightyUserInfo;
 		} else if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_Y)) {
 			throw new MightyAppException(" User Id, Device Id and Phone Device is already registered", HttpStatus.CONFLICT);
 		}
@@ -174,20 +179,25 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		mightyDeviceInfo.setIsRegistered(MightyAppConstants.IND_Y);
 		//mightyDeviceInfo.setMightyUserInfo(setUserInfo);
 		
+		MightyUserInfo mightyUserInfo_1 = null;
 		try {
-			consumerInstrumentDAO.save(mightyUserInfo);
+			mightyUserInfo_1 = consumerInstrumentDAO.save(mightyUserInfo);
 			mightyDeviceInfoDAO.save(mightyDeviceInfo);
 		} catch(Exception e) {
 			logger.error(e.getMessage());
 			throw new MightyAppException("Unable to save User Device Mapping", HttpStatus.INTERNAL_SERVER_ERROR, e);
 		}
+		
+		logger.info(" Mighty USer ID ",mightyUserInfo_1.getId());
+		
+		return mightyUserInfo_1;
 	}
 	
 	private MightyDeviceInfo getDeviceDetails(String deviceId) {
 		return mightyDeviceInfoDAO.getDeviceInfo(deviceId);
 	}
 	
-	public void registerDevice(ConsumerDeviceDTO consumerDeviceDto) throws MightyAppException {
+	public UserDeviceRegistrationDTO registerDevice(ConsumerDeviceDTO consumerDeviceDto) throws MightyAppException {
 		if(null == consumerDeviceDto) {
 			logger.debug("Register Device, Consumer Device DTO object is null");
 			throw new MightyAppException("Invalid request Object", HttpStatus.BAD_REQUEST);
@@ -205,10 +215,20 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		
 		MightyDeviceInfo mightDeviceInfo = getDeviceDetails(consumerDeviceDto.getMightyDeviceId());
 		
-		registerUserAndDevice(consumerDeviceDto, mightDeviceInfo);
+		MightyUserInfo mightyUserInfo =  registerUserAndDevice(consumerDeviceDto, mightDeviceInfo);
+		
+		return constructResponse(mightyUserInfo);
 		
 	}
 
+	private UserDeviceRegistrationDTO constructResponse(MightyUserInfo mightyUserInfo) {
+		UserDeviceRegistrationDTO userDeviceRegistrationDTO = new UserDeviceRegistrationDTO();
+		userDeviceRegistrationDTO.setUserId(mightyUserInfo.getId());
+		userDeviceRegistrationDTO.setUserName(mightyUserInfo.getUserName());
+		userDeviceRegistrationDTO.setStatus(mightyUserInfo.getUserStatus());
+		return userDeviceRegistrationDTO;
+	}
+	
 	public void deRegisterDevice(ConsumerDeviceDTO consumerDeviceDto) {
 		if(null == consumerDeviceDto) {
 			logger.debug("De Register Device, Consumer Device DTO object is null");

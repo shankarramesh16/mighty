@@ -15,7 +15,7 @@ public class UserLoginDTO  extends BaseResponseDTO implements Serializable {
 	
 	private long userId;
 	
-	private String phoneDeviceId;
+	private String deviceId;
 	
 	private List<String> lstMightyDeviceId;
 
@@ -27,12 +27,12 @@ public class UserLoginDTO  extends BaseResponseDTO implements Serializable {
 		this.userId = userId;
 	}
 
-	public String getPhoneDeviceId() {
-		return phoneDeviceId;
+	public String getDeviceId() {
+		return deviceId;
 	}
 
-	public void setPhoneDeviceId(String phoneDeviceId) {
-		this.phoneDeviceId = phoneDeviceId;
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	public String getUserStatus() {

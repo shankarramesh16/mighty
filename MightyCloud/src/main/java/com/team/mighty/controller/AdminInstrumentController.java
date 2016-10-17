@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.domain.MightyDeviceFirmware;
 import com.team.mighty.domain.MightyDeviceOrderInfo;
+import com.team.mighty.dto.DeviceFirmWareDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
@@ -77,6 +78,24 @@ public class AdminInstrumentController {
 			String response = JsonUtil.objToJson(mightyDeviceFirmware);
 			responseEntity = new ResponseEntity<String>(response, e.getHttpStatus());
 			logger.errorException(e, e.getMessage());
+		}
+		return responseEntity;
+	}
+	
+	@RequestMapping(value = "/deviceFirmware", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getDeviceFirmWare() {
+		ResponseEntity<String> responseEntity = null;
+		DeviceFirmWareDTO deviceFirmWareDTO = null;
+		try {
+			String response = JsonUtil.objToJson(deviceFirmWareDTO);
+			responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
+		} catch(MightyAppException e) {
+			logger.errorException(e);
+			deviceFirmWareDTO = new DeviceFirmWareDTO();
+			deviceFirmWareDTO.setStatusCode(e.getHttpStatus().toString());
+			deviceFirmWareDTO.setStatusDesc(e.getMessage());
+			String response = JsonUtil.objToJson(deviceFirmWareDTO);
+			responseEntity = new ResponseEntity<String>(response, e.getHttpStatus());
 		}
 		return responseEntity;
 	}

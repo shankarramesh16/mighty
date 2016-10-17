@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.dto.ConsumerDeviceDTO;
+import com.team.mighty.dto.UserDeviceRegistrationDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
@@ -56,8 +57,9 @@ public class ConsumerInstrumentController {
 		logger.info(" /POST Consumer API",  consumerDeviceDto);
 		ResponseEntity<String> responseEntity = null;
 		try {
-			consumerInstrumentServiceImpl.registerDevice(consumerDeviceDto);
-			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+			UserDeviceRegistrationDTO userInfo = consumerInstrumentServiceImpl.registerDevice(consumerDeviceDto);
+			String response = JsonUtil.objToJson(userInfo);
+			responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
 		} catch(MightyAppException e) {
 			String errorMessage = e.getMessage();
 			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());

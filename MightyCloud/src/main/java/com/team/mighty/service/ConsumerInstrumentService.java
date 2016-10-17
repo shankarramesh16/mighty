@@ -1,6 +1,7 @@
 package com.team.mighty.service;
 
 import com.team.mighty.dto.ConsumerDeviceDTO;
+import com.team.mighty.dto.UserDeviceRegistrationDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 
@@ -15,7 +16,7 @@ public interface ConsumerInstrumentService {
 	
 	public UserLoginDTO userLogin(UserLoginDTO userLoginDTO) throws MightyAppException;
 	
-	public void registerDevice(ConsumerDeviceDTO consumerDeviceDto) throws MightyAppException;
+	public UserDeviceRegistrationDTO registerDevice(ConsumerDeviceDTO consumerDeviceDto) throws MightyAppException;
 	
 	public void deRegisterDevice(ConsumerDeviceDTO consumerDeviceDto);
 	

@@ -1,6 +1,7 @@
 package com.team.mighty.dao;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +19,7 @@ public interface MightyDeviceUserMapDAO extends JpaRepository<MightyDeviceUserMa
 			, @Param("phoneDeviceId") String phoneDeviceId);
 	
 	@Query("SELECT m FROM MightyDeviceUserMapping m join m.mightyUserInfo userInfo WHERE m.phoneDeviceId = :phoneDeviceId and userInfo.id = :userId")
-	MightyDeviceUserMapping checkUserAndPhoneDeviceId(@Param("userId") long userId, @Param("phoneDeviceId") String phoneDeviceId);
+	Set<MightyDeviceUserMapping> checkUserAndPhoneDeviceId(@Param("userId") long userId, @Param("phoneDeviceId") String phoneDeviceId);
 	
 	@Query("SELECT m FROM MightyDeviceUserMapping m join m.mightyUserInfo userInfo WHERE m.mightyDeviceId = :mightyDeviceId and m.phoneDeviceId = :phoneDeviceId and userInfo.userName = :userName")
 	MightyDeviceUserMapping checkAnyDeActivatedAccountByUserName(@Param("userName") String userName, @Param("mightyDeviceId") long mightyDeviceId
