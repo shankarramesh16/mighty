@@ -13,9 +13,11 @@ import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.dao.MightyDeviceFirmwareDAO;
 import com.team.mighty.dao.MightyDeviceInfoDAO;
 import com.team.mighty.dao.MightyDeviceOrderDAO;
+import com.team.mighty.dao.MightyFeaturedPlaylistDAO;
 import com.team.mighty.domain.MightyDeviceFirmware;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceOrderInfo;
+import com.team.mighty.domain.MightyFeaturedPlaylist;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
@@ -34,6 +36,9 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	
 	@Autowired
 	private MightyDeviceFirmwareDAO mightyDeviceFirmwareDAO;
+	
+	@Autowired
+	private MightyFeaturedPlaylistDAO mightyFeaturedPlaylistDAO;
 	
 	public List<DeviceInfoDTO> getAllMightyDevice() throws MightyAppException {
 		logger.info("AdminInstrumentServiceImpl,getAllMightyDevice");
@@ -93,6 +98,27 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 		
 		mightyDeviceFirmware = mightyDeviceFirmwareDAO.save(mightyDeviceFirmware);
 		return mightyDeviceFirmware;
+	}
+	
+	public void insertDeviceFirmwareDetails(MightyDeviceFirmware mightyDevFirmware) throws Exception {
+		mightyDeviceFirmwareDAO.save(mightyDevFirmware);
+	}
+
+	
+	public List<MightyDeviceFirmware> getDeviceFirmware() throws Exception {
+		
+		return mightyDeviceFirmwareDAO.getDeviceFirmware();
+	}
+
+	
+	public List<MightyFeaturedPlaylist> getMightyFeaturedPlaylist()	throws Exception {
+		return mightyFeaturedPlaylistDAO.getMightyFeaturedPlaylist();
+	}
+
+	
+	public void insertMightyFeaturedPlaylistDetails(MightyFeaturedPlaylist mightyFeaturedPlaylist) throws Exception {
+		mightyFeaturedPlaylistDAO.save(mightyFeaturedPlaylist);
+		
 	}
 
 }

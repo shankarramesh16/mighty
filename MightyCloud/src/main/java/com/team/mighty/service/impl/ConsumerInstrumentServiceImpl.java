@@ -343,5 +343,14 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	public void setMightyDeviceInfoDAO(MightyDeviceInfoDAO mightyDeviceInfoDAO) {
 		this.mightyDeviceInfoDAO = mightyDeviceInfoDAO;
 	}
+	
+	public List<MightyUserInfo> getMightyUserInfo() throws Exception {
+		return mightyDeviceInfoDAO.getMightyUserInfo();
+	}
+
+	
+	public List<MightyDeviceInfo> getMightyDeviceInfo() throws Exception {
+		return mightyDeviceInfoDAO.getMightyDeviceInfo();
+	}
 
 }

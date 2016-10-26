@@ -7,6 +7,23 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>MightyCloud Maven Webapp</name>
 	<url>http://maven.apache.org</url>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			 <plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+			</plugin> 
+		</plugins>
+		<finalName>MightyCloud</finalName>
+	</build>
 
 	<properties>
 		<springframework.version>4.3.0.RELEASE</springframework.version>
@@ -119,9 +136,63 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.6.3</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>displaytag</groupId>
+			<artifactId>displaytag</artifactId>
+			<!-- <url>http://displaytag.sourceforge.net/</url> -->
+			<version>1.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+		<groupId>org.apache.tomcat</groupId>
+		<artifactId>tomcat-coyote</artifactId>
+		<version>7.0.39</version>
+		<scope>provided</scope>
+		</dependency>
+	
+<dependency>
+	<groupId>org.apache.poi</groupId>
+	<artifactId>poi</artifactId>
+	<version>3.7</version>
+</dependency>
+ 
+<dependency>
+	<groupId>org.apache.poi</groupId>
+	<artifactId>poi-ooxml</artifactId>
+	<version>3.7</version>
+</dependency>
+
+	<dependency>
+        <groupId>displaytag</groupId>
+        <artifactId>displaytag-export-poi</artifactId>
+        <version>1.2</version>
+    </dependency>
+    
+<dependency>
+	<groupId>com.itextpdf</groupId>
+	<artifactId>itextpdf</artifactId>
+	<version>5.5.3</version>
+</dependency>	
+
+<dependency>
+	<groupId>com.googlecode.json-simple</groupId>
+	<artifactId>json-simple</artifactId>
+	<version>1.1</version>
+</dependency>	
+
+<dependency>
+	<groupId>org.json</groupId>
+	<artifactId>json</artifactId>
+	<version>20140107</version>
+</dependency>	
 
 	</dependencies>
-	<build>
-		<finalName>MightyCloud</finalName>
-	</build>
+	
 </project>
