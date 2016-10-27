@@ -31,7 +31,29 @@ public class ConsumerDeviceDTO implements Serializable {
 	
 	private String emailId;
 	
+	private String password;
+	
+	private String userIndicator;
+	
 	private long userId;
+	
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getUserIndicator() {
+		return userIndicator;
+	}
+
+	public void setUserIndicator(String userIndicator) {
+		this.userIndicator = userIndicator;
+	}
+
 
 	public String getUserName() {
 		return userName;

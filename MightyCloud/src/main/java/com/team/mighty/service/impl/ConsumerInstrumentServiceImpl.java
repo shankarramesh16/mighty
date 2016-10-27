@@ -149,6 +149,8 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			mightyUserInfo.setFirstName(consumerDeviceDto.getFirstName());
 			mightyUserInfo.setLastName(consumerDeviceDto.getLastName());
 			mightyUserInfo.setEmailId(consumerDeviceDto.getEmailId());
+			mightyUserInfo.setPassword(consumerDeviceDto.getPassword());
+			mightyUserInfo.setUserIndicator(consumerDeviceDto.getUserIndicator());
 			mightyUserInfo.setCreatedDt(new Date(System.currentTimeMillis()));
 			mightyUserInfo.setUpdatedDt(new Date(System.currentTimeMillis()));
 			

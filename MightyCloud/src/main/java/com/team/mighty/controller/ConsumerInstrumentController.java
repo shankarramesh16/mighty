@@ -90,6 +90,8 @@ public class ConsumerInstrumentController {
 			consumerDeviceDTO.setFirstName(obj.get("FirstName").toString());	
 			consumerDeviceDTO.setLastName(obj.get("LastName").toString());
 			consumerDeviceDTO.setEmailId(obj.get("EmailID").toString());
+			consumerDeviceDTO.setPassword(obj.get("Password").toString());
+			consumerDeviceDTO.setUserIndicator(obj.get("UserIndicator").toString());
 			consumerDeviceDTO.setMightyDeviceId(obj.get("MightyDeviceID").toString());
 			consumerDeviceDTO.setDeviceModel(obj.get("DeviceModel").toString());
 			consumerDeviceDTO.setDeviceId(obj.get("DeviceID").toString());

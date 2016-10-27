@@ -42,6 +42,12 @@ public class MightyUserInfo extends BaseEntityInfo {
 
 	@Column(name = "EMAIL_ID")
 	private String emailId;
+	
+	@Column(name = "PASSWORD")
+	private String password;
+
+	@Column(name = "USER_INDICATOR")
+	private String userIndicator;
 
 	@Column(name = "SPOTIFY_ACCESS_TOKEN")
 	private String spotifyAccessToken;
@@ -97,6 +103,22 @@ public class MightyUserInfo extends BaseEntityInfo {
 
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getUserIndicator() {
+		return userIndicator;
+	}
+
+	public void setUserIndicator(String userIndicator) {
+		this.userIndicator = userIndicator;
 	}
 
 	public String getSpotifyAccessToken() {
