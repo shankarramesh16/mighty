@@ -33,6 +33,8 @@ public interface ConsumerInstrumentService {
 	public List<MightyUserInfo> getMightyUserInfo() throws Exception;
 
 	public List<MightyDeviceInfo> getMightyDeviceInfo() throws Exception;
+
+	public void mightyUserLogin(ConsumerDeviceDTO consumerDeviceDTO) throws MightyAppException; 
 	
 
 }

@@ -17,6 +17,7 @@ import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.dao.ConsumerInstrumentDAO;
 import com.team.mighty.dao.MightyDeviceInfoDAO;
 import com.team.mighty.dao.MightyDeviceUserMapDAO;
+import com.team.mighty.dao.MightyUserInfoDao;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
@@ -45,6 +46,11 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	@Autowired
 	private MightyDeviceUserMapDAO mightyDeviceUserMapDAO;
+	
+	@Autowired
+	private MightyUserInfoDao mightyUserInfoDAO;
+	
+	
 	
 
 	public UserLoginDTO userLogin(UserLoginDTO userLoginDTO) {
@@ -353,6 +359,21 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	public List<MightyDeviceInfo> getMightyDeviceInfo() throws Exception {
 		return mightyDeviceInfoDAO.getMightyDeviceInfo();
+	}
+
+	
+	public void mightyUserLogin(ConsumerDeviceDTO consumerDeviceDTO) throws MightyAppException {
+	
+		MightyUserInfo mightyUserInfo = null;
+		try {
+			mightyUserInfo = mightyUserInfoDAO.getMightyUserLogin(consumerDeviceDTO.getPassword(),consumerDeviceDTO.getUserIndicator());
+		} catch(Exception e) {
+			throw new MightyAppException("System Error", HttpStatus.INTERNAL_SERVER_ERROR, e);
+		}
+		
+		if(null == mightyUserInfo) {
+			throw new MightyAppException(" Mighty User Details not found", HttpStatus.NOT_FOUND);
+		}
 	}
 
 }

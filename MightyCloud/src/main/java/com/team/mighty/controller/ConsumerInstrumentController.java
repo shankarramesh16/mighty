@@ -70,6 +70,37 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 	}*/
 	
+	@RequestMapping(value="/mightyUserLogin",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> mightyUserLoginHandler(@RequestBody String received) {
+		logger.info(" /POST mightyUserLogin API");
+		
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("Exception in",e);
+		}
+		
+				
+		try {
+			ConsumerDeviceDTO consumerDeviceDTO=new ConsumerDeviceDTO();
+			consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
+			consumerDeviceDTO.setPassword(obj.get("Password").toString());
+			logger.debug("USername :", obj.get("UserName").toString());
+			 logger.debug("Password :", obj.get("Password").toString());
+			 
+			consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
+			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+		} catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+		return responseEntity;
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> doRegistration(@RequestBody String received) {
 		logger.info(" /POST Consumer API");

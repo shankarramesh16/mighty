@@ -5,6 +5,7 @@
 	version="2.0">
 	<persistence-unit name="mightyPU" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>com.team.mighty.domain.AdminUser</class>
 		<class>com.team.mighty.domain.ConsumerInstrument</class>
 		<class>com.team.mighty.domain.MightyDeviceFirmware</class>
 		<class>com.team.mighty.domain.MightyDeviceInfo</class>
@@ -13,7 +14,6 @@
 		<class>com.team.mighty.domain.MightyFeaturedPlaylist</class>
 		<class>com.team.mighty.domain.MightyUserAnalytics</class>
 		<class>com.team.mighty.domain.MightyUserInfo</class>
-		<class>com.team.mighty.domain.AdminUser</class>
 		<class>com.team.mighty.domain.Role</class>
 
 		<properties>
