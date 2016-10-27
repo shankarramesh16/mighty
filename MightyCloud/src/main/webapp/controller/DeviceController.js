@@ -1,7 +1,7 @@
 /**
  * 
  */
-mightyApp.controller('deviceController', function( $scope,$location, $http) {
+mightyApp.controller('deviceController', function( $modal,$scope,$location, $http) {
 	
     // init
     $scope.sort = {       
@@ -29,6 +29,46 @@ mightyApp.controller('deviceController', function( $scope,$location, $http) {
         }
     };
     
+    var $ctrl = this;
+    $ctrl.items = ['item1', 'item2', 'item3'];
+    
+    $ctrl.selected = {
+      item: $ctrl.items[0]
+    };
+
+    $ctrl.ok = function () {
+     
+    };
+
+    $ctrl.cancel = function () {
+    };
+
+    $scope.deviceInfo = [{id: 'choice1', deviceId : "",manufDate : ""}];
+    
+    $scope.addDeviceInfoChoice = function() {
+        var newItemNo = $scope.deviceInfo.length+1;
+        $scope.deviceInfo.push({'id':'choice'+newItemNo, deviceId : "",manufDate : ""});
+      };
+      
+      $scope.removeDeviceInfoChoice = function() {
+    	    var lastItem = $scope.deviceInfo.length-1;
+    	    $scope.deviceInfo.splice(lastItem);
+    	  };
+    	  
+    $scope.open = function () {
+
+    var modalInstance = $modal.open({
+        templateUrl: 'addModelContent.html',
+        size: 'sm',
+        resolve: {
+          items: function () {
+            return $ctrl.items;
+          }
+        }
+      });
+    };
+    
+   
     
 	$scope.prevPage = function () {
         if ($scope.currentPage > 0) {
