@@ -127,6 +127,7 @@ public class AdminInstrumentController {
 			logger.info(request.getProtocol());
 			logger.info(request.isSecure());
 			logger.info(request.getContextPath());
+			logger.info(request.getHeader("x-forwarded-proto"));
 			mightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware();
 			if(mightyDeviceFirmware!=null){
 				deviceFirmWareDTO=new DeviceFirmWareDTO();
@@ -166,7 +167,7 @@ public class AdminInstrumentController {
 		try {
 			mightyDeviceFirmware=adminInstrumentServiceImpl.getDeviceFirmwareById(deviceFirmwareId);
 			if(mightyDeviceFirmware!= null && mightyDeviceFirmware.getFile() != null){
-					response.setHeader("Content-Disposition", "attachment;filename=\binaryEncodedFile");
+					response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
 						OutputStream out = response.getOutputStream();
 							response.setContentType("text/plain");
 								IOUtils.copy(mightyDeviceFirmware.getFile().getBinaryStream(), out);
