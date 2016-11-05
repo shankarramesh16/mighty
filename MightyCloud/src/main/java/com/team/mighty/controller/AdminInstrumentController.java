@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +29,8 @@ import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;
+import com.team.mighty.service.MightyCommonService;
+import com.team.mighty.utils.JWTKeyGenerator;
 import com.team.mighty.utils.JsonUtil;
 
 @RestController
@@ -38,6 +41,9 @@ public class AdminInstrumentController {
 	
 	@Autowired
 	private AdminInstrumentService adminInstrumentServiceImpl;
+	
+	@Autowired
+	private MightyCommonService mightyCommonServiceImpl;
 	
 	@RequestMapping(value = "/device", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getAllMightyDevices() {
@@ -54,11 +60,23 @@ public class AdminInstrumentController {
 		return responseEntity;
 	}
 	
+	// To Validate X-MIGHTY-TOKEN
+	
+	//JWTKeyGenerator.validateXToken(xToken);
+	//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_THRIDPARTY, xToken);
+	
 	@RequestMapping(value = "/createDeviceOrder", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> mightyDeviceOrder(@RequestBody MightyDeviceOrderInfo mightyDeviceOrderInfo) {
+	public ResponseEntity<String> mightyDeviceOrder(@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken,
+			@RequestBody MightyDeviceOrderInfo mightyDeviceOrderInfo) {
 		logger.info("/ POST Create Device Order ", mightyDeviceOrderInfo);
 		ResponseEntity<String> responseEntity = null;
 		try {
+			//Validate X-MIGHTY-TOKEN Value
+			JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_THRIDPARTY, xToken);
+			
 			mightyDeviceOrderInfo = adminInstrumentServiceImpl.createDeviceOrder(mightyDeviceOrderInfo);
 			String response = JsonUtil.objToJson(mightyDeviceOrderInfo);
 			responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
@@ -72,8 +90,11 @@ public class AdminInstrumentController {
 		return responseEntity;
 	}
 	
+	// validateJWTToken
 	@RequestMapping(value = "/createDeviceFirmware", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> createNewDeviceFirmWare(@RequestBody MightyDeviceFirmware mightyDeviceFirmware) {
+	public ResponseEntity<String> createNewDeviceFirmWare(@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken,
+			@RequestBody MightyDeviceFirmware mightyDeviceFirmware) {
+		
 		ResponseEntity<String> responseEntity = null;
 		try {
 			mightyDeviceFirmware = adminInstrumentServiceImpl.createDeviceFirmware(mightyDeviceFirmware);

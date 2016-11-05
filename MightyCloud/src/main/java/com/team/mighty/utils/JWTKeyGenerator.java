@@ -6,7 +6,10 @@ import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
-import com.team.mighty.constant.MightyAppConstants;
+import org.springframework.http.HttpStatus;
+
+import com.team.mighty.exception.MightyAppException;
+import com.team.mighty.logger.MightyLogger;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
@@ -15,27 +18,15 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JWTKeyGenerator {
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-		String token = new JWTKeyGenerator().createJWTToken("MIGHTY_MOBILE","ID",  "SUBJECT", 500);
-
-		System.out.println(token);
-
-		try {
-
-			// sleep 5 seconds
-			Thread.sleep(2000);
-
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+	private static final MightyLogger logger = MightyLogger.getLogger(JWTKeyGenerator.class);
+	
+	public static void validateXToken(String xToken) throws MightyAppException {
+		if (xToken == null) {
+			throw new MightyAppException("Invalid XToken Value", HttpStatus.UNAUTHORIZED);
 		}
-
-		new JWTKeyGenerator().parseJWT("MIGHTY_MOBILE",token);
-
 	}
 
-	public static String createJWTToken(String serviceInvokerKey, String id,  String subject, long ttlMillis) {
+	public static String createJWTToken(String serviceInvokerKey, String id, String subject, long ttlMillis) {
 
 		// The JWT signature algorithm we will be using to sign the token
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -46,8 +37,8 @@ public class JWTKeyGenerator {
 		// We will sign our JWT with our ApiKey secret
 		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(serviceInvokerKey);
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-
-		String issuerName = SpringPropertiesUtil.getProperty(MightyAppConstants.TOKEN_ISSUER_KEY);
+		String issuerName = "SHAN";
+		//String issuerName = SpringPropertiesUtil.getProperty(MightyAppConstants.TOKEN_ISSUER_KEY);
 		// Let's set the JWT Claims
 		JwtBuilder builder = Jwts.builder().setId(id).setIssuedAt(now).setSubject(subject).setIssuer(issuerName)
 				.signWith(signatureAlgorithm, signingKey);
@@ -63,24 +54,27 @@ public class JWTKeyGenerator {
 		return builder.compact();
 	}
 
-	private void parseJWT(String serviceInvokerKey, String jwt) {
+	public static void validateJWTToken(String serviceInvokerKey, String jwt) throws MightyAppException {
 
 		// This line will throw an exception if it is not a signed JWS (as
 		// expected)
-		Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(serviceInvokerKey))
-				.parseClaimsJws(jwt).getBody();
-		System.out.println("ID: " + claims.getId());
-		System.out.println("Subject: " + claims.getSubject());
-		System.out.println("Issuer: " + claims.getIssuer());
-		System.out.println("Expiration: " + claims.getExpiration());
-
-		System.out.println(new Date().toString());
+		try {
+			Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(serviceInvokerKey))
+					.parseClaimsJws(jwt).getBody();
+			logger.info("ID: " + claims.getId());
+			logger.info("Subject: " + claims.getSubject());
+			logger.info("Issuer: " + claims.getIssuer());
+			logger.info("Expiration: " + claims.getExpiration());
+		} catch(Exception e) {
+			throw new MightyAppException("X-Mighty-token Value Expired", HttpStatus.UNAUTHORIZED);
+		}
+		
+		
 	}
 
-	public String getSecret(String serviceInvoker) {
-
-		return "MYSECRETKEY";
-
+	public static void main(String[] args) {
+		String token = createJWTToken("MYSECRETKEY", "ID", "SUB", 500);
+		validateJWTToken("MYSECRETKEY", token);
 	}
 
 }

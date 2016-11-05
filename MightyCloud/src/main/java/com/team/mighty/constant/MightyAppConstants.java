@@ -30,6 +30,7 @@ public class MightyAppConstants {
 	public static final String TTL_LOGIN_KEY = "mighty.token.login.ttlmillis";
 	
 	public static final String KEY_MIGHTY_MOBILE = "MIGHTY_MOBILE";
+	public static final String KEY_MIGHTY_THRIDPARTY = "MIGHTY_THIRDPARTY";
 	
 	public static final String SUBJECT_SECURE = "MOBILE_SECURE";
 	public static final String SUBJECT_NON_SECURE = "MOBILE_NON_SECURE";
