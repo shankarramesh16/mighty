@@ -11,8 +11,8 @@ import com.team.mighty.domain.MightyDeviceFirmware;
 
 public interface MightyDeviceFirmwareDAO extends JpaRepository<MightyDeviceFirmware, Serializable> {
 	
-	@Query("FROM MightyDeviceFirmware")
-	List<MightyDeviceFirmware> getDeviceFirmware() throws Exception;
+	@Query("FROM MightyDeviceFirmware m where m.status = :status order By m.version desc")
+	List<MightyDeviceFirmware> getDeviceFirmware(@Param("status") String status) throws Exception;
 
 	@Query("FROM MightyDeviceFirmware mdf where mdf.id=:deviceFirmwareId")
 	MightyDeviceFirmware getDeviceFirmwareById(@Param("deviceFirmwareId") String deviceFirmwareId);

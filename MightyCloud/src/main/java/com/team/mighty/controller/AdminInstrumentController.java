@@ -2,9 +2,11 @@ package com.team.mighty.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.team.mighty.constant.MightyAppConstants;
@@ -30,7 +34,6 @@ import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;
 import com.team.mighty.service.MightyCommonService;
-import com.team.mighty.utils.JWTKeyGenerator;
 import com.team.mighty.utils.JsonUtil;
 
 @RestController
@@ -116,12 +119,26 @@ public class AdminInstrumentController {
 		DeviceFirmWareDTO deviceFirmWareDTO = null;
 		MightyDeviceFirmware mightyDeviceFirmware=null;
 		try {
-			mightyDeviceFirmware=adminInstrumentServiceImpl.getMightyDeviceFirmware();
+			
+			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
+					.getRequestAttributes()).getRequest();
+			logger.info(request.getServerName());
+			logger.info(request.getServerPort());
+			logger.info(request.getProtocol());
+			logger.info(request.isSecure());
+			logger.info(request.getContextPath());
+			mightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware();
 			if(mightyDeviceFirmware!=null){
 				deviceFirmWareDTO=new DeviceFirmWareDTO();
 				deviceFirmWareDTO.setLatestVersion(mightyDeviceFirmware.getVersion());
 				/*passing localhost API...*/
-				deviceFirmWareDTO.setFileDownloadUrl("http://192.168.1.135:8011/MightyCloud/rest/admin/download/"+mightyDeviceFirmware.getId());
+				String URL = null;
+				if(request.isSecure()) {
+					URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
+				} else {
+					URL = "http://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
+				}
+				deviceFirmWareDTO.setFileDownloadUrl(URL);
 				String response = JsonUtil.objToJson(deviceFirmWareDTO);
 				responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
 			}
@@ -148,7 +165,7 @@ public class AdminInstrumentController {
 		MightyDeviceFirmware mightyDeviceFirmware=null;
 		try {
 			mightyDeviceFirmware=adminInstrumentServiceImpl.getDeviceFirmwareById(deviceFirmwareId);
-			if(mightyDeviceFirmware!= null){
+			if(mightyDeviceFirmware!= null && mightyDeviceFirmware.getFile() != null){
 					response.setHeader("Content-Disposition", "attachment;filename=\binaryEncodedFile");
 						OutputStream out = response.getOutputStream();
 							response.setContentType("text/plain");
