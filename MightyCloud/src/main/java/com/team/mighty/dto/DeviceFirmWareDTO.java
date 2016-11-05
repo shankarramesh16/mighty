@@ -18,6 +18,8 @@ public class DeviceFirmWareDTO extends BaseResponseDTO {
 	
 	private Date createdDt;
 	
+	private String fileDownloadUrl;
+	
 	private List<DeviceFirmWareDTO> lstPreviousVersion;
 
 	public String getLatestVersion() {
@@ -58,6 +60,14 @@ public class DeviceFirmWareDTO extends BaseResponseDTO {
 
 	public void setLstPreviousVersion(List<DeviceFirmWareDTO> lstPreviousVersion) {
 		this.lstPreviousVersion = lstPreviousVersion;
+	}
+
+	public String getFileDownloadUrl() {
+		return fileDownloadUrl;
+	}
+
+	public void setFileDownloadUrl(String fileDownloadUrl) {
+		this.fileDownloadUrl = fileDownloadUrl;
 	}
 
 }

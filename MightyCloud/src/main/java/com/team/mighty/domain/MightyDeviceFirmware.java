@@ -1,6 +1,7 @@
 package com.team.mighty.domain;
 
 import java.io.Serializable;
+import java.sql.Blob;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -8,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -23,8 +25,24 @@ public class MightyDeviceFirmware implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")
-	private long id;
+	private String id;
 	
+	@Column(name="FILE")
+	@Lob
+	private Blob file;
+	
+	/*@Column(name="FILE")
+	@Lob
+	private byte[] file;
+	
+	public byte[] getFile() {
+		return file;
+	}
+
+	public void setFile(byte[] file) {
+		this.file = file;
+	}*/
+
 	@Column(name = "VERSION")
 	private String version;
 	
@@ -46,12 +64,19 @@ public class MightyDeviceFirmware implements Serializable {
 	@Transient
 	private String errorDesc;
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
+	}
+	public Blob getFile() {
+		return this.file;
+	}
+
+	public void setFile(Blob file) {
+		this.file = file;
 	}
 
 	public String getVersion() {

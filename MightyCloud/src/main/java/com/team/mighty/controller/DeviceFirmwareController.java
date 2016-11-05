@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.team.mighty.constant.MightyAppConstants;
@@ -28,17 +30,16 @@ public class DeviceFirmwareController {
 	@RequestMapping(value = "/addDeviceFirmware")
 	public String addDeviceFirmwareHandler(HttpServletRequest request,Map<String,Object> map) throws Exception {
 		logger.debug("Adding DeviceFirmware");
-				String message=(String)request.getAttribute("status");
-					map.put("status", message);
-						return "addDeviceFirmware";
+				return "addDeviceFirmware";
 	}
  
  
  	@RequestMapping(value = "/deviceFirmwareSubmit",method=RequestMethod.POST)
-	public String deviceFirmwareSubmitHandler(HttpServletRequest request,Map<String,Object> map,RedirectAttributes redirectAttributes) throws Exception {
+	public String deviceFirmwareSubmitHandler(HttpServletRequest request,Map<String,Object> map,@RequestParam("file") MultipartFile file,RedirectAttributes redirectAttributes) throws Exception {
 		logger.debug("In submitting DeviceFirmware details");
 		String effectiveDate=request.getParameter("fromDate");
 		String version=request.getParameter("version");
+		
 		
 		MightyDeviceFirmware mightyDevFirmware=new MightyDeviceFirmware();
 		mightyDevFirmware.setCreatedDt(new Date(System.currentTimeMillis()));
@@ -46,6 +47,7 @@ public class DeviceFirmwareController {
 		mightyDevFirmware.setStatus(MightyAppConstants.IND_A);
 		mightyDevFirmware.setUpdatedDt(new Date(System.currentTimeMillis()));
 		mightyDevFirmware.setVersion(version);
+		mightyDevFirmware.setFile(new javax.sql.rowset.serial.SerialBlob(file.getBytes()));
 		try{
 			adminInstrumentServiceImpl.insertDeviceFirmwareDetails(mightyDevFirmware);
 			redirectAttributes.addFlashAttribute("status", "Device firmware added successfully..");

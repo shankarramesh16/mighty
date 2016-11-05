@@ -121,4 +121,22 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 		
 	}
 
+	public MightyDeviceFirmware getDeviceFirmwareById(String deviceFirmwareId) throws MightyAppException {
+		return mightyDeviceFirmwareDAO.getDeviceFirmwareById(deviceFirmwareId);
+	}
+
+
+	public MightyDeviceFirmware getMightyDeviceFirmware() throws MightyAppException {
+		List<MightyDeviceFirmware> mightyDeviceFirmware=null;
+		try {
+			mightyDeviceFirmware=mightyDeviceFirmwareDAO.getDeviceFirmware();
+			if(mightyDeviceFirmware!=null && !mightyDeviceFirmware.isEmpty()){
+				return mightyDeviceFirmware.get(mightyDeviceFirmware.size()-1);
+			}
+		} catch (Exception e) {
+			throw new MightyAppException(e.getMessage(),HttpStatus.BAD_REQUEST);
+		}
+		return null;
+	}
+
 }
