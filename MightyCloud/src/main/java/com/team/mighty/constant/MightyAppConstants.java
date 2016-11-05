@@ -8,9 +8,9 @@ package com.team.mighty.constant;
 public class MightyAppConstants {
 
 	// REST API Mapping
-	public static final String CONSUMER_API = "consumer";
+	public static final String CONSUMER_API = "rest/consumer";
 	public static final String SPOTIFY_API = "spotifyaccess";
-	public static final String ADMIN_API = "admin";
+	public static final String ADMIN_API = "rest/admin";
 	
 	// Domain Table Mapping
 	public static final String CONSUMER_TABLE = "TBL_CONSUMER";
