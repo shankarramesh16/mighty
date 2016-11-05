@@ -17,9 +17,11 @@ import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.dao.ConsumerInstrumentDAO;
 import com.team.mighty.dao.MightyDeviceInfoDAO;
 import com.team.mighty.dao.MightyDeviceUserMapDAO;
+import com.team.mighty.dao.MightyKeyConfigDAO;
 import com.team.mighty.dao.MightyUserInfoDao;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
+import com.team.mighty.domain.MightyKeyConfig;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.UserDeviceRegistrationDTO;
@@ -27,6 +29,8 @@ import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.ConsumerInstrumentService;
+import com.team.mighty.utils.JWTKeyGenerator;
+import com.team.mighty.utils.SpringPropertiesUtil;
 
 /**
  * 
@@ -49,6 +53,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	@Autowired
 	private MightyUserInfoDao mightyUserInfoDAO;
+	
+	@Autowired
+	private MightyKeyConfigDAO mightyKeyConfigDAO;
 	
 	
 	
@@ -102,6 +109,19 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		userLoginDTO.setLstMightyDeviceId(lstMightyDevice);
 		
 		userLoginDTO.setStatusCode(HttpStatus.OK.toString());
+		
+		MightyKeyConfig mightyKeyConfig = mightyKeyConfigDAO.getKeyConfigValue(MightyAppConstants.KEY_MIGHTY_MOBILE);
+		
+		if(null != mightyKeyConfig && (mightyKeyConfig.getIsEnabled() != null && 
+				mightyKeyConfig.getIsEnabled().equalsIgnoreCase(MightyAppConstants.IND_Y))) {
+			
+			long ttlMillis = Long.parseLong(SpringPropertiesUtil.getProperty(MightyAppConstants.TTL_LOGIN_KEY));
+			
+			String jwtKey = JWTKeyGenerator.createJWTToken(mightyKeyConfig.getMightyKeyValue(), MightyAppConstants.TOKEN_LOGN_ID,
+					MightyAppConstants.SUBJECT_SECURE, ttlMillis);
+			
+			userLoginDTO.setApiToken(jwtKey);
+		}
 		
 		return userLoginDTO;
 	}

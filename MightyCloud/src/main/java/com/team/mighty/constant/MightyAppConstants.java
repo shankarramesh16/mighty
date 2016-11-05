@@ -21,4 +21,20 @@ public class MightyAppConstants {
 	public static final String IND_A = "A";
 	public static final String IND_D = "D";
 	
+	// MIGHTY Config
+	
+	public static final String HTTP_HEADER_TOKEN_NAME = "X-MIGHTY-TOKEN";
+	
+	public static final String TOKEN_ISSUER_KEY = "mighty.token.issuerName";
+	
+	public static final String TTL_LOGIN_KEY = "mighty.token.login.ttlmillis";
+	
+	public static final String KEY_MIGHTY_MOBILE = "MIGHTY_MOBILE";
+	
+	public static final String SUBJECT_SECURE = "MOBILE_SECURE";
+	public static final String SUBJECT_NON_SECURE = "MOBILE_NON_SECURE";
+	
+	public static final String TOKEN_LOGN_ID = "MOBILE_LOGIN";
+	
+	
 }

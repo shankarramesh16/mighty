@@ -3,6 +3,7 @@ package com.team.mighty.controller;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.dto.ConsumerDeviceDTO;
-import com.team.mighty.dto.UserDeviceRegistrationDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
@@ -40,10 +40,12 @@ public class ConsumerInstrumentController {
 	public ResponseEntity<String> userLoginFromApp(@RequestBody UserLoginDTO userLoginDTO) {
 		logger.info(" /POST User Login API ", userLoginDTO);
 		ResponseEntity<String> responseEntity = null;
+		HttpHeaders httpHeaders = new HttpHeaders();
 		try {
 			userLoginDTO = consumerInstrumentServiceImpl.userLogin(userLoginDTO);
 			String response = JsonUtil.objToJson(userLoginDTO);
-			responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
+			httpHeaders.add(MightyAppConstants.HTTP_HEADER_TOKEN_NAME, userLoginDTO.getApiToken());
+			responseEntity = new ResponseEntity<String>(response,httpHeaders, HttpStatus.OK);
 		} catch(MightyAppException e) {
 			logger.errorException(e, e.getMessage());
 			userLoginDTO.setStatusCode(e.getHttpStatus().toString());

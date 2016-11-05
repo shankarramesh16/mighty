@@ -12,6 +12,8 @@ public class BaseResponseDTO implements Serializable {
 	private String statusDesc;
 	
 	private String statusCode;
+	
+	private String apiToken;
 
 	public String getStatusDesc() {
 		return statusDesc;
@@ -27,5 +29,13 @@ public class BaseResponseDTO implements Serializable {
 
 	public void setStatusCode(String statusCode) {
 		this.statusCode = statusCode;
+	}
+
+	public String getApiToken() {
+		return apiToken;
+	}
+
+	public void setApiToken(String apiToken) {
+		this.apiToken = apiToken;
 	}
 }
