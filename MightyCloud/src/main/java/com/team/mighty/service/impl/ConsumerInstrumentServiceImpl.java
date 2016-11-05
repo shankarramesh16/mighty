@@ -274,7 +274,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		
 		if(mightyDeviceUserMapping != null) {
 			logger.debug(mightyDeviceUserMapping);
-			logger.debug(mightyDeviceUserMapping.getMightyUserInfo());
+			logger.debug("Inside",mightyDeviceUserMapping.getMightyUserInfo());
 			logger.debug(mightyDeviceUserMapping.getMightyUserInfo().getId());
 			mightyDeviceUserMapping.setRegistrationStatus(MightyAppConstants.IND_N);
 			updateUserDeviceMap(mightyDeviceUserMapping);
@@ -366,13 +366,13 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 		MightyUserInfo mightyUserInfo = null;
 		try {
-			mightyUserInfo = mightyUserInfoDAO.getMightyUserLogin(consumerDeviceDTO.getPassword(),consumerDeviceDTO.getUserIndicator());
+			mightyUserInfo = mightyUserInfoDAO.getMightyUserLogin(consumerDeviceDTO.getPassword(),consumerDeviceDTO.getUserName());
 		} catch(Exception e) {
 			throw new MightyAppException("System Error", HttpStatus.INTERNAL_SERVER_ERROR, e);
 		}
 		
 		if(null == mightyUserInfo) {
-			throw new MightyAppException(" Mighty User Details not found", HttpStatus.NOT_FOUND);
+			throw new MightyAppException(" Invalid Username or Password", HttpStatus.NOT_FOUND);
 		}
 	}
 

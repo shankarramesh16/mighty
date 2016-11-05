@@ -5,8 +5,8 @@
 	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 	<display-name>Archetype Created Web Application</display-name>
-<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
+	<welcome-file-list>
+		<welcome-file>/index.jsp</welcome-file>
 	</welcome-file-list>
 	<servlet>
 		<servlet-name>mighty</servlet-name>
@@ -18,7 +18,7 @@
 
 	<servlet-mapping>
 		<servlet-name>mighty</servlet-name>
-		<url-pattern>/rest/*</url-pattern>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 		
 	<servlet-mapping>

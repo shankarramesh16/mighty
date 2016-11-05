@@ -8,7 +8,7 @@ import com.team.mighty.domain.MightyUserInfo;
 
 public interface MightyUserInfoDao extends JpaRepository<MightyUserInfo, Long> {
 	
-	@Query("SELECT m FROM MightyUserInfo m WHERE m.password=:password and m.userIndicator=:userIndicator")
-	MightyUserInfo getMightyUserLogin(@Param("password") String password,@Param("userIndicator") String userIndicator);
+	@Query("SELECT m FROM MightyUserInfo m WHERE m.password=:password and m.userName=:userName")
+	MightyUserInfo getMightyUserLogin(@Param("password") String password,@Param("userName") String userName);
 
 }

@@ -87,7 +87,7 @@ if (message != null && !message.equals("")) {
 </div>
 	<div id="body">
 		<div class="content">
-			<form action="deviceFirmwareSubmit" name="deviceFirmwareForm"
+			<form action="deviceFirmwareSubmit" enctype="multipart/form-data" name="deviceFirmwareForm"
 				onsubmit="return confirmValidate();" method="post">
 				<h3>Add Device Firmware</h3>
 				<table align="center">
@@ -105,6 +105,12 @@ if (message != null && !message.equals("")) {
 						<td><input type="text" value=""	 name="version" id="vId" /> 
 						</td>
 					</tr>
+					
+					<tr>  
+    				 <td align="right">Upload File: </td>  
+    				 <td><input type="file" name="file" />  
+    				 </td>  
+     			    </tr>
 					
 					<tr>
 						<td></td>
