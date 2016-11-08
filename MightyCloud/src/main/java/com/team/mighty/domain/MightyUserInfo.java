@@ -20,9 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MightyUserInfo extends BaseEntityInfo {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	public MightyUserInfo() {
@@ -48,12 +45,6 @@ public class MightyUserInfo extends BaseEntityInfo {
 
 	@Column(name = "USER_INDICATOR")
 	private String userIndicator;
-
-	@Column(name = "SPOTIFY_ACCESS_TOKEN")
-	private String spotifyAccessToken;
-
-	@Column(name = "SPOTIFY_REFRESH_TOKEN")
-	private String spotifyRefreshToken;
 
 	@Column(name = "USER_NAME")
 	private String userName;
@@ -121,22 +112,7 @@ public class MightyUserInfo extends BaseEntityInfo {
 		this.userIndicator = userIndicator;
 	}
 
-	public String getSpotifyAccessToken() {
-		return spotifyAccessToken;
-	}
-
-	public void setSpotifyAccessToken(String spotifyAccessToken) {
-		this.spotifyAccessToken = spotifyAccessToken;
-	}
-
-	public String getSpotifyRefreshToken() {
-		return spotifyRefreshToken;
-	}
-
-	public void setSpotifyRefreshToken(String spotifyRefreshToken) {
-		this.spotifyRefreshToken = spotifyRefreshToken;
-	}
-
+	
 	public String getUserName() {
 		return userName;
 	}

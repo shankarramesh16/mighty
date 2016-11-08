@@ -40,6 +40,12 @@ public class MightyDeviceInfo extends BaseEntityInfo implements Serializable {
 	@Column(name = "DEVICE_TYPE")
 	private String deviceType;
 	
+	@Column(name = "SW_VERSION")
+	private String swVersion;
+	
+	@Column(name = "HW_SERIALNO")
+	private String hwSerialNo;
+	
 	@Column(name ="IS_REGISTERED")
 	private String isRegistered;
 	
@@ -73,6 +79,22 @@ public class MightyDeviceInfo extends BaseEntityInfo implements Serializable {
 
 	public String getDeviceType() {
 		return deviceType;
+	}
+	
+	public String getSwVersion() {
+		return swVersion;
+	}
+
+	public void setSwVersion(String swVersion) {
+		this.swVersion = swVersion;
+	}
+
+	public String getHwSerialNo() {
+		return hwSerialNo;
+	}
+
+	public void setHwSerialNo(String hwSerialNo) {
+		this.hwSerialNo = hwSerialNo;
 	}
 
 	public void setDeviceType(String deviceType) {
