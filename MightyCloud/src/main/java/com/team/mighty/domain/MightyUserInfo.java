@@ -1,6 +1,7 @@
 package com.team.mighty.domain;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -64,9 +69,45 @@ public class MightyUserInfo extends BaseEntityInfo {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<MightyDeviceUserMapping> mightyDeviceUserMapping;
 	
+		
+		//bi-directional many-to-many association to TblMightyUsrDevMap
+		@ManyToMany
+		@JoinTable(
+			name="tbl_mighty_user_info_tbl_mighty_usr_dev_map"
+			, joinColumns={
+				@JoinColumn(name="TBL_MIGHTY_USER_INFO_USER_ID")
+				}
+			, inverseJoinColumns={
+				@JoinColumn(name="mightyDeviceUserMapping_id")
+				}
+			)
+		private List<MightyDeviceUserMapping> mightyUsrDevMaps1;
+		
+		
+
+		/*//bi-directional many-to-one association to TblMightyUsrDevMap
+		@OneToMany(mappedBy="MightyUserInfo",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+		private List<MightyDeviceUserMapping> mightyUsrDevMaps2;*/
+	
 	public long getId() {
 		return id;
 	}
+
+	public List<MightyDeviceUserMapping> getMightyUsrDevMaps1() {
+		return mightyUsrDevMaps1;
+	}
+
+	public void setMightyUsrDevMaps1(List<MightyDeviceUserMapping> mightyUsrDevMaps1) {
+		this.mightyUsrDevMaps1 = mightyUsrDevMaps1;
+	}
+
+	/*public List<MightyDeviceUserMapping> getMightyUsrDevMaps2() {
+		return mightyUsrDevMaps2;
+	}
+
+	public void setMightyUsrDevMaps2(List<MightyDeviceUserMapping> mightyUsrDevMaps2) {
+		this.mightyUsrDevMaps2 = mightyUsrDevMaps2;
+	}*/
 
 	public void setId(long id) {
 		this.id = id;

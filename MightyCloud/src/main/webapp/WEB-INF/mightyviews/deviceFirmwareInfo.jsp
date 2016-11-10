@@ -12,9 +12,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Mighty Device Firmware View</title>
 <link rel="stylesheet" href="css/displaytag.css" media="all">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/style1.css">
-<link rel="stylesheet" href="css/style2.css"> 
+<!-- <link rel="stylesheet" href="css/style.css"> -->
+ <link rel="stylesheet" href="css/style1.css">  
+<!--  <link rel="stylesheet" href="css/style2.css"> --> 
 <script type="text/javascript" src="js/jquery-latest.js"></script>
 <!-- <script src="http://code.jquery.com/jquery-latest.js"></script>  -->
 <!-- <script src="http://code.jquery.com/jquery-latest.js"></script>  -->

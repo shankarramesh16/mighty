@@ -34,11 +34,11 @@ public class DeviceFirmwareController {
 	}
  
  
- 	@RequestMapping(value = "/deviceFirmwareSubmit",method=RequestMethod.POST)
-	public String deviceFirmwareSubmitHandler(HttpServletRequest request,Map<String,Object> map,@RequestParam("file") MultipartFile file,RedirectAttributes redirectAttributes) throws Exception {
+ 		
+	@RequestMapping(value = "/deviceFirmwareSubmit",method=RequestMethod.POST)
+	public String deviceFirmwareSubmitHandler(HttpServletRequest request,Map<String,Object> map,@RequestParam("file1") MultipartFile file1,@RequestParam("file2") MultipartFile file2,RedirectAttributes redirectAttributes) throws Exception {
 		logger.debug("In submitting DeviceFirmware details");
 		String effectiveDate=request.getParameter("fromDate");
-		String version=request.getParameter("version");
 		
 		
 		MightyDeviceFirmware mightyDevFirmware=new MightyDeviceFirmware();
@@ -46,8 +46,12 @@ public class DeviceFirmwareController {
 		mightyDevFirmware.setEffectiveDt(DateUtil.convertStringToDate(effectiveDate, "dd/MM/yyyy","yyyy-MM-dd hh:mm::ss"));
 		mightyDevFirmware.setStatus(MightyAppConstants.IND_A);
 		mightyDevFirmware.setUpdatedDt(new Date(System.currentTimeMillis()));
-		mightyDevFirmware.setVersion(version);
-		mightyDevFirmware.setFile(new javax.sql.rowset.serial.SerialBlob(file.getBytes()));
+		mightyDevFirmware.setFile(new javax.sql.rowset.serial.SerialBlob(file1.getBytes()));
+		String[] str1=new String(file2.getBytes()).split("\\n");
+		String[] str2=str1[0].split(":");
+		String versionContain=str2[1];
+		mightyDevFirmware.setVersion(versionContain);
+		
 		try{
 			adminInstrumentServiceImpl.insertDeviceFirmwareDetails(mightyDevFirmware);
 			redirectAttributes.addFlashAttribute("status", "Device firmware added successfully..");
@@ -59,7 +63,7 @@ public class DeviceFirmwareController {
 			return "redirect:/addDeviceFirmware";
 	}
  	
- 	@RequestMapping(value = "/deviceFirmware", method = RequestMethod.GET)
+ 	@RequestMapping(value = "/deviceFirmwareReport", method = RequestMethod.GET)
 	public String deviceFirmwareInfoHandler(Map<String,Object> map) throws Exception {
 		logger.debug("Getting device Firmware inform");
 		List<MightyDeviceFirmware> mightDeviceFirmware=adminInstrumentServiceImpl.getDeviceFirmware();

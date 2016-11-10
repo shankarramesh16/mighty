@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.team.mighty.constant.MightyAppConstants;
+import com.team.mighty.domain.MightyDeviceUserMapping;
+import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
@@ -58,17 +60,18 @@ public class ConsumerInstrumentController {
 	
 
 	
-	@RequestMapping(value="/mightyUserLogin",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/mightyAppLogin",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> mightyUserLoginHandler(@RequestBody String received) {
-		logger.info(" /POST mightyUserLogin API");
+		logger.info(" /POST mightyAppLogin API");
 		
 		JSONObject obj=null;
 		ResponseEntity<String> responseEntity = null;
+		MightyUserInfo mightyUserInfo=null;
 		try{		
 				obj=new JSONObject();
 				obj=(JSONObject)new JSONParser().parse(received);
 		}catch(Exception e){
-			logger.error("Exception in",e);
+			logger.error("System Exception during parsing JSON",e);
 		}
 		
 				
@@ -77,9 +80,9 @@ public class ConsumerInstrumentController {
 			consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
 			consumerDeviceDTO.setPassword(obj.get("Password").toString());
 				 
-			consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
-			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
-		} catch(MightyAppException e) {
+			mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
+			responseEntity = new ResponseEntity<String>(String.valueOf(mightyUserInfo.getId()), HttpStatus.OK);
+			} catch(MightyAppException e) {
 			String errorMessage = e.getMessage();
 			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
 			logger.errorException(e, e.getMessage());
@@ -93,11 +96,12 @@ public class ConsumerInstrumentController {
 		
 		JSONObject obj=null;
 		ResponseEntity<String> responseEntity = null;
+			
 		try{		
 				obj=new JSONObject();
 				obj=(JSONObject)new JSONParser().parse(received);
 		}catch(Exception e){
-			logger.error("Exception in",e);
+			logger.error("System Exception during parsing JSON ",e);
 		}
 				
 				
@@ -109,14 +113,13 @@ public class ConsumerInstrumentController {
 			consumerDeviceDTO.setEmailId(obj.get("EmailID").toString());
 			consumerDeviceDTO.setPassword(obj.get("Password").toString());
 			consumerDeviceDTO.setUserIndicator(obj.get("UserIndicator").toString());
-			consumerDeviceDTO.setMightyDeviceId(obj.get("MightyDeviceID").toString());
+			//consumerDeviceDTO.setMightyDeviceId(obj.get("MightyDeviceID").toString());
 			consumerDeviceDTO.setDeviceModel(obj.get("DeviceModel").toString());
 			consumerDeviceDTO.setDeviceId(obj.get("DeviceID").toString());
 			consumerDeviceDTO.setDeviceName(obj.get("DeviceName").toString());
 			consumerDeviceDTO.setDeviceOs(obj.get("DeviceOS").toString());
 			consumerDeviceDTO.setDeviceOsVersion(obj.get("DeviceOSVersion").toString());
 			consumerDeviceDTO.setDeviceType(obj.get("DeviceType").toString());
-				
 			consumerInstrumentServiceImpl.registerDevice(consumerDeviceDTO);
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		} catch(MightyAppException e) {
@@ -159,12 +162,6 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 	}
 
-	public ConsumerInstrumentService getConsumerInstrumentServiceImpl() {
-		return consumerInstrumentServiceImpl;
-	}
-
-	public void setConsumerInstrumentServiceImpl(ConsumerInstrumentService consumerInstrumentServiceImpl) {
-		this.consumerInstrumentServiceImpl = consumerInstrumentServiceImpl;
-	}
+	
 }
 	

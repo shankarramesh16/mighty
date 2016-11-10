@@ -46,28 +46,33 @@
 </script>
 <script type="text/javascript">
 	 function confirmValidate() {
-	    var version = $("input[name=version]").val();
+	    var input1 = document.getElementById("file1");
+	    var input2 = document.getElementById("file2");
+	    var fromDate = $("input[name=fromDate]").val();
 		var flag = true;
 		var currentDate = new Date();
 		var currentDatevar = currentDate.getDate() + "/"
 				+ currentDate.getMonth() + "/" + currentDate.getFullYear();
-		var fromDate = $("input[name=fromDate]").val();
+		
 		
 		if(fromDate=="")
-			{
+		{
 			flag=false;
 			alert("Please Specify Effective Date!");
-			}
-		else if(version==""){
-			flag=false;
-			alert("Please Specify Version!");
-		}
-		/* else if (CompareTwoDatesddmmyyyy(fromDate, currentDatevar)) {
+		}else if (CompareTwoDatesddmmyyyy(fromDate, currentDatevar)) {
 			alert("Effective date must be after current date !");
-			flag = false;
-		} */
-
+			flag = false;				
+		}
 		
+		else if (!input1.files[0]) {
+		    alert("Please select a file before clicking 'Upload'");
+	    	flag=false;
+		}else if (!input2.files[0]) {
+			alert("Please select a Version File before clicking 'Upload'");
+			flag=false;
+		} 
+		
+			
 		return flag;
 
 	} 
@@ -89,7 +94,7 @@ if (message != null && !message.equals("")) {
 		<div class="content">
 			<form action="deviceFirmwareSubmit" enctype="multipart/form-data" name="deviceFirmwareForm"
 				onsubmit="return confirmValidate();" method="post">
-				<h3>Add Device Firmware</h3>
+				<h3>Device Firmware Upload</h3>
 				<table align="center">
 					
 					<tr>
@@ -100,22 +105,22 @@ if (message != null && !message.equals("")) {
 							<label for="fromDate" class="requiredLabel">*</label></td>
 					</tr>
 					
-					<tr>
-						<td align="right">Version</td>
-						<td><input type="text" value=""	 name="version" id="vId" /> 
-						</td>
-					</tr>
-					
+									
 					<tr>  
-    				 <td align="right">Upload File: </td>  
-    				 <td><input type="file" name="file" />  
+    				 <td align="right"> Binary File: </td>  
+    				 <td><input type="file" name="file1" id="file1" />  
+    				 </td>  
+     			    </tr>
+     			    
+     			    <tr>  
+    				 <td align="right">Version File: </td>  
+    				 <td><input type="file" name="file2" id="file2" />  
     				 </td>  
      			    </tr>
 					
 					<tr>
 						<td></td>
-						<td><input class="formbutton" type="submit" value="Add" /> </td>
-							<!-- <input type="button" class="formbutton" onclick="javascript:history.go(-1);" value="Back" /></td> -->
+						<td><input class="formbutton" type="submit" value="Upload" /> </td>
 					</tr>
 					
 				</table>

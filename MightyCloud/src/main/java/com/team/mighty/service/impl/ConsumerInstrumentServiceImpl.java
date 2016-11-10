@@ -126,7 +126,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		return userLoginDTO;
 	}
 
-	@Transactional
+	/*@Transactional
 	private MightyUserInfo registerUserAndDevice(ConsumerDeviceDTO consumerDeviceDto, MightyDeviceInfo mightyDeviceInfo) throws MightyAppException {
 		
 		MightyUserInfo mightyUserInfo = null;
@@ -149,21 +149,34 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 					throw new MightyAppException(" User Id, Device Id and Phone Device is already registered", HttpStatus.CONFLICT);
 				}
 			}
-		}
+		}*/
+	
+	@Transactional
+	private MightyUserInfo registerUserAndDevice(ConsumerDeviceDTO consumerDeviceDto) throws MightyAppException {
 		
-		// Check any de-activated device registered
-		MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccountByUserName(consumerDeviceDto.getUserName(), mightyDeviceInfo.getId(), phoneDeviceId);
-		
-		if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
-			logger.info(" Already Disbaled account is there and activating that one ------- ");
-			mightyDeviceUserMapping.setRegistrationStatus(MightyAppConstants.IND_Y);
-			mightyDeviceInfo.setIsRegistered(MightyAppConstants.IND_Y);
-			mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
-			mightyDeviceInfoDAO.save(mightyDeviceInfo);
-			return mightyUserInfo;
-		} else if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_Y)) {
-			throw new MightyAppException(" User Id, Device Id and Phone Device is already registered", HttpStatus.CONFLICT);
-		}
+		MightyUserInfo mightyUserInfo = null;
+		mightyUserInfo=getUserByNameAndEmail(consumerDeviceDto.getUserName(),consumerDeviceDto.getEmailId());
+		String phoneDeviceId = consumerDeviceDto.getDeviceId();
+		if(mightyUserInfo!=null) {
+			// Check any de-activated account
+			if(mightyUserInfo.getEmailId().equalsIgnoreCase(consumerDeviceDto.getEmailId())){
+				throw new MightyAppException(" Emailaddress is already registered", HttpStatus.CONFLICT);
+			}else if(mightyUserInfo.getUserName().equalsIgnoreCase(consumerDeviceDto.getUserName())){
+				throw new MightyAppException(" Username is already registered", HttpStatus.CONFLICT);
+			}
+			MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
+			if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
+					logger.info(" Already Disbaled account is there and activating that one ------- ");
+					mightyDeviceUserMapping.setRegistrationStatus(MightyAppConstants.IND_Y);
+					mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
+					mightyUserInfo=mightyDeviceUserMapping.getMightyUserInfo();
+					return mightyUserInfo;
+				} else if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_Y)) {
+					throw new MightyAppException(" User details is already registered", HttpStatus.CONFLICT);
+				}
+			 
+		 }
+					
 		
 		if(mightyUserInfo == null) {
 			logger.info(" User information not found in database, hence creating new one ");
@@ -181,9 +194,8 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			mightyUserInfo.setUpdatedDt(new Date(System.currentTimeMillis()));
 			
 		}
-		
+		MightyDeviceUserMapping mightyDeviceUserMapping=null;
 		mightyDeviceUserMapping = new MightyDeviceUserMapping();
-		mightyDeviceUserMapping.setMightyDeviceId(mightyDeviceInfo.getId());
 		mightyDeviceUserMapping.setMightyUserInfo(mightyUserInfo);
 		mightyDeviceUserMapping.setPhoneDeviceOSVersion(consumerDeviceDto.getDeviceOs());
 		mightyDeviceUserMapping.setPhoneDeviceType(consumerDeviceDto.getDeviceType());
@@ -204,13 +216,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		
 		setUserInfo.add(mightyUserInfo);
 		
-		mightyDeviceInfo.setIsRegistered(MightyAppConstants.IND_Y);
-		//mightyDeviceInfo.setMightyUserInfo(setUserInfo);
-		
 		MightyUserInfo mightyUserInfo_1 = null;
 		try {
 			mightyUserInfo_1 = consumerInstrumentDAO.save(mightyUserInfo);
-			mightyDeviceInfoDAO.save(mightyDeviceInfo);
 		} catch(Exception e) {
 			logger.error(e.getMessage());
 			throw new MightyAppException("Unable to save User Device Mapping", HttpStatus.INTERNAL_SERVER_ERROR, e);
@@ -221,6 +229,10 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		return mightyUserInfo_1;
 	}
 	
+	private MightyUserInfo getUserByNameAndEmail(String userName,String emailId) {
+		return mightyUserInfoDAO.getUserByNameAndEmail(userName,emailId);
+	}
+
 	private MightyDeviceInfo getDeviceDetails(String deviceId) {
 		return mightyDeviceInfoDAO.getDeviceInfo(deviceId);
 	}
@@ -232,22 +244,26 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		}
 		
 		if((null == consumerDeviceDto.getUserName() || "".equalsIgnoreCase(consumerDeviceDto.getUserName()))
-				|| (null == consumerDeviceDto.getDeviceId() || "".equals(consumerDeviceDto.getDeviceId()))
-				|| (null == consumerDeviceDto.getMightyDeviceId() || "".equals(consumerDeviceDto.getMightyDeviceId()))) {
-			logger.debug("Register Device, Anyone of the object is empty [UserName, DeviceId, MightyDeviceId] ", consumerDeviceDto.getUserName(), 
-					",",consumerDeviceDto.getDeviceId(), ",",consumerDeviceDto.getMightyDeviceId() );
-			throw new MightyAppException("Invalid request Parameters [UserName or Device Id or Mighty Device Id] ", HttpStatus.BAD_REQUEST);
+				|| (null == consumerDeviceDto.getDeviceId() || "".equals(consumerDeviceDto.getDeviceId())))
+				 {
+			logger.debug("Register Device, Anyone of the object is empty [UserName, DeviceId] ", consumerDeviceDto.getUserName(), 
+					",",consumerDeviceDto.getDeviceId());
+			throw new MightyAppException("Invalid request Parameters [UserName or Device Id ] ", HttpStatus.BAD_REQUEST);
 		}
 		
-		validateDevice(consumerDeviceDto.getMightyDeviceId());
+		//validateDevice(consumerDeviceDto.getMightyDeviceId());
 		
-		MightyDeviceInfo mightDeviceInfo = getDeviceDetails(consumerDeviceDto.getMightyDeviceId());
+		//MightyDeviceInfo mightDeviceInfo = getDeviceDetails(consumerDeviceDto.getMightyDeviceId());
 		
-		MightyUserInfo mightyUserInfo =  registerUserAndDevice(consumerDeviceDto, mightDeviceInfo);
+		//MightyUserInfo mightyUserInfo =  registerUserAndDevice(consumerDeviceDto, mightDeviceInfo);
+		
+		MightyUserInfo mightyUserInfo =  registerUserAndDevice(consumerDeviceDto);
 		
 		return constructResponse(mightyUserInfo);
 		
 	}
+
+	
 
 	private UserDeviceRegistrationDTO constructResponse(MightyUserInfo mightyUserInfo) {
 		UserDeviceRegistrationDTO userDeviceRegistrationDTO = new UserDeviceRegistrationDTO();
@@ -382,7 +398,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	
-	public void mightyUserLogin(ConsumerDeviceDTO consumerDeviceDTO) throws MightyAppException {
+	public MightyUserInfo mightyUserLogin(ConsumerDeviceDTO consumerDeviceDTO) throws MightyAppException {
 	
 		MightyUserInfo mightyUserInfo = null;
 		try {
@@ -394,6 +410,11 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		if(null == mightyUserInfo) {
 			throw new MightyAppException(" Invalid Username or Password", HttpStatus.NOT_FOUND);
 		}
+		return mightyUserInfo;
 	}
 
+	
+
+
+	
 }

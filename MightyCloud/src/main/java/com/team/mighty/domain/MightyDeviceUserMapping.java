@@ -2,6 +2,7 @@ package com.team.mighty.domain;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -26,10 +28,13 @@ public class MightyDeviceUserMapping extends BaseEntityInfo implements Serializa
 	@GeneratedValue( strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_ID")
 	private MightyUserInfo mightyUserInfo;
 	
+	@ManyToMany(mappedBy="mightyUsrDevMaps1")
+	private List<MightyUserInfo> mightyUserInfos;
+		
 	@Column(name = "PHONE_DEVICE_ID")
 	private String phoneDeviceId;
 	
@@ -105,6 +110,15 @@ public class MightyDeviceUserMapping extends BaseEntityInfo implements Serializa
 	public MightyUserInfo getMightyUserInfo() {
 		return mightyUserInfo;
 	}
+	
+	public List<MightyUserInfo> getMightyUserInfos() {
+		return mightyUserInfos;
+	}
+
+	public void setMightyUserInfos(List<MightyUserInfo> mightyUserInfos) {
+		this.mightyUserInfos = mightyUserInfos;
+	}
+
 
 	public void setMightyUserInfo(MightyUserInfo mightyUserInfo) {
 		this.mightyUserInfo = mightyUserInfo;
@@ -133,5 +147,7 @@ public class MightyDeviceUserMapping extends BaseEntityInfo implements Serializa
 	public void setUpdatedDt(Date updatedDt) {
 		this.updatedDt = updatedDt;
 	}
+	
+	
 	
 }
