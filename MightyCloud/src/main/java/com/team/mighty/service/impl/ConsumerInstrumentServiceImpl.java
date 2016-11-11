@@ -24,6 +24,7 @@ import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyKeyConfig;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
+import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserDeviceRegistrationDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
@@ -93,7 +94,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		
 		while(it.hasNext()) {
 			MightyDeviceUserMapping mightDeviceUser = it.next();
-			if(mightDeviceUser.getRegistrationStatus().equalsIgnoreCase(MightyAppConstants.IND_N)){
+			  if(mightDeviceUser.getRegistrationStatus().equalsIgnoreCase(MightyAppConstants.IND_N)){
 				throw new MightyAppException(" User Registerd Device Status is In Active ", HttpStatus.UNAUTHORIZED);
 			}
 			
@@ -251,12 +252,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException("Invalid request Parameters [UserName or Device Id ] ", HttpStatus.BAD_REQUEST);
 		}
 		
-		//validateDevice(consumerDeviceDto.getMightyDeviceId());
-		
-		//MightyDeviceInfo mightDeviceInfo = getDeviceDetails(consumerDeviceDto.getMightyDeviceId());
-		
-		//MightyUserInfo mightyUserInfo =  registerUserAndDevice(consumerDeviceDto, mightDeviceInfo);
-		
+			
 		MightyUserInfo mightyUserInfo =  registerUserAndDevice(consumerDeviceDto);
 		
 		return constructResponse(mightyUserInfo);
@@ -358,26 +354,31 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		
 		MightyDeviceInfo mightyDeviceInfo = null;
 		try {
+			logger.debug("deviceId:",deviceId);
 			mightyDeviceInfo = mightyDeviceInfoDAO.getDeviceInfo(deviceId);
 		} catch(Exception e) {
 			throw new MightyAppException("System Error", HttpStatus.INTERNAL_SERVER_ERROR, e);
 		}
 		
-		if(null == mightyDeviceInfo) {
+		/*if(null == mightyDeviceInfo) {
 			throw new MightyAppException(" Device Details not found", HttpStatus.NOT_FOUND);
+		}*/
+		
+				
+		if(mightyDeviceInfo!=null){
+			String isActive = mightyDeviceInfo.getIsActive();
+			String isRegistered = mightyDeviceInfo.getIsRegistered();
+			if(null == isActive || isActive.equalsIgnoreCase(MightyAppConstants.IND_N) ) {
+				throw new MightyAppException(" Device is not active or status is empty", HttpStatus.GONE);
+			}
+			
+					
+			if(null != isRegistered && isRegistered.equalsIgnoreCase(MightyAppConstants.IND_Y)) {
+				throw new MightyAppException(" Deivce already registered ", HttpStatus.CONFLICT);
+			}
 		}
 		
-		String isActive = mightyDeviceInfo.getIsActive();
 		
-		if(null == isActive || isActive.equalsIgnoreCase(MightyAppConstants.IND_N)) {
-			throw new MightyAppException(" Device is not active or status is empty", HttpStatus.GONE);
-		}
-		
-		String isRegistered = mightyDeviceInfo.getIsRegistered();
-		
-		if(null != isRegistered && isRegistered.equalsIgnoreCase(MightyAppConstants.IND_Y)) {
-			throw new MightyAppException(" Deivce already registered ", HttpStatus.CONFLICT);
-		}
 	}
 
 	public MightyDeviceInfoDAO getMightyDeviceInfoDAO() {
@@ -411,6 +412,69 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException(" Invalid Username or Password", HttpStatus.NOT_FOUND);
 		}
 		return mightyUserInfo;
+	}
+
+	
+	public void registerMightyDevice(DeviceInfoDTO deviceInfoDTO) throws MightyAppException {
+		if(null == deviceInfoDTO) {
+			logger.debug("Register Device, Consumer Device DTO object is null");
+			throw new MightyAppException("Invalid request Object", HttpStatus.BAD_REQUEST);
+		}
+		
+		if((null == deviceInfoDTO.getUserId() || "".equalsIgnoreCase(deviceInfoDTO.getUserId()))
+				|| (null == deviceInfoDTO.getDeviceId() || "".equals(deviceInfoDTO.getDeviceId())))
+				 {
+			logger.debug("Register Device, Anyone of the object is empty [UserId, DeviceId] ", deviceInfoDTO.getUserId(), 
+					",",deviceInfoDTO.getDeviceId());
+			throw new MightyAppException("Invalid request Parameters [UserId or Device Id ] ", HttpStatus.BAD_REQUEST);
+		}
+		
+		validateDevice(deviceInfoDTO.getDeviceId());
+		registerMightyWithUser(deviceInfoDTO);
+		
+		//MightyUserInfo mightyUserInfo =  registerUserAndDevice(consumerDeviceDto);
+		
+				
+	}
+
+	private void registerMightyWithUser(DeviceInfoDTO deviceInfoDTO) {
+		MightyUserInfo mightyUserInfo = null;
+		mightyUserInfo=getUserById(deviceInfoDTO.getUserId());
+		if(mightyUserInfo!=null) {
+			// Check any de-activated account
+			MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
+			if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
+					logger.info(" Already Disbaled account is there --------- ");
+					throw new MightyAppException(" This mighty device for this user is not activated", HttpStatus.EXPECTATION_FAILED);
+					
+				} else if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_Y)) {
+					MightyDeviceInfo mightyDeviceInfo=new MightyDeviceInfo();
+					mightyDeviceInfo.setDeviceId(deviceInfoDTO.getDeviceId());
+					mightyDeviceInfo.setDeviceName(deviceInfoDTO.getDeviceName());
+					mightyDeviceInfo.setDeviceType(deviceInfoDTO.getDeviceType());
+					mightyDeviceInfo.setSwVersion(deviceInfoDTO.getSwVersion());
+					mightyDeviceInfo.setIsActive(deviceInfoDTO.getIsActive());
+					mightyDeviceInfo.setIsRegistered(deviceInfoDTO.getIsRegistered());
+					MightyDeviceInfo mightyDevice=null;
+					try{
+						mightyDevice=mightyDeviceInfoDAO.save(mightyDeviceInfo);
+					}catch(Exception e){
+						logger.error(e.getMessage());
+						throw new MightyAppException("Unable to save User Mighty Device Info ", HttpStatus.INTERNAL_SERVER_ERROR, e);
+					}
+					
+						mightyDeviceUserMapping.setMightyDeviceId(mightyDevice.getId());
+						mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
+										
+				}
+		  }
+					
+		
+		
+	}
+
+	private MightyUserInfo getUserById(String userId) {
+		return mightyUserInfoDAO.getUserById(Long.parseLong(userId));
 	}
 
 	

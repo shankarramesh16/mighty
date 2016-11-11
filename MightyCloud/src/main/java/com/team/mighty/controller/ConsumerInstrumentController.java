@@ -17,6 +17,7 @@ import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
+import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
@@ -48,7 +49,7 @@ public class ConsumerInstrumentController {
 			String response = JsonUtil.objToJson(userLoginDTO);
 			httpHeaders.add(MightyAppConstants.HTTP_HEADER_TOKEN_NAME, userLoginDTO.getApiToken());
 			responseEntity = new ResponseEntity<String>(response,httpHeaders, HttpStatus.OK);
-		} catch(MightyAppException e) {
+		}catch(MightyAppException e) {
 			logger.errorException(e, e.getMessage());
 			userLoginDTO.setStatusCode(e.getHttpStatus().toString());
 			userLoginDTO.setStatusDesc(e.getMessage());
@@ -121,6 +122,41 @@ public class ConsumerInstrumentController {
 			consumerDeviceDTO.setDeviceOsVersion(obj.get("DeviceOSVersion").toString());
 			consumerDeviceDTO.setDeviceType(obj.get("DeviceType").toString());
 			consumerInstrumentServiceImpl.registerDevice(consumerDeviceDTO);
+			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+		} catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+		return responseEntity;
+	}
+	
+	@RequestMapping(value="/mightyRegistration",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> doMightyRegistration(@RequestBody String received) {
+		logger.info(" /POST Consumer API");
+		
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+			
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON ",e);
+		}
+				
+				
+		try {
+			DeviceInfoDTO deviceInfoDTO=new DeviceInfoDTO();
+			deviceInfoDTO.setUserId(obj.get("UserID").toString());
+			deviceInfoDTO.setDeviceId(obj.get("HWSerialNumber").toString());
+			deviceInfoDTO.setDeviceName(obj.get("DeviceName").toString());
+			deviceInfoDTO.setDeviceType(obj.get("DeviceType").toString());
+			deviceInfoDTO.setSwVersion(obj.get("SWVersion").toString());
+			deviceInfoDTO.setIsActive(MightyAppConstants.IND_Y);
+			deviceInfoDTO.setIsRegistered(MightyAppConstants.IND_Y);
+			
+			consumerInstrumentServiceImpl.registerMightyDevice(deviceInfoDTO);
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		} catch(MightyAppException e) {
 			String errorMessage = e.getMessage();

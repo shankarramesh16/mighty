@@ -14,4 +14,7 @@ public interface MightyUserInfoDao extends JpaRepository<MightyUserInfo, Long> {
 	@Query("SELECT m FROM MightyUserInfo m WHERE m.userName=:userName or m.emailId=:emailId")
 	MightyUserInfo getUserByNameAndEmail(@Param("userName") String userName, @Param("emailId") String emailId);
 
+	@Query("SELECT m FROM MightyUserInfo m WHERE m.id=:userId")
+	MightyUserInfo getUserById(@Param("userId") long l);
+
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
+import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserDeviceRegistrationDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
@@ -35,6 +36,8 @@ public interface ConsumerInstrumentService {
 	public List<MightyDeviceInfo> getMightyDeviceInfo() throws Exception;
 
 	public MightyUserInfo mightyUserLogin(ConsumerDeviceDTO consumerDeviceDTO) throws MightyAppException;
+
+	public void registerMightyDevice(DeviceInfoDTO deviceInfoDTO) throws MightyAppException;
 
 	
 	
