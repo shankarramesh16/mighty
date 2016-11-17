@@ -2,7 +2,6 @@ package com.team.mighty.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -34,6 +33,7 @@ import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;
 import com.team.mighty.service.MightyCommonService;
+import com.team.mighty.utils.JWTKeyGenerator;
 import com.team.mighty.utils.JsonUtil;
 
 @RestController
@@ -114,11 +114,16 @@ public class AdminInstrumentController {
 	}
 	
 	@RequestMapping(value = "/deviceFirmware", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getDeviceFirmWare() {
+	public ResponseEntity<String> getDeviceFirmWare(@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
 		ResponseEntity<String> responseEntity = null;
 		DeviceFirmWareDTO deviceFirmWareDTO = null;
 		MightyDeviceFirmware mightyDeviceFirmware=null;
 		try {
+			//Validate X-MIGHTY-TOKEN Value
+			JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			
 			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
 					.getRequestAttributes()).getRequest();
@@ -140,6 +145,10 @@ public class AdminInstrumentController {
 					URL = "http://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
 				}
 				deviceFirmWareDTO.setFileDownloadUrl(URL);
+				deviceFirmWareDTO.setHashValue(mightyDeviceFirmware.getHashValue());
+				deviceFirmWareDTO.setHastType(mightyDeviceFirmware.getHashType());
+				logger.debug("hashValue",mightyDeviceFirmware.getHashValue());
+				logger.debug("hashType",mightyDeviceFirmware.getHashType());
 				String response = JsonUtil.objToJson(deviceFirmWareDTO);
 				responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
 			}
@@ -167,7 +176,10 @@ public class AdminInstrumentController {
 		try {
 			mightyDeviceFirmware=adminInstrumentServiceImpl.getDeviceFirmwareById(deviceFirmwareId);
 			if(mightyDeviceFirmware!= null && mightyDeviceFirmware.getFile() != null){
-					response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+					//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+				 String headerKey = "Content-Disposition";
+			        String headerValue = String.format("attachment; filename=\"%s\"",mightyDeviceFirmware.getFileName());
+			        response.setHeader(headerKey, headerValue);
 						OutputStream out = response.getOutputStream();
 							response.setContentType("text/plain");
 								IOUtils.copy(mightyDeviceFirmware.getFile().getBinaryStream(), out);

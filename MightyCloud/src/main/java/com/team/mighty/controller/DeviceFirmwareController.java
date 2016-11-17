@@ -27,7 +27,7 @@ public class DeviceFirmwareController {
 	@Autowired
 	private AdminInstrumentService adminInstrumentServiceImpl;
 	
-	@RequestMapping(value = "/addDeviceFirmware")
+	@RequestMapping(value = "/uploadDeviceFirmware")
 	public String addDeviceFirmwareHandler(HttpServletRequest request,Map<String,Object> map) throws Exception {
 		logger.debug("Adding DeviceFirmware");
 				return "addDeviceFirmware";
@@ -46,12 +46,16 @@ public class DeviceFirmwareController {
 		mightyDevFirmware.setEffectiveDt(DateUtil.convertStringToDate(effectiveDate, "dd/MM/yyyy","yyyy-MM-dd hh:mm::ss"));
 		mightyDevFirmware.setStatus(MightyAppConstants.IND_A);
 		mightyDevFirmware.setUpdatedDt(new Date(System.currentTimeMillis()));
+		mightyDevFirmware.setFileName(file1.getOriginalFilename());
 		mightyDevFirmware.setFile(new javax.sql.rowset.serial.SerialBlob(file1.getBytes()));
 		String[] str1=new String(file2.getBytes()).split("\\n");
 		String[] str2=str1[0].split(":");
+		String[] str3=str1[1].split(":");
+		String[] str4=str1[2].split(":");
 		String versionContain=str2[1];
 		mightyDevFirmware.setVersion(versionContain);
-		
+		mightyDevFirmware.setHashValue(str3[1]);
+		mightyDevFirmware.setHashType(Integer.parseInt(str4[1]));
 		try{
 			adminInstrumentServiceImpl.insertDeviceFirmwareDetails(mightyDevFirmware);
 			redirectAttributes.addFlashAttribute("status", "Device firmware added successfully..");
@@ -60,7 +64,7 @@ public class DeviceFirmwareController {
 				logger.error(ex);
 		}
 		
-			return "redirect:/addDeviceFirmware";
+			return "redirect:/deviceFirmwareReport";
 	}
  	
  	@RequestMapping(value = "/deviceFirmwareReport", method = RequestMethod.GET)

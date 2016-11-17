@@ -21,6 +21,25 @@ public class DeviceFirmWareDTO extends BaseResponseDTO {
 	private String fileDownloadUrl;
 	
 	private List<DeviceFirmWareDTO> lstPreviousVersion;
+	
+	private String hashValue;
+	private int hastType;
+
+	public String getHashValue() {
+		return hashValue;
+	}
+
+	public void setHashValue(String hashValue) {
+		this.hashValue = hashValue;
+	}
+
+	public int getHastType() {
+		return hastType;
+	}
+
+	public void setHastType(int hastType) {
+		this.hastType = hastType;
+	}
 
 	public String getLatestVersion() {
 		return latestVersion;

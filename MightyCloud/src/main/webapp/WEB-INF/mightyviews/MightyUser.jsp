@@ -15,7 +15,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Mighty Device Firmware View</title>
+<title>Mighty User View</title>
 <link rel="stylesheet" href="css/displaytag.css" media="all">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/style1.css">
@@ -32,10 +32,10 @@
 
 <body>
 	<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
-	String fname1=("DeviceFirmwareList :").concat(new Date().toString()).concat(".csv");
-	String fname2=("DeviceFirmwareList :").concat(new Date().toString()).concat(".xls");
-	String fname3=("DeviceFirmwareList :").concat(new Date().toString()).concat(".xml");
-	List<MightyDeviceFirmware> deviceFirmwareList=(List<MightyDeviceFirmware>)request.getAttribute("mightDeviceFirmware");
+	String fname1=("MightyUserList :").concat(new Date().toString()).concat(".csv");
+	String fname2=("MightyUserList :").concat(new Date().toString()).concat(".xls");
+	String fname3=("MightyUserList :").concat(new Date().toString()).concat(".xml");
+	List<MightyUserInfo> mightyUserList=(List<MightyUserInfo>)request.getAttribute("mightydeviceuserlist");
 	%>
 	<%@include file="Header.jsp"%> 
 	<div class="wrapper">
@@ -59,9 +59,9 @@
 						<div class="breadcrumb-wrap">
 							<a href="adminHome"><img src="images/home.png" /></a>
 							<a href="adminHome">My Information </a>
-							<a href="deviceUserInfo" >Mighty User </a>
+							<a href="#" class="current">Mighty User </a>
 							<a href="uploadDeviceFirmware" >Device Firmware Upload</a>
-							<a href="#" class="current">Mighty Device Firmware Report</a>
+							<a href="deviceFirmwareReport" >Mighty Device Firmware Report</a>
 							<a href="mightyDeviceInfo" >Mighty Device Report</a>
 							<a href="addDevicePlaylist" >Mighty Featured Playlist</a>
 							<a href="devicePlaylist" >Mighty Featured Playlist Report</a>
@@ -85,7 +85,7 @@
 							<div class="section-heading">
 								<div class="row">
 									<div class="col-sm-12 bold">
-										<Strong>Mighty Device Firmware View</Strong>
+										<Strong>Mighty User View</Strong>
 									</div>
 								</div>
 							</div>
@@ -98,19 +98,18 @@
 								</div>
 							</div>
 	
-		 <display:table class="alternateColor" name="<%=deviceFirmwareList%>" id="row"
+		 <display:table class="alternateColor" name="<%=mightyUserList%>" id="row"
 			export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
 			<display:column property="id" title="ID" sortable="true" headerClass="sortable" />
-			<display:column property="createdDt" title="Created_Date"	format="{0,date,dd-MM-yyyy}" sortable="true"  />
+			<display:column property="userName" title="User_Name"	format="{0,date,dd-MM-yyyy}" sortable="true"  />
 				
-				<display:column property="fileName" title="FileName" sortable="true"  />
-				<display:column property="version" title="Version" 	sortable="true"  />
-				<display:column property="hashValue" title="HashValue" sortable="true"  />
-				<display:column property="hashType" title="HashType" sortable="true"  />
+				<display:column property="emailId" title="EmailID" sortable="true"  />
+				<display:column property="userIndicator" title="UserIndicator" 	sortable="true"  />
+				<display:column property="userStatus" title="Status" sortable="true"  />
+				<display:column property="createdDt" title="CreatedDate" format="{0,date,dd-MM-yyyy}" sortable="true"  />
 				
-				<display:column  property="effectiveDt" title="Effective_Date" format="{0,date,dd-MM-yyyy}" sortable="true" />
+				<display:column  property="updatedDt" title="UpdatedDate" format="{0,date,dd-MM-yyyy}" sortable="true" />
 				
-				<display:column  property="status" title="Status" sortable="true" />
 				
 				
 				

@@ -3,13 +3,14 @@
 <link href="css/menu.css" rel="stylesheet" type="text/css" />
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/custom.css" rel="stylesheet">
-<link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/theme.scss.css?10713448530586305152" rel="stylesheet" type="text/css" media="all" />
-<link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/unslider.css?10713448530586305152" rel="stylesheet" type="text/css" media="all" />
-<link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/unslider-dots.css?10713448530586305152" rel="stylesheet" type="text/css" media="all" />
-<link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/custom.scss.css?10713448530586305152" rel="stylesheet" type="text/css" media="all" />
+<link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/theme.scss.css?10713448530586305152" rel="stylesheet" type="text/css"  />
+<link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/unslider.css?10713448530586305152" rel="stylesheet" type="text/css"  />
+<link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/unslider-dots.css?10713448530586305152" rel="stylesheet" type="text/css" />
+<link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/custom.scss.css?10713448530586305152" rel="stylesheet" type="text/css"  />
 
 
-<div class="wrapper"><div id="PageContainer"> 
+
+<div id="PageContainer"> 
     	
         		
           			<div class="grid grid--no-gutters grid--table site-header__inner">
@@ -40,3 +41,4 @@
    	 
    	
 </div> 
+

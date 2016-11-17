@@ -25,7 +25,7 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		logger.debug("Getting mighty device User inform");
 		List<MightyUserInfo> mightUserList=consumerInstrumentServiceImpl.getMightyUserInfo();
 		map.put("mightydeviceuserlist", mightUserList);
-		return "deviceInfo";
+		return "MightyUser";
 	}
 	
 	@RequestMapping(value = "/mightyDeviceInfo", method = RequestMethod.GET)

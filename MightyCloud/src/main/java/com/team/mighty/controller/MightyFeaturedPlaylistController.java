@@ -1,9 +1,11 @@
 package com.team.mighty.controller;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.team.mighty.constant.MightyAppConstants;
+import com.team.mighty.domain.AdminUser;
 import com.team.mighty.domain.MightyFeaturedPlaylist;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;
@@ -26,10 +30,7 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyFeatured
 	@RequestMapping(value = "/addDevicePlaylist")
 	public String addDevicePlaylistHandler(HttpServletRequest request,Map<String,Object> map) throws Exception {
 		logger.debug("Adding Mighty Device Featured Playlist");
-				String message=(String)request.getAttribute("status");
-				  logger.debug("Status value as"+message);
-					map.put("status", message);
-					  return "addMightyFeaturedPlaylist";
+				 return "addMightyFeaturedPlaylist";
 	}
 	
 	
@@ -42,8 +43,10 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyFeatured
 	}
 	
 	@RequestMapping(value = "/mightyFeaturedPlaylist",method=RequestMethod.POST)
-	public String mightyFeaturedPlaylistHandler(HttpServletRequest request,Map<String,Object> map,RedirectAttributes redirectAttributes) throws Exception {
+	public String mightyFeaturedPlaylistHandler(HttpServletRequest request,HttpSession session,Map<String,Object> map,RedirectAttributes redirectAttributes) throws Exception {
 		logger.debug("In submitting mighty Featured Playlist details");
+		
+		AdminUser admin=(AdminUser) session.getAttribute("adminUser");
 		String playlistId=request.getParameter("playlist");
 		String playlistName=request.getParameter("playlistName");
 		String playlistUrl=request.getParameter("playlistUrl");
@@ -54,6 +57,11 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyFeatured
 		mightyFeaturedPlaylist.setPlaylist_Name(playlistName);
 		mightyFeaturedPlaylist.setPlaylist_URL(playlistUrl);
 		mightyFeaturedPlaylist.setGenre(genre);
+		mightyFeaturedPlaylist.setCreated_Date(new Date(System.currentTimeMillis()));
+		mightyFeaturedPlaylist.setUpdated_Date(new Date(System.currentTimeMillis()));
+		mightyFeaturedPlaylist.setCreated_By(admin.getLoginId());
+		mightyFeaturedPlaylist.setUpdated_By(admin.getLoginId());
+		mightyFeaturedPlaylist.setStatus(MightyAppConstants.IND_A);
 		
 		try{
 			adminInstrumentServiceImpl.insertMightyFeaturedPlaylistDetails(mightyFeaturedPlaylist);
@@ -63,6 +71,6 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyFeatured
 				logger.error(ex);
 			}
 		
-			return "redirect:/addDevicePlaylist";
+			return "redirect:/devicePlaylist";
 	}
 }

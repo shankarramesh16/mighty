@@ -20,11 +20,12 @@
 	
 	
 	<%@include file="Header.jsp"%> 
+	<main class="main-content" role="main">
 	<div class="container">
 	<div class="row">
 					<div class="col-sm-12">
 		
-		<%="HI Admin" %>
+		<%-- <%="HI Admin" %> --%>
 			  <%-- <div id="content">
 			<%@include file="Footer.jsp"%>
 			</div>   --%>
@@ -32,6 +33,7 @@
 		</div>
 		</div>
 		</div>
+		</main>
 		
 </body>
 </html>

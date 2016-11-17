@@ -42,6 +42,9 @@ public class ConsumerInstrumentController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> userLoginFromApp(@RequestBody UserLoginDTO userLoginDTO) {
 		logger.info(" /POST User Login API ", userLoginDTO);
+		logger.debug("userId as",userLoginDTO.getUserId());
+		logger.debug("deviceId as",userLoginDTO.getDeviceId());
+		
 		ResponseEntity<String> responseEntity = null;
 		HttpHeaders httpHeaders = new HttpHeaders();
 		try {

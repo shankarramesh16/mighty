@@ -46,8 +46,26 @@ public class MightyDeviceFirmware implements Serializable {
 	@Column(name = "VERSION")
 	private String version;
 	
+	@Column(name = "FILE_NAME")
+	private String fileName;
+	
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 	@Column(name = "STATUS")
 	private String status;
+	
+	@Column(name = "HASH_VALUE")
+	private String hashValue;
+	
+	
+	@Column(name = "HASH_TYPE")
+	private int hashType;
 	
 	@Column(name = "CREATED_DT")
 	private Date createdDt;
@@ -67,6 +85,23 @@ public class MightyDeviceFirmware implements Serializable {
 	public String getId() {
 		return id;
 	}
+	
+	public String getHashValue() {
+		return hashValue;
+	}
+
+	public void setHashValue(String hashValue) {
+		this.hashValue = hashValue;
+	}
+
+	public int getHashType() {
+		return hashType;
+	}
+
+	public void setHashType(int hashType) {
+		this.hashType = hashType;
+	}
+
 
 	public void setId(String id) {
 		this.id = id;
