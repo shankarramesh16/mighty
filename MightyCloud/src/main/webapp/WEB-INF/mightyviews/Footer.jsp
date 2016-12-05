@@ -1,15 +1,13 @@
-<div id="footer">
-
-	<div class="footer-bottom">
-	   <p>
-	   For queries write to vikky@unizentechnologies.com
-	   </p>
-		<p>
-			&copy; Mighty: 
-			Reserved: 2012 Unizen Technologies Pvt. Ltd.
-		</p>
-	</div>
-
+	<div class="footer-wrap">
+					
+					<div class="row">
+					<div class="col-sm-12 text-center">
+							 <p class="text-12"><b>All Content © 2016 Mighty Audio, Inc.</b></p>
+ 					</div>
+					</div>
+					
 </div>
+
+
 	
 	

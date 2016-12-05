@@ -57,14 +57,16 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="breadcrumb-wrap">
-							<a href="adminHome"><img src="images/home.png" /></a>
-							<a href="adminHome">My Information </a>
-							<a href="#" class="current">Mighty User </a>
-							<a href="uploadDeviceFirmware" >Device Firmware Upload</a>
-							<a href="deviceFirmwareReport" >Mighty Device Firmware Report</a>
-							<a href="mightyDeviceInfo" >Mighty Device Report</a>
-							<a href="addDevicePlaylist" >Mighty Featured Playlist</a>
-							<a href="devicePlaylist" >Mighty Featured Playlist Report</a>
+					<a href="adminHome"><img src="images/home.png" /></a>
+					<a href="adminHome" ><b>My Information</b></a>
+					<a href="#" class="current" ><b>Mighty User </b></a>
+					<a href="uploadDeviceFirmware" ><b>Device Firmware Upload</b></a>
+					<a href="deviceFirmwareReport"><b>Mighty Device Firmware Report</b></a>
+					<a href="mightyDeviceInfo" ><b>Mighty Device Report</b></a>
+					<a href="addDevicePlaylist" ><b>Mighty Featured Playlist</b></a>
+					<a href="devicePlaylist" ><b>Mighty Featured Playlist Report</b></a>
+					<a href="addOrderDevice" ><b>Mighty Device Order</b></a>
+							
 							
 						</div>
 						
@@ -130,14 +132,6 @@
 			</div>
 		</div>
 	</div>
-<div class="footer-wrap">
-					
-					<div class="row">
-					<div class="col-sm-12 text-center">
-							 <p class="text-12">The information stored on this website is maintained in accordance with the organization's Data Privacy Policy. </span><br />Copyright © Mighty
- 					</div>
-					</div>
-					
-</div>
+<%@include file="Footer.jsp"%> 
 </body>
 </html>

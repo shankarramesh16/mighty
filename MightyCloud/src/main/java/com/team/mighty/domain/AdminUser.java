@@ -1,6 +1,8 @@
 package com.team.mighty.domain;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.*;
 
 
@@ -32,11 +34,16 @@ public class AdminUser implements Serializable {
 
 	private String gender;
 
+	
+
 	private String lastname;
 
 	private String loginId;
 
 	private String password;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date pwdChangedDate;
 
 	//bi-directional many-to-one association to Role
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -141,5 +148,11 @@ public class AdminUser implements Serializable {
 	public void setRole(Role role) {
 		this.role = role;
 	}
+	public Date getPwdChangedDate() {
+		return pwdChangedDate;
+	}
 
+	public void setPwdChangedDate(Date pwdChangedDate) {
+		this.pwdChangedDate = pwdChangedDate;
+	}
 }

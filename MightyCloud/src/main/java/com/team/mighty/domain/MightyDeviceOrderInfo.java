@@ -2,13 +2,17 @@ package com.team.mighty.domain;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -58,6 +62,17 @@ public class MightyDeviceOrderInfo implements Serializable {
 	@Column(name ="IS_GIFT")
 	private String isGift;
 	
+	@Column(name ="DEVICE_SERIALNO")
+	private String deviceSerialNo;
+	
+	public String getDeviceSerialNo() {
+		return deviceSerialNo;
+	}
+
+	public void setDeviceSerialNo(String deviceSerialNo) {
+		this.deviceSerialNo = deviceSerialNo;
+	}
+
 	@Column(name ="PLAYLIST_URL")
 	private String playListURL;
 	
@@ -75,6 +90,20 @@ public class MightyDeviceOrderInfo implements Serializable {
 	
 	@Column(name ="CREATED_DT")
 	private Date createdDt;
+	
+	@Column(name="UPDATED_BY")
+	private String updatedBy;
+
+	@Column(name="UPDATED_DT")
+	private Date updatedDt;
+	
+	@Column(name="CREATED_BY")
+	private String createdBy;
+	
+	
+	//bi-directional many-to-one association to TblMightyDeviceInfo
+	@OneToMany(mappedBy="deviceOrderInfo")
+	private List<MightyDeviceInfo> mightyDeviceInfos;
 	
 	@Transient
 	private String errorCode;
@@ -221,6 +250,30 @@ public class MightyDeviceOrderInfo implements Serializable {
 	public String getErrorCode() {
 		return errorCode;
 	}
+	
+	public String getUpdatedBy() {
+		return this.updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public Date getUpdatedDt() {
+		return this.updatedDt;
+	}
+
+	public void setUpdatedDt(Date updatedDt) {
+		this.updatedDt = updatedDt;
+	}
+	
+	public String getCreatedBy() {
+		return this.createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
 
 	public void setErrorCode(String errorCode) {
 		this.errorCode = errorCode;
@@ -233,5 +286,21 @@ public class MightyDeviceOrderInfo implements Serializable {
 	public void setErrorDesc(String errorDesc) {
 		this.errorDesc = errorDesc;
 	}
+	/*public List<MightyDeviceInfo> getMightyDeviceInfos() {
+		return this.MightyDeviceInfos;
+	}
 
+	public void setMightyDeviceInfos(List<MightyDeviceInfo> MightyDeviceInfos) {
+		this.MightyDeviceInfos = MightyDeviceInfos;
+	}*/
+
+	public List<MightyDeviceInfo> getMightyDeviceInfos() {
+		return mightyDeviceInfos;
+	}
+
+	public void setMightyDeviceInfos(List<MightyDeviceInfo> mightyDeviceInfos) {
+		this.mightyDeviceInfos = mightyDeviceInfos;
+	}
+
+	
 }

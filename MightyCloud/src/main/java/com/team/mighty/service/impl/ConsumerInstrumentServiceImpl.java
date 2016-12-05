@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.dao.ConsumerInstrumentDAO;
 import com.team.mighty.dao.MightyDeviceInfoDAO;
+import com.team.mighty.dao.MightyDeviceOrderDAO;
 import com.team.mighty.dao.MightyDeviceUserMapDAO;
 import com.team.mighty.dao.MightyKeyConfigDAO;
 import com.team.mighty.dao.MightyUserInfoDao;
 import com.team.mighty.domain.MightyDeviceInfo;
+import com.team.mighty.domain.MightyDeviceOrderInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyKeyConfig;
 import com.team.mighty.domain.MightyUserInfo;
@@ -57,6 +59,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	@Autowired
 	private MightyKeyConfigDAO mightyKeyConfigDAO;
+	
+	@Autowired
+	private MightyDeviceOrderDAO mightyDeviceOrderDAO;
 	
 	
 	
@@ -352,6 +357,19 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException(" Device ID or Input is empty", HttpStatus.BAD_REQUEST);
 		}
 		
+		/*checking for attaching device a order placed or not*/
+		/*MightyDeviceOrderInfo mightyDeviceOrder=null;
+		try{
+			mightyDeviceOrder=mightyDeviceOrderDAO.getDeviceOrderById(deviceId);
+		}catch(Exception e) {
+			throw new MightyAppException("System Error", HttpStatus.INTERNAL_SERVER_ERROR, e);
+		}
+		
+		if(mightyDeviceOrder==null){
+			throw new MightyAppException( "For this device Id, order is not place in system ", HttpStatus.GONE);
+		}*/
+		
+						
 		MightyDeviceInfo mightyDeviceInfo = null;
 		try {
 			logger.debug("deviceId:",deviceId);
@@ -448,6 +466,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 					throw new MightyAppException(" This mighty device for this user is not activated", HttpStatus.EXPECTATION_FAILED);
 					
 				} else if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_Y)) {
+					//MightyDeviceOrderInfo mightyDeviceOrderInfo=mightyDeviceOrderDAO.getDeviceOrderById(deviceInfoDTO.getDeviceId());
 					MightyDeviceInfo mightyDeviceInfo=new MightyDeviceInfo();
 					mightyDeviceInfo.setDeviceId(deviceInfoDTO.getDeviceId());
 					mightyDeviceInfo.setDeviceName(deviceInfoDTO.getDeviceName());
@@ -455,6 +474,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 					mightyDeviceInfo.setSwVersion(deviceInfoDTO.getSwVersion());
 					mightyDeviceInfo.setIsActive(deviceInfoDTO.getIsActive());
 					mightyDeviceInfo.setIsRegistered(deviceInfoDTO.getIsRegistered());
+					//mightyDeviceInfo.setDeviceOrderInfo(mightyDeviceOrderInfo);
 					MightyDeviceInfo mightyDevice=null;
 					try{
 						mightyDevice=mightyDeviceInfoDAO.save(mightyDeviceInfo);
@@ -474,7 +494,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	private MightyUserInfo getUserById(String userId) {
-		return mightyUserInfoDAO.getUserById(Long.parseLong(userId));
+		return mightyUserInfoDAO.getUserById(Long.parseLong(userId.trim()));
 	}
 
 	

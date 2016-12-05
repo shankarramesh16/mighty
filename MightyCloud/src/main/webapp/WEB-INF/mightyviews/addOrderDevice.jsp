@@ -6,6 +6,10 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page import="java.util.*"%>
 <%@page import="com.team.mighty.domain.*"%>
+<%@page import="org.displaytag.decorator.TotalTableDecorator"%>
+<%@page import="org.displaytag.decorator.MultilevelTotalTableDecorator"%>
+<%@page import="com.itextpdf.text.log.SysoLogger"%>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <!DOCTYPE html >
 <html lang="en">
 <head>
@@ -13,11 +17,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Add Mighty Featured Playlist</title>
+<title>Add Device Order</title>
 
 <script  src="https://code.jquery.com/jquery-2.2.0.js"></script>
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/custom_siemens.css" rel="stylesheet">
+<link rel="stylesheet" href="css/displaytag.css" media="all">
 
 <script type="text/javascript" src="js/jquery-latest.js"></script>
 <script type="text/javascript" src="js/jquery.validate.js"></script>
@@ -25,7 +30,7 @@
 <link rel="stylesheet" href="css/jquery-ui.css">
 <script src="js/jquery-ui.js"></script>
 <script type="text/javascript">
-	 function confirmValidate() {
+	/*  function confirmValidate() {
 	    var playlist = $("input[name=playlist]").val();
 	    var playlistName = $("input[name=playlistName]").val();
 	    var playlistUrl = $("input[name=playlistUrl]").val();
@@ -66,12 +71,21 @@
 				
 		return flag;
 
-	} 
+	}  */
 </script>
 
 </head>
 <body>
-	<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");%>
+	<%
+	String fname1=("DeviceOrderList :").concat(new Date().toString()).concat(".csv");
+	String fname2=("DeviceOrderList :").concat(new Date().toString()).concat(".xls");
+	String fname3=("DeviceOrderList :").concat(new Date().toString()).concat(".xml"); 
+	
+	AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
+	
+	List<MightyDeviceOrderInfo> mightyDeviceOrderList=(List<MightyDeviceOrderInfo>)request.getAttribute("mightyDeviceOrder");
+
+	%>
 							 <%@include file="Header.jsp"%> 
 	<div class="wrapper">
 		<div class="header-wrap">
@@ -96,12 +110,11 @@
 					<a href="adminHome" ><b>My Information</b></a>
 					<a href="deviceUserInfo" ><b>Mighty User </b></a>
 					<a href="uploadDeviceFirmware" ><b>Device Firmware Upload</b></a>
-					<a href="deviceFirmwareReport"><b>Mighty Device Firmware Report</b></a>
+					<a href="deviceFirmwareReport" ><b>Mighty Device Firmware Report</b></a>
 					<a href="mightyDeviceInfo" ><b>Mighty Device Report</b></a>
-					<a href="#" class="current" ><b>Mighty Featured Playlist</b></a>
+					<a href="addDevicePlaylist" ><b>Mighty Featured Playlist</b></a>
 					<a href="devicePlaylist" ><b>Mighty Featured Playlist Report</b></a>
-					<a href="addOrderDevice" ><b>Mighty Device Order</b></a>
-							
+					<a href="#" class="current"><b>Mighty Device Order</b></a>
 							
 							
 						</div>
@@ -123,7 +136,7 @@
 							<div class="section-heading">
 								<div class="row">
 									<div class="col-sm-12 bold">
-										<Strong>Mighty Featured Playlist</Strong>
+										<Strong>Mighty Device Order</Strong>
 									</div>
 								</div>
 							</div>
@@ -138,14 +151,14 @@
 							
 							
 							
-		<form action="mightyFeaturedPlaylist" name="mightyFeaturedPlaylist"	onsubmit="return confirmValidate();" method="post">					
+		<form action="mightyDeviceOrdersubmit" name="mightyDeviceOrder"	onsubmit="return confirmValidate();" method="post">					
 			<div class="push-200 login-input-wrap">
 								
 					<div class="row">
 					
-					<div class="col-md-5 col-sm-5 col-xs-6 mar-top-15 text-lightgrey" style="text-align: left;">Playlist Id</div>
+					<div class="col-md-5 col-sm-5 col-xs-6 mar-top-15 text-lightgrey" style="text-align: left;">OrderID:</div>
 					<div class="col-md-6 col-sm-7 col-xs-6 mar-top-15">
-						 <input type="text" value="" name="playlist" id="playlistId" class="form-control"/>
+						 <input type="text" value="" name="orderId" id="orderId" class="form-control"/>
 					</div>
 										
 					</div>	
@@ -154,32 +167,27 @@
 								
 					<div class="row">
 					
-					<div class="col-md-5 col-sm-5 col-xs-6 mar-top-15 text-blue " style="text-align: left;">Playlist Name</div>
+					<div class="col-md-5 col-sm-5 col-xs-6 mar-top-15 text-blue " style="text-align: left;">IS_GIFT:</div>
 					<div class="col-md-6 col-sm-7 col-xs-6 mar-top-15" >
-					  <input type="text" value="" name="playlistName" id="playlistName" class="form-control"/>  
-						 
+					  <select name="giftId" id="giftId" style="width: 160px" class="form-control">
+							<option value="N">NO</option>
+							<option value="Y">YES</option>
+							
+					  </select>
 					</div>
 					
 					</div>	
 					
 					<div class="row">
 					
-					<div class="col-md-5 col-sm-5 col-xs-6 mar-top-15 text-lightgrey " style="text-align: left;">Playlist URL</div>
-					<div class="col-md-6 col-sm-7 col-xs-12 mar-top-15">
-						 <input type="text" value="" name="playlistUrl" id="playlistUrl" class="form-control"/>  
+					<div class="col-md-5 col-sm-5 col-xs-6 mar-top-15 text-lightgrey " style="text-align: left;">DeviceSerial#</div>
+					<div class="col-md-6 col-sm-7 col-xs-6 mar-top-15">
+						 <input type="text"  name="deviceId" id="deviceId" class="form-control"/>  
 					</div>
 					
 					</div>	
 					
-					<div class="row">
-					
-					<div class="col-md-5 col-sm-5 col-xs-6 mar-top-15 text-lightgrey " style="text-align: left;">Genre</div>
-					<div class="col-md-6 col-sm-7 col-xs-12 mar-top-15">
-						 <input type="text" value=""	 name="genre" id="genreId" class="form-control"/> 
-					</div>
-					
-					</div>	
-							 
+												 
 								
 					<div class="row text-left mar-btm-30">
 					<div class="col-sm-12">
@@ -187,16 +195,44 @@
 					</div>
 					</div>
 			</form>
+			
 				</div>
 						
-					
+					<% if(mightyDeviceOrderList!=null){
+			System.out.println("listsize"+mightyDeviceOrderList.size());%>
+			 <display:table class="alternateColor" name="<%=mightyDeviceOrderList%>" id="row"
+			export="false" requestURI=""  defaultsort="1" defaultorder="descending" pagesize="50">
+			<%-- <display:column property="id" title="ID" sortable="true" headerClass="sortable" /> --%>
+				<display:column property="orderId" title="OrderId" sortable="true"  />
+				<display:column property="isGift" title="Is_Gift" sortable="true"  />
+				<display:column property="deviceSerialNo" title="Device_Serial#" 	sortable="true"  />
+				<display:column property="createdDt" title="Created_Date"	format="{0,date,dd-MM-yyyy}" sortable="true"  />
+				<display:column  property="updatedDt" title="Updated_Date" format="{0,date,dd-MM-yyyy}" sortable="true" />
+				<display:column property="createdBy" title="CreatedBy" sortable="true"  />
+				<display:column property="updatedBy" title="updatedBy" sortable="true"  />
+				
+				<display:column  title="Edit"   ><a onclick="fillFieldsEdit('${row.id}')" title="Edit"><i><img src="images/edit1.png" /></i></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</display:column>
+				
+				<display:column  title="Delete"   ><a onclick="fillFieldsDelete('${row.id}')" title="Delete"><i><img src="images/delete1.png" /></i></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</display:column>
+				     		   
+		 	 <display:setProperty name="export.csv.filename" value="<%=fname1%>" />
+			 <display:setProperty name="export.excel.filename" value="<%=fname2%>" />
+			 <display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
+		</display:table>
+		<% }%>
 
 					</div>
+					
 				</div>
 
 			</div>
+			
 		</div>
+		
 	</div>
+	
 <%@include file="Footer.jsp"%> 
 		
 

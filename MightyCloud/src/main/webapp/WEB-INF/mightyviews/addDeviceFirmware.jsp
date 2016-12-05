@@ -42,6 +42,12 @@
 	    var input2 = document.getElementById("file2");
 	    var fromDate = $("input[name=fromDate]").val();
 		var flag = true;
+		
+		
+		var validExts = new Array(".txt");
+	    var fileExt = input2.value;
+	    fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+	   
 		var currentDate = new Date();
 		var currentDatevar = currentDate.getDate() + "/"
 				+ currentDate.getMonth() + "/" + currentDate.getFullYear();
@@ -55,24 +61,26 @@
 		 document.getElementById("fromDate").focus();
 		  flag=false;
 		
-		}/* else if (CompareTwoDatesddmmyyyy(fromDate, currentDatevar)) {
-			alert("Effective date must be after current date !");
-			flag = false;				
-		}*/ 
-		
+		}		
 		else  if (!input1.files[0]) {
-		 document.getElementById("errortag").innerHTML = "Please select a file before clicking 'Upload'";
+		 document.getElementById("errortag").innerHTML = "Please select a Binary file before clicking 'Upload'";
 		 $('.validation-required').removeClass("validation-required").addClass("form-control");
 		 $('.san').show();
 		 document.getElementById("file1").focus();
 		   flag=false;
 		}else if (!input2.files[0]) {
-			 document.getElementById("errortag").innerHTML = "Please select a Version File before clicking 'Upload'";
+			 document.getElementById("errortag").innerHTML = "Please select a Version file before clicking 'Upload'";
 			 $('.validation-required').removeClass("validation-required").addClass("form-control");
 			 $('.san').show();
 			 document.getElementById("file2").focus();
 			   flag=false;
+		} else  if (validExts.indexOf(fileExt) < 0) {
+			document.getElementById("errortag").innerHTML = "Invalid file selected, valid files are of " +
+            validExts.toString() + " types.";
+			document.getElementById("file2").focus();
+			flag=false;
 		} 
+		    
 		
 			
 		return flag;
@@ -82,8 +90,9 @@
 </head>
 <body>
 	<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");%>
-							 <%@include file="Header.jsp"%> 
+							 
 	<div class="wrapper">
+	<%@include file="Header.jsp"%> 
 		<div class="header-wrap">
 		<div class="container">
 		
@@ -102,31 +111,21 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="breadcrumb-wrap">
-							<a href="adminHome"><img src="images/home.png" /></a>
-							<a href="adminHome">My Information </a>
-							<a href="deviceUserInfo" >Mighty User </a>
-							<a href="#" class="current" >Device Firmware Upload</a>
-							<a href="deviceFirmwareReport" >Mighty Device Firmware Report</a>
-							<a href="mightyDeviceInfo" >Mighty Device Report</a>
-							<a href="addDevicePlaylist" >Mighty Featured Playlist</a>
-							<a href="devicePlaylist" >Mighty Featured Playlist Report</a>
+					<a href="adminHome"><img src="images/home.png" /></a>
+					<a href="adminHome"><b>My Information</b></a>
+					<a href="deviceUserInfo" ><b>Mighty User </b></a>
+					<a href="#" class="current" ><b>Device Firmware Upload</b></a>
+					<a href="deviceFirmwareReport" ><b>Mighty Device Firmware Report</b></a>
+					<a href="mightyDeviceInfo" ><b>Mighty Device Report</b></a>
+					<a href="addDevicePlaylist" ><b>Mighty Featured Playlist</b></a>
+					<a href="devicePlaylist" ><b>Mighty Featured Playlist Report</b></a>
+					<a href="addOrderDevice" ><b>Mighty Device Order</b></a>
+													
 							
 						</div>
 						
 						<div class="content-wrap">
-
-							<%
-								if ((String)request.getAttribute("status") != null) {
-							%>
-							<div class="row mar-top-40">
-								<div class="col-sm-12">
-									<div class="alert alert-success"><%=(String)request.getAttribute("status")%></div>
-								</div>
-							</div>
-							<%
-								}
-							%>
-							
+														
 							<div class="section-heading">
 								<div class="row">
 									<div class="col-sm-12 bold">
@@ -165,7 +164,7 @@
 					
 					<div class="col-md-5 col-sm-5 col-xs-6 mar-top-15 text-lightgrey " style="text-align: left;">Binary File:</div>
 					<div class="col-md-8 col-sm-7 col-xs-6 mar-top-15" >
-					  <input type="file" name="file1"  id="file1"  />  
+					  <input type="file" name="file1" accept="text/plain" id="file1"  />  
 						 
 					</div>
 					
@@ -175,19 +174,19 @@
 					
 					<div class="col-md-5 col-sm-5 col-xs-6 mar-top-15 text-lightgrey " style="text-align: left;">Version File:</div>
 					<div class="col-md-8 col-sm-7 col-xs-12 mar-top-15">
-						 <input class="textfile" type="file" name="file2" id="file2" />  
+						 <input type="file" name="file2" id="file2" accept=".csv"/>  
 					</div>
 					
 					</div>	
-							 
+					<div>	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</div>			 
 								
 					<div class="row text-left mar-btm-30">
 					<div class="col-sm-12">
 						<input class="btn btn-blue save-btn" type="submit" value="Upload" />
 					</div>
 					</div>
-					<div class="row text-left mar-btm-200">
-					<P><b>Note:</b>Version file contains text data with specific format of mighty-(version,hash value,hast type).</P></div>
+					
 	  </form>
 				</div>
 						
@@ -199,15 +198,10 @@
 			</div>
 		</div>
 	</div>
-<div class="footer-wrap">
-					
-					<div class="row">
-					<div class="col-sm-12 text-center">
-							 <p class="text-12">The information stored on this website is maintained in accordance with the organization's Data Privacy Policy. </span><br />Copyright © Mighty
- 					</div>
+	<div class="row text-center mar-btm-200">
+					<P><b>Note:</b>Version file contains text data with specific format of mighty-(version,hash value,hast type).</P>
 					</div>
-					
-</div>
+<%@include file="Footer.jsp"%> 
 		
 
 </body>

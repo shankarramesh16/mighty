@@ -26,7 +26,9 @@
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/custom_siemens.css" rel="stylesheet">
 
-<script type="text/javascript" src="js/jquery-latest.js"></script>
+<script type="text/javascript" src="js/jquery-latest.js">
+
+</script>
 <script type="text/javascript" src="js/jquery.validate.js"></script>
 </head>
 
@@ -57,15 +59,16 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="breadcrumb-wrap">
-							<a href="adminHome"><img src="images/home.png" /></a>
-							<a href="adminHome">My Information </a>
-							<a href="deviceUserInfo" >Mighty User </a>
-							<a href="uploadDeviceFirmware" >Device Firmware Upload</a>
-							<a href="deviceFirmwareReport" >Mighty Device Firmware Report</a>
-							<a href="#" class="current">Mighty Device Report</a>
-							<a href="addDevicePlaylist" >Mighty Featured Playlist</a>
-							<a href="devicePlaylist" >Mighty Featured Playlist Report</a>
-							
+					<a href="adminHome"><img src="images/home.png" /></a>
+					<a href="adminHome" ><b>My Information</b></a>
+					<a href="deviceUserInfo" ><b>Mighty User </b></a>
+					<a href="uploadDeviceFirmware" ><b>Device Firmware Upload</b></a>
+					<a href="deviceFirmwareReport"><b>Mighty Device Firmware Report</b></a>
+					<a href="#" class="current" ><b>Mighty Device Report</b></a>
+					<a href="addDevicePlaylist" ><b>Mighty Featured Playlist</b></a>
+					<a href="devicePlaylist" ><b>Mighty Featured Playlist Report</b></a>
+					<a href="addOrderDevice" ><b>Mighty Device Order</b></a>
+														
 						</div>
 						
 						<div class="content-wrap">
@@ -102,7 +105,7 @@
 			export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
 				<display:column property="id" title="ID" sortable="true" headerClass="sortable" />
 							
-				<display:column style="background-color: #eee" property="deviceId" title="Device_ID/Hw_SerialNo."	sortable="true" headerClass="sortable" />
+				<display:column  property="deviceId" title="Device_ID/Hw_SerialNo."	sortable="true" headerClass="sortable" />
 				
 				<display:column  property="deviceName" title="Device_Name" sortable="true" headerClass="sortable"/>
 				
@@ -131,14 +134,6 @@
 			</div>
 		</div>
 	</div>
-<div class="footer-wrap">
-					
-					<div class="row">
-					<div class="col-sm-12 text-center">
-							 <p class="text-12">The information stored on this website is maintained in accordance with the organization's Data Privacy Policy. </span><br />Copyright © Mighty
- 					</div>
-					</div>
-					
-</div>
+<%@include file="Footer.jsp"%> 
 </body>
 </html>

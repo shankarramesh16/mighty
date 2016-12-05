@@ -114,6 +114,63 @@ public class AdminInstrumentController {
 	}
 	
 	@RequestMapping(value = "/deviceFirmware", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getDeviceFirmWare() {
+		ResponseEntity<String> responseEntity = null;
+		DeviceFirmWareDTO deviceFirmWareDTO = null;
+		MightyDeviceFirmware mightyDeviceFirmware=null;
+		try {
+			//Validate X-MIGHTY-TOKEN Value
+			//JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			
+			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
+					.getRequestAttributes()).getRequest();
+			logger.info(request.getServerName());
+			logger.info(request.getServerPort());
+			logger.info(request.getProtocol());
+			logger.info(request.isSecure());
+			logger.info(request.getContextPath());
+			logger.info(request.getHeader("x-forwarded-proto"));
+			mightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware();
+			if(mightyDeviceFirmware!=null){
+				deviceFirmWareDTO=new DeviceFirmWareDTO();
+				deviceFirmWareDTO.setLatestVersion(mightyDeviceFirmware.getVersion());
+				/*passing downloading API...*/
+				String URL = "http://mighty2.cloudaccess.host/MightyCloud/rest/admin/download/"+mightyDeviceFirmware.getId();
+				/*if(request.isSecure()) {
+					URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
+				} else {
+					URL = "http://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
+				}*/
+				deviceFirmWareDTO.setFileDownloadUrl(URL);
+				deviceFirmWareDTO.setHashValue(mightyDeviceFirmware.getHashValue());
+				deviceFirmWareDTO.setHashType(mightyDeviceFirmware.getHashType());
+				try{
+				deviceFirmWareDTO.setFileSize(String.valueOf(mightyDeviceFirmware.getFile().length()));
+				logger.debug("size",deviceFirmWareDTO.getFileSize());
+				}catch(SQLException e){
+					logger.error(e);
+				}
+				logger.debug("hashValue",mightyDeviceFirmware.getHashValue());
+				logger.debug("hashType",mightyDeviceFirmware.getHashType());
+				String response = JsonUtil.objToJson(deviceFirmWareDTO);
+				responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
+			}
+		} catch(MightyAppException e) {
+			logger.errorException(e);
+			deviceFirmWareDTO = new DeviceFirmWareDTO();
+			deviceFirmWareDTO.setStatusCode(e.getHttpStatus().toString());
+			deviceFirmWareDTO.setStatusDesc(e.getMessage());
+			String response = JsonUtil.objToJson(deviceFirmWareDTO);
+			responseEntity = new ResponseEntity<String>(response, e.getHttpStatus());
+		}
+		return responseEntity;
+	}
+	
+	
+	/*@RequestMapping(value = "/deviceFirmware", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getDeviceFirmWare(@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
 		ResponseEntity<String> responseEntity = null;
 		DeviceFirmWareDTO deviceFirmWareDTO = null;
@@ -137,7 +194,7 @@ public class AdminInstrumentController {
 			if(mightyDeviceFirmware!=null){
 				deviceFirmWareDTO=new DeviceFirmWareDTO();
 				deviceFirmWareDTO.setLatestVersion(mightyDeviceFirmware.getVersion());
-				/*passing localhost API...*/
+				passing localhost API...
 				String URL = null;
 				if(request.isSecure()) {
 					URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
@@ -161,7 +218,7 @@ public class AdminInstrumentController {
 			responseEntity = new ResponseEntity<String>(response, e.getHttpStatus());
 		}
 		return responseEntity;
-	}
+	}*/
 	
 	@RequestMapping(value = "/device/upload", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> uploadDeviceListCSV(@RequestParam("file") MultipartFile file) {

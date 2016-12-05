@@ -15,11 +15,17 @@
 
         <%
     	AdminUser adminUserObj = (AdminUser) request.getSession().getAttribute("adminUser");
-               
+        if (adminUserObj == null) {
+			response.sendRedirect("/");
+		} else {
+		%>
+	<%@include file="Header.jsp"%> 
+	<%
+		 }     
         %>
 	
 	
-	<%@include file="Header.jsp"%> 
+	<%-- <%@include file="Header.jsp"%>  --%>
 	<main class="main-content" role="main">
 	<div class="container">
 	<div class="row">

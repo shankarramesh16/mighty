@@ -9,16 +9,16 @@
 <link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/custom.scss.css?10713448530586305152" rel="stylesheet" type="text/css" media="all" />
 
 
-<div class="wrapper"><div id="PageContainer"> 
-    	
-        		
+<!-- <div class="wrapper"> -->
+<div id="PageContainer"> 
+    		
           			<div class="grid grid--no-gutters grid--table site-header__inner">
             			<div class="grid__item small--hide medium-up--one-third">
            				</div>
            					 <div class="grid__item one-third">
 					             <div class="site-header__logo h1" itemscope itemtype="http://schema.org/Organization">
 
-               					 <a href="www.bemighty.com">
+               					 <!-- <a href="http://mighty2.cloudaccess.host/MightyCloud/"> -->
                 					 <svg width="121px" height="37px" viewBox="452 13 121 37" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                       					<defs>
                          			 		<linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">

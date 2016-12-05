@@ -105,8 +105,7 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	}
 
 	
-	public List<MightyDeviceFirmware> getDeviceFirmware() throws Exception {
-		
+	public List<Object[]> getDeviceFirmware() throws Exception {
 		return mightyDeviceFirmwareDAO.getDeviceFirmware("A");
 	}
 
@@ -129,7 +128,7 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	public MightyDeviceFirmware getMightyDeviceFirmware() throws MightyAppException {
 		List<MightyDeviceFirmware> mightyDeviceFirmware=null;
 		try {
-			mightyDeviceFirmware = mightyDeviceFirmwareDAO.getDeviceFirmware("A");
+			mightyDeviceFirmware = mightyDeviceFirmwareDAO.getDeviceFirmwareByStatus("A");
 			if(mightyDeviceFirmware!=null && !mightyDeviceFirmware.isEmpty()){
 				return mightyDeviceFirmware.get(0);
 			}
@@ -138,5 +137,25 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 		}
 		return null;
 	}
+
+
+	public List<MightyDeviceOrderInfo> getOrderDevices() throws Exception {
+		return mightyDeviceOrderDAO.getOrderDevices();
+		
+	}
+
+	
+	public void deleteFirmware(MightyDeviceFirmware mightyDeviceFirmware) throws Exception {
+		mightyDeviceFirmwareDAO.delete(mightyDeviceFirmware);
+		
+	}
+
+
+	public void saveMightyDeviceOrder(MightyDeviceOrderInfo mightyDeviceOrder)	throws Exception {
+		mightyDeviceOrderDAO.save(mightyDeviceOrder);
+		
+	}
+
+	
 
 }

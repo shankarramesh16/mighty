@@ -18,7 +18,7 @@ public interface AdminInstrumentService {
 	
 	public void insertDeviceFirmwareDetails(MightyDeviceFirmware mightyDevFirmware) throws Exception;
 
-	public List<MightyDeviceFirmware> getDeviceFirmware()throws Exception;
+	public List<Object[]> getDeviceFirmware()throws Exception;
 
 	public List<MightyFeaturedPlaylist> getMightyFeaturedPlaylist()throws Exception;
 
@@ -27,4 +27,10 @@ public interface AdminInstrumentService {
 	public MightyDeviceFirmware getDeviceFirmwareById(String deviceFirmwareId) throws MightyAppException;
 
 	public MightyDeviceFirmware getMightyDeviceFirmware()throws MightyAppException;
+
+	public List<MightyDeviceOrderInfo> getOrderDevices()throws Exception;
+
+	public void deleteFirmware(MightyDeviceFirmware mightyDeviceFirmware)throws Exception;
+
+	public void saveMightyDeviceOrder(MightyDeviceOrderInfo mightyDeviceOrder)throws Exception;
 }

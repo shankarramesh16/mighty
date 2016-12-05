@@ -21,8 +21,9 @@
   
   <body >
   		<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");%>
-							 <%@include file="Header.jsp"%> 
+							 
 <div class="wrapper">
+<%@include file="Header.jsp"%> 
 	<div class="header-wrap">
 		<div class="container">
 		
@@ -48,13 +49,14 @@
 				
 				<div class="breadcrumb-wrap">
 					<a href="adminHome"><img src="images/home.png" /></a>
-					<a href="#" class="current">My Information </a>
-					<a href="deviceUserInfo" >Mighty User </a>
-					<a href="uploadDeviceFirmware" >Device Firmware Upload</a>
-					<a href="deviceFirmwareReport" >Mighty Device Firmware Report</a>
-					<a href="mightyDeviceInfo" >Mighty Device Report</a>
-					<a href="addDevicePlaylist" >Mighty Featured Playlist</a>
-					<a href="devicePlaylist" >Mighty Featured Playlist Report</a>
+					<a href="#" class="current"><b>My Information</b></a>
+					<a href="deviceUserInfo" ><b>Mighty User </b></a>
+					<a href="uploadDeviceFirmware" ><b>Device Firmware Upload</b></a>
+					<a href="deviceFirmwareReport" ><b>Mighty Device Firmware Report</b></a>
+					<a href="mightyDeviceInfo" ><b>Mighty Device Report</b></a>
+					<a href="addDevicePlaylist" ><b>Mighty Featured Playlist</b></a>
+					<a href="devicePlaylist" ><b>Mighty Featured Playlist Report</b></a>
+					<a href="addOrderDevice" ><b>Mighty Device Order</b></a>
 					
 				</div>
 				
@@ -88,20 +90,20 @@
 					<div class="push-15">
 					<div class="row">
 						<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 text-lightgrey">First Name:</div>
-						<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15"><%=adminUser.getFirstname()%></div>
+						<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getFirstname()%></b></div>
 						
 						<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 col-md-offset-2 text-lightgrey">Last Name:</div>
-						<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><%=adminUser.getLastname()%></div>						
+						<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getLastname()%></b></div>						
 					</div>
 					
 									
 					
 					<div class="row">
 						<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 text-lightgrey">Email:</div>
-						<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15 text-break"><%=adminUser.getEmailaddress()%></div>
+						<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15 text-break"><b><%=adminUser.getEmailaddress()%></b></div>
 						
 						<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 col-md-offset-2 text-lightgrey">Mobile No:</div>
-						<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><%=adminUser.getContactnumber()%></div>						
+						<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getContactnumber()%></b></div>						
 					</div>
 					
 									
@@ -118,17 +120,10 @@
 		</div>
 	</div>
 </div>
-<div class="footer-wrap">
-					<div class="row">
-						<div class="col-sm-12 text-center">
-							 <p class="text-12">The information stored on this website is maintained in accordance with the organization's Data Privacy Policy. </span><br />Copyright © Mighty
- 
-					</div>
-					</div>
-					
+
+<%@include file="Footer.jsp"%> 
+
 </div>
-
-
    
 
   </body>
