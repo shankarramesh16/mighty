@@ -48,6 +48,13 @@ public class MightyDeviceInfo extends BaseEntityInfo implements Serializable {
 	@Column(name = "IS_ACTIVE")
 	private String isActive;
 	
+	
+	@Column(name = "AppVersion")
+	private Float appVersion;
+	
+	@Column(name = "AppBuild")
+	private String appBuild;
+	
 	//bi-directional many-to-one association to TblDeviceOrderInfo
 		@ManyToOne(fetch=FetchType.LAZY)
 		@JoinColumn(name="ORDER_ID")
@@ -68,6 +75,22 @@ public class MightyDeviceInfo extends BaseEntityInfo implements Serializable {
 
 	public void setDeviceId(String deviceId) {
 		this.deviceId = deviceId;
+	}
+	
+	public Float getAppVersion() {
+		return appVersion;
+	}
+
+	public void setAppVersion(Float appVersion) {
+		this.appVersion = appVersion;
+	}
+
+	public String getAppBuild() {
+		return appBuild;
+	}
+
+	public void setAppBuild(String appBuild) {
+		this.appBuild = appBuild;
 	}
 
 	public String getDeviceName() {

@@ -17,6 +17,24 @@ public class DeviceInfoDTO implements Serializable {
 	private String isActive;
 	private String isRegistered;
 	private String userName;
+	private String appVersion;
+	private String appBuild;
+
+	public String getAppVersion() {
+		return appVersion;
+	}
+
+	public void setAppVersion(String appVersion) {
+		this.appVersion = appVersion;
+	}
+
+	public String getAppBuild() {
+		return appBuild;
+	}
+
+	public void setAppBuild(String appBuild) {
+		this.appBuild = appBuild;
+	}
 
 	public String getDeviceName() {
 		return deviceName;

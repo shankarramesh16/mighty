@@ -195,6 +195,8 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			mightyUserInfo.setLastName(consumerDeviceDto.getLastName());
 			mightyUserInfo.setEmailId(consumerDeviceDto.getEmailId());
 			mightyUserInfo.setPassword(consumerDeviceDto.getPassword());
+			mightyUserInfo.setAge(consumerDeviceDto.getAge());
+			mightyUserInfo.setGender(consumerDeviceDto.getGender());
 			mightyUserInfo.setUserIndicator(consumerDeviceDto.getUserIndicator());
 			mightyUserInfo.setCreatedDt(new Date(System.currentTimeMillis()));
 			mightyUserInfo.setUpdatedDt(new Date(System.currentTimeMillis()));
@@ -474,6 +476,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 					mightyDeviceInfo.setSwVersion(deviceInfoDTO.getSwVersion());
 					mightyDeviceInfo.setIsActive(deviceInfoDTO.getIsActive());
 					mightyDeviceInfo.setIsRegistered(deviceInfoDTO.getIsRegistered());
+					mightyDeviceInfo.setAppVersion(Float.valueOf(deviceInfoDTO.getAppVersion()));
+					logger.debug("AppVersion",deviceInfoDTO.getAppVersion());
+					mightyDeviceInfo.setAppBuild(deviceInfoDTO.getAppBuild());
 					//mightyDeviceInfo.setDeviceOrderInfo(mightyDeviceOrderInfo);
 					MightyDeviceInfo mightyDevice=null;
 					try{

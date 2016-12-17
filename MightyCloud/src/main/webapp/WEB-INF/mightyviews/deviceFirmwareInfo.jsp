@@ -143,6 +143,11 @@ function fillFields(id) {
 				<display:column property="version" title="Version" 	sortable="true"  />
 				<display:column property="hashValue" title="HashValue" sortable="true"  />
 				<display:column property="hashType" title="HashType" sortable="true"  />
+				<display:column property="requires" title="Requires" sortable="true"  />
+				<display:column property="compatibleIOS" title="Compatible_IOS" sortable="true"  />
+				<display:column property="compatibleAND" title="compatible_AND" sortable="true"  />
+				<display:column property="compatibleHW" title="compatible_HW" sortable="true"  />
+				
 				
 				<display:column  property="effectiveDt" title="Effective_Date" format="{0,date,dd-MM-yyyy}" sortable="true" />
 				

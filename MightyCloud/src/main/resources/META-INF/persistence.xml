@@ -5,6 +5,7 @@
 	version="2.0">
 	<persistence-unit name="mightyPU" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<non-jta-data-source>java:comp/env/jdbc/MightyDB</non-jta-data-source>
 		<class>com.team.mighty.domain.AdminUser</class>
 		<class>com.team.mighty.domain.ConsumerInstrument</class>
 		<class>com.team.mighty.domain.MightyDeviceFirmware</class>
@@ -17,20 +18,20 @@
 		<class>com.team.mighty.domain.Role</class>
 
 		<properties>
-			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+			<!-- <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" /> -->
 		<!-- 	<property name="hibernate.connection.url" value="jdbc:mysql://127.2.140.130:3306/mighty?autoReconnect=true" />
 			<property name="hibernate.connection.username" value="adminr26Gdqj" />
 			<property name="hibernate.connection.password" value="l-Qh7sDyWMCz"/> -->
-	 		<!-- <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/mighty?autoReconnect=true" />
+	 		 <!-- <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/mighty?autoReconnect=true" />
 			<property name="hibernate.connection.username" value="root" />
 			<property name="hibernate.connection.password" value="root"/>  -->
-			 <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/mightyc3?autoReconnect=true" />
+			 <!-- <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/mightyc3?autoReconnect=true" />
 			<property name="hibernate.connection.username" value="mightyc3" />
-			<property name="hibernate.connection.password" value="CSsd64x2t4"/>  
+			<property name="hibernate.connection.password" value="CSsd64x2t4"/>  --> 
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
-			<property name="dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 		 	<property name="hibernate.cache.use_query_cache" value="false" />
 			<property name="hibernate.cache.use_second_level_cache" value="false" />
 			<property name="hibernate.connection.isolation" value="2"/>

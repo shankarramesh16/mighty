@@ -49,6 +49,19 @@ public class MightyDeviceFirmware implements Serializable {
 	@Column(name = "FILE_NAME")
 	private String fileName;
 	
+	@Column(name = "REQUIRES")
+	private Float requires;
+	
+	@Column(name = "COMPATIBLE_IOS")
+	private Float compatibleIOS;
+	
+	
+	@Column(name = "COMPATIBLE_AND")
+	private String compatibleAND;
+	
+	@Column(name = "COMPATIBLE_HW")
+	private String compatibleHW;
+	
 	public String getFileName() {
 		return fileName;
 	}
@@ -117,6 +130,38 @@ public class MightyDeviceFirmware implements Serializable {
 	public String getVersion() {
 		return version;
 	}
+	public Float getRequires() {
+		return requires;
+	}
+
+	public void setRequires(Float requires) {
+		this.requires = requires;
+	}
+
+	public Float getCompatibleIOS() {
+		return compatibleIOS;
+	}
+
+	public void setCompatibleIOS(Float compatibleIOS) {
+		this.compatibleIOS = compatibleIOS;
+	}
+
+	public String getCompatibleAND() {
+		return compatibleAND;
+	}
+
+	public void setCompatibleAND(String compatibleAND) {
+		this.compatibleAND = compatibleAND;
+	}
+
+	public String getCompatibleHW() {
+		return compatibleHW;
+	}
+
+	public void setCompatibleHW(String compatibleHW) {
+		this.compatibleHW = compatibleHW;
+	}
+
 
 	public void setVersion(String version) {
 		this.version = version;

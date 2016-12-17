@@ -40,6 +40,13 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	@Autowired
 	private MightyFeaturedPlaylistDAO mightyFeaturedPlaylistDAO;
 	
+	public MightyDeviceFirmware mightyLstDeviceFirmware=null;
+	
+	public MightyDeviceFirmware getMightyLstDeviceFirmware() {
+		return mightyLstDeviceFirmware;
+	}
+
+	
 	public List<DeviceInfoDTO> getAllMightyDevice() throws MightyAppException {
 		logger.info("AdminInstrumentServiceImpl,getAllMightyDevice");
 		List<MightyDeviceInfo> lstMightDeviceInfo = new ArrayList<MightyDeviceInfo>();
@@ -155,6 +162,147 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 		mightyDeviceOrderDAO.save(mightyDeviceOrder);
 		
 	}
+	
+	public MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo,String SWVersion,String AppVersion, String AppBuild) throws MightyAppException{
+		MightyDeviceFirmware mightyDeviceFirmware=null;
+		
+		List<MightyDeviceFirmware> compatibleWithExistRequires=null;
+		try {
+			MightyDeviceInfo mightyInfo=null; 
+			mightyInfo=mightyDeviceInfoDAO.getDeviceInfo(HWSerialNo);
+			if(mightyInfo!=null){
+				mightyInfo.setSwVersion(SWVersion);
+				mightyInfo.setAppVersion(Float.valueOf(AppVersion));
+				mightyInfo.setAppBuild(AppBuild);
+				MightyDeviceInfo mightyDeviceInfo=mightyDeviceInfoDAO.save(mightyInfo);
+				if(mightyDeviceInfo!=null){
+						logger.debug("HwSerialNo",mightyDeviceInfo.getDeviceId());
+					String compatibleHw=mightyDeviceInfo.getDeviceId().trim().substring(3, 4);
+						logger.debug("existingHwCode",compatibleHw);
+						logger.debug("appversion",mightyDeviceInfo.getAppVersion());
+						logger.debug("swVersion",Float.valueOf(mightyDeviceInfo.getSwVersion()));
+					
+					List<MightyDeviceFirmware>  mightyLastestDeviceFirmwares= mightyDeviceFirmwareDAO.getDeviceFirmwareByStatusAsc("A");
+					mightyLstDeviceFirmware=new  MightyDeviceFirmware();
+					if(mightyLastestDeviceFirmwares!=null && !mightyLastestDeviceFirmwares.isEmpty()){
+						   for(MightyDeviceFirmware mdf : mightyLastestDeviceFirmwares){
+							      mightyLstDeviceFirmware=mdf;   
+							   
+							  /* if(mdf.getCompatibleHW().contains(compatibleHw)){
+								   mightyLstDeviceFirmware=mdf;   
+							   }*/
+						   }
+					   }
+					
+					
+					
+					compatibleWithExistRequires=mightyDeviceFirmwareDAO.getFirmwareByCompatible(mightyDeviceInfo.getAppVersion(),Float.valueOf(mightyDeviceInfo.getSwVersion()),"A");
+					
+					   if(compatibleWithExistRequires!=null && !compatibleWithExistRequires.isEmpty()){
+							logger.debug("Size if",compatibleWithExistRequires.size());
+								return compatibleWithExistRequires.get(0);
+						/*if(compatibleWithExistRequires.get(0).getCompatibleHW().contains(compatibleHw)){
+								
+						}*/
+					   }else {
+							List<MightyDeviceFirmware> compatibleWithVersion= mightyDeviceFirmwareDAO.getFirmwareByReqVersion(mightyDeviceInfo.getAppVersion(),"A");
+							
+							if(compatibleWithVersion!=null && !compatibleWithVersion.isEmpty()){
+								logger.debug("Size else",compatibleWithVersion.size());
+								
+								for(MightyDeviceFirmware mdf : compatibleWithVersion){
+									
+										float firmwareVer=0;
+										float requestedVer=0;
+										float requiredLatest=0;
+												try{
+													firmwareVer=Float.parseFloat(mdf.getVersion().trim());
+													requestedVer=Float.parseFloat(mightyDeviceInfo.getSwVersion().trim());
+													requiredLatest=mdf.getRequires();
+												}catch(NullPointerException npe){
+													logger.error("Line 193",npe);
+												}
+									logger.debug("swVersin",firmwareVer);
+									logger.debug("latestRequired",requestedVer);
+										if(firmwareVer > requestedVer){
+											if(requestedVer>=requiredLatest ){
+											return mdf;
+											}	
+										}
+									
+									
+									/*if(mdf.getCompatibleHW().contains(compatibleHw)){
+										float firmwareVer=0;
+										float requestedVer=0;
+										float requiredLatest=0;
+												try{
+													firmwareVer=Float.parseFloat(mdf.getVersion().trim());
+													requestedVer=Float.parseFloat(mightyDeviceInfo.getSwVersion().trim());
+													requiredLatest=mdf.getRequires();
+												}catch(NullPointerException npe){
+													logger.error("Line 193",npe);
+												}
+									logger.debug("swVersin",firmwareVer);
+									logger.debug("latestRequired",requestedVer);
+										if(firmwareVer > requestedVer){
+											if(requestedVer>=requiredLatest ){
+											return mdf;
+											}	
+										}
+									}*/
+																
+							   }		
+						   
+					     }	
+					  }
+					   
+					
+					logger.debug("objectttt",mightyLstDeviceFirmware);
+				}	   
+			}else{
+				  throw new MightyAppException("HwSerialNo mighty be not exist or not in correct format",HttpStatus.EXPECTATION_FAILED);
+				  }
+			
+			
+		} catch (Exception e) {
+			throw new MightyAppException(e.getMessage(),HttpStatus.BAD_REQUEST);
+			//throw new MightyAppException(e.getMessage(),HttpStatus.BAD_REQUEST);
+		}
+		return null;
+	}
+
+	
+	/*public MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo){
+		MightyDeviceFirmware mightyDeviceFirmware=null;
+		try {
+			MightyDeviceInfo mightyDeviceInfo=null; 
+			List<MightyDeviceFirmware> mightyDeviceFirmwaresByAppComp=null;
+			mightyDeviceInfo=mightyDeviceInfoDAO.getDeviceInfo(HWSerialNo);
+			
+			if(mightyDeviceInfo!=null){
+						logger.debug("HwSerialNo",mightyDeviceInfo.getDeviceId());
+					String compatibleHw=mightyDeviceInfo.getDeviceId().substring(3, 4);
+						logger.debug("existingHwCode",compatibleHw);
+						mightyDeviceFirmwaresByAppComp=mightyDeviceFirmwareDAO.getFirmwareByAppComp(mightyDeviceInfo.getAppVersion(),"A");	
+						if(mightyDeviceFirmwaresByAppComp!=null){
+							for(MightyDeviceFirmware mdf : mightyDeviceFirmwaresByAppComp){
+								if(mdf.getCompatibleHW().contains(compatibleHw)){
+									mightyDeviceFirmware=mightyDeviceFirmwareDAO.getDeviceFirmwareById(deviceFirmwareId)
+								}
+							}
+						}
+				
+			}
+			
+			mightyDeviceFirmware = mightyDeviceFirmwareDAO.getDeviceFirmwareByStatus("A");
+			if(mightyDeviceFirmware!=null && !mightyDeviceFirmware.isEmpty()){
+				return mightyDeviceFirmware.get(0);
+			}
+		} catch (Exception e) {
+			throw new MightyAppException(e.getMessage(),HttpStatus.BAD_REQUEST);
+		}
+		return null;
+	}*/
 
 	
 

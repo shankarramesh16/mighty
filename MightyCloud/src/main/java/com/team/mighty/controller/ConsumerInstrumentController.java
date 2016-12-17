@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -94,9 +95,76 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 	}
 	
+	/*@RequestMapping(value="/grafana",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> IoITesting(@RequestBody String received) {
+		logger.info(" /POST mightyAppLogin API");
+		logger.info("hiiii",received);
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyUserInfo mightyUserInfo=null;
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON",e);
+		}
+		
+				
+		try {
+			
+			logger.debug("temperature Value",obj.get("temperature").toString());	
+			
+			} catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+		return responseEntity;
+	}*/
+	
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> doRegistration(@RequestBody String received) {
 		logger.info(" /POST Consumer API");
+		
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+			
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON ",e);
+		}
+				
+				
+		try {
+			ConsumerDeviceDTO consumerDeviceDTO=new ConsumerDeviceDTO();
+			consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
+			consumerDeviceDTO.setEmailId(obj.get("EmailID").toString());
+			consumerDeviceDTO.setPassword(obj.get("Password").toString());
+			consumerDeviceDTO.setUserIndicator(obj.get("UserIndicator").toString());
+			//consumerDeviceDTO.setMightyDeviceId(obj.get("MightyDeviceID").toString());
+			consumerDeviceDTO.setDeviceModel(obj.get("DeviceModel").toString());
+			consumerDeviceDTO.setDeviceId(obj.get("DeviceID").toString());
+			consumerDeviceDTO.setDeviceName(obj.get("DeviceName").toString());
+			consumerDeviceDTO.setDeviceOs(obj.get("DeviceOS").toString());
+			consumerDeviceDTO.setDeviceOsVersion(obj.get("DeviceOSVersion").toString());
+			consumerDeviceDTO.setDeviceType(obj.get("DeviceType").toString());
+			consumerDeviceDTO.setAge(obj.get("Age").toString());
+			consumerDeviceDTO.setGender(obj.get("Gender").toString());
+			consumerInstrumentServiceImpl.registerDevice(consumerDeviceDTO);
+			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+		} catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+		return responseEntity;
+	}
+	
+	@RequestMapping(value="/fbLogin",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> doFacebookLogin(@RequestBody String received,@RequestHeader String xToken) {
+		logger.info(" /POST FacebookLogin API");
 		
 		JSONObject obj=null;
 		ResponseEntity<String> responseEntity = null;
@@ -156,6 +224,8 @@ public class ConsumerInstrumentController {
 			deviceInfoDTO.setDeviceName(obj.get("DeviceName").toString());
 			deviceInfoDTO.setDeviceType(obj.get("DeviceType").toString());
 			deviceInfoDTO.setSwVersion(obj.get("SWVersion").toString());
+			deviceInfoDTO.setAppVersion(obj.get("AppVersion").toString());
+			deviceInfoDTO.setAppBuild(obj.get("AppBuild").toString());
 			deviceInfoDTO.setIsActive(MightyAppConstants.IND_Y);
 			deviceInfoDTO.setIsRegistered(MightyAppConstants.IND_Y);
 			

@@ -53,6 +53,13 @@ public class MightyUserInfo extends BaseEntityInfo {
 
 	@Column(name = "USER_NAME")
 	private String userName;
+	
+	@Column(name = "AGE")
+	private String age;
+	
+	@Column(name = "GENDER")
+	private String gender;
+
 
 	@Column(name = "USER_STATUS")
 	private String userStatus;
@@ -127,6 +134,22 @@ public class MightyUserInfo extends BaseEntityInfo {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	
+	public String getAge() {
+		return age;
+	}
+
+	public void setAge(String age) {
+		this.age = age;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 
 	public String getEmailId() {

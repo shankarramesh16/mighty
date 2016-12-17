@@ -33,4 +33,8 @@ public interface AdminInstrumentService {
 	public void deleteFirmware(MightyDeviceFirmware mightyDeviceFirmware)throws Exception;
 
 	public void saveMightyDeviceOrder(MightyDeviceOrderInfo mightyDeviceOrder)throws Exception;
+
+	public MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo, String SWVersion, String AppVersion, String AppBuild)throws MightyAppException; 
+	
+	public MightyDeviceFirmware getMightyLstDeviceFirmware();
 }

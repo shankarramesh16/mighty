@@ -1,4 +1,4 @@
-package com.team.mighty.interceptor;
+/*package com.team.mighty.interceptor;
 
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +24,7 @@ public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 		
 				
 		logger.debug(">> FILTER <<");
-		/*String indexPage="/";
+		String indexPage="/";
 		String forwardPage="/";
 		String queryString="";
 		HttpSession session = request.getSession();
@@ -69,7 +69,7 @@ public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 		else if (page.equals("login")) { 
 				return true;
 			  }
-		*/
+		
 		return true;
 	
 	}
@@ -119,3 +119,4 @@ public String getQueryString( HttpServletRequest servletRequest  )
 	  return queryString.toString();
 }
 }
+*/
