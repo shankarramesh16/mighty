@@ -1,5 +1,9 @@
 package com.team.mighty.service.impl;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,7 +25,6 @@ import com.team.mighty.dao.MightyDeviceUserMapDAO;
 import com.team.mighty.dao.MightyKeyConfigDAO;
 import com.team.mighty.dao.MightyUserInfoDao;
 import com.team.mighty.domain.MightyDeviceInfo;
-import com.team.mighty.domain.MightyDeviceOrderInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyKeyConfig;
 import com.team.mighty.domain.MightyUserInfo;
@@ -161,7 +164,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	private MightyUserInfo registerUserAndDevice(ConsumerDeviceDTO consumerDeviceDto) throws MightyAppException {
 		
 		MightyUserInfo mightyUserInfo = null;
-		mightyUserInfo=getUserByNameAndEmail(consumerDeviceDto.getUserName(),consumerDeviceDto.getEmailId());
+		mightyUserInfo=getUserByNameAndEmailWithIndicator(consumerDeviceDto.getUserName(),consumerDeviceDto.getEmailId(),consumerDeviceDto.getUserIndicator());
 		String phoneDeviceId = consumerDeviceDto.getDeviceId();
 		if(mightyUserInfo!=null) {
 			// Check any de-activated account
@@ -259,14 +262,119 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException("Invalid request Parameters [UserName or Device Id ] ", HttpStatus.BAD_REQUEST);
 		}
 		
-			
-		MightyUserInfo mightyUserInfo =  registerUserAndDevice(consumerDeviceDto);
+		MightyUserInfo mightyUserInfo=registerUserAndDevice(consumerDeviceDto);
 		
 		return constructResponse(mightyUserInfo);
 		
 	}
 
 	
+	@Transactional
+	private MightyUserInfo registerFBUserAndDevice(ConsumerDeviceDTO consumerDeviceDto) throws MightyAppException{
+		/*Validating on FB Token*/
+		validateFacebookToken(consumerDeviceDto.getPassword());
+		
+		
+		MightyUserInfo mightyUserInfo = null;
+		mightyUserInfo=getUserByNameAndEmailWithIndicator(consumerDeviceDto.getUserName(),consumerDeviceDto.getEmailId(),consumerDeviceDto.getUserIndicator());
+		String phoneDeviceId = consumerDeviceDto.getDeviceId();
+		if(mightyUserInfo!=null) {
+			// Check any de-activated account
+			logger.debug("IN If -before to check active/deactive");
+			MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
+			if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
+					logger.info(" Already Disbaled account is there and activating that one ------- ");
+					mightyDeviceUserMapping.setRegistrationStatus(MightyAppConstants.IND_Y);
+					mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
+					mightyUserInfo=mightyDeviceUserMapping.getMightyUserInfo();
+					return mightyUserInfo;
+			} else{
+				logger.debug("IN Else -registered already");
+				return mightyUserInfo;
+			}
+			 
+		 }
+					
+		
+		if(mightyUserInfo == null) {
+			logger.info(" User information not found in database, hence creating new one ");
+			mightyUserInfo = new MightyUserInfo();
+			
+			logger.info("----------------- "+consumerDeviceDto.getUserName());
+			mightyUserInfo.setUserName(consumerDeviceDto.getUserName());
+			mightyUserInfo.setUserStatus(MightyAppConstants.IND_A);
+			mightyUserInfo.setFirstName(consumerDeviceDto.getFirstName());
+			mightyUserInfo.setLastName(consumerDeviceDto.getLastName());
+			mightyUserInfo.setEmailId(consumerDeviceDto.getEmailId());
+			//mightyUserInfo.setPassword(consumerDeviceDto.getPassword());
+			mightyUserInfo.setAge(consumerDeviceDto.getAge());
+			mightyUserInfo.setGender(consumerDeviceDto.getGender());
+			mightyUserInfo.setUserIndicator(consumerDeviceDto.getUserIndicator());
+			mightyUserInfo.setCreatedDt(new Date(System.currentTimeMillis()));
+			mightyUserInfo.setUpdatedDt(new Date(System.currentTimeMillis()));
+			
+		}
+		MightyDeviceUserMapping mightyDeviceUserMapping=null;
+		mightyDeviceUserMapping = new MightyDeviceUserMapping();
+		mightyDeviceUserMapping.setMightyUserInfo(mightyUserInfo);
+		mightyDeviceUserMapping.setPhoneDeviceOSVersion(consumerDeviceDto.getDeviceOs());
+		mightyDeviceUserMapping.setPhoneDeviceType(consumerDeviceDto.getDeviceType());
+		mightyDeviceUserMapping.setPhoneDeviceId(consumerDeviceDto.getDeviceId());
+		mightyDeviceUserMapping.setPhoneDeviceVersion(consumerDeviceDto.getDeviceOsVersion());
+		mightyDeviceUserMapping.setRegistrationStatus(MightyAppConstants.IND_Y);
+		mightyDeviceUserMapping.setCreatedDt(new Date(System.currentTimeMillis()));
+		mightyDeviceUserMapping.setUpdatedDt(new Date(System.currentTimeMillis()));
+		
+		Set<MightyUserInfo> setUserInfo = new HashSet<MightyUserInfo>();
+		
+		Set<MightyDeviceUserMapping> setMightyUserDevice = mightyUserInfo.getMightyDeviceUserMapping();
+		if(setMightyUserDevice == null || mightyUserInfo.getMightyDeviceUserMapping().isEmpty()) {
+			setMightyUserDevice = new HashSet<MightyDeviceUserMapping>();
+		}
+		setMightyUserDevice.add(mightyDeviceUserMapping);
+		mightyUserInfo.setMightyDeviceUserMapping(setMightyUserDevice);
+		
+		setUserInfo.add(mightyUserInfo);
+		
+		MightyUserInfo mightyUserInfo_1 = null;
+		try {
+			mightyUserInfo_1 = consumerInstrumentDAO.save(mightyUserInfo);
+		} catch(Exception e) {
+			logger.error(e.getMessage());
+			throw new MightyAppException("Unable to save User Device Mapping", HttpStatus.INTERNAL_SERVER_ERROR, e);
+		}
+		
+		logger.info(" Mighty USer ID ",mightyUserInfo_1.getId());
+		
+		return mightyUserInfo_1;
+	}
+
+	private void validateFacebookToken(String fbToken) throws MightyAppException{
+		try{
+			String url="https://graph.facebook.com/me?access_token="+fbToken;
+			logger.debug("URLConn",url);
+			URL obj = new URL(url);
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+			con.setRequestMethod("GET");
+			int responseCode = con.getResponseCode();
+			logger.debug("GET Response Code :: " + responseCode);
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				logger.debug("Token valid,GET Response with 200");
+			} else {
+				throw new MightyAppException("Invalid Fb access token, get request is not worked", HttpStatus.BAD_REQUEST);
+			}
+
+		
+		}catch(Exception e){
+			throw new MightyAppException("Invalid Facebook token", HttpStatus.EXPECTATION_FAILED);
+		}
+		
+	}
+
+	private MightyUserInfo getUserByNameAndEmailWithIndicator(String userName, String emailId, String userIndicator) {
+		
+		return mightyUserInfoDAO.getUserByNameAndEmailWithIndicator(userName,emailId,userIndicator);
+	}
 
 	private UserDeviceRegistrationDTO constructResponse(MightyUserInfo mightyUserInfo) {
 		UserDeviceRegistrationDTO userDeviceRegistrationDTO = new UserDeviceRegistrationDTO();
@@ -500,6 +608,11 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 
 	private MightyUserInfo getUserById(String userId) {
 		return mightyUserInfoDAO.getUserById(Long.parseLong(userId.trim()));
+	}
+
+	
+	public MightyUserInfo mightyFBUserLogin(ConsumerDeviceDTO consumerDeviceDTO) throws MightyAppException {
+		return registerFBUserAndDevice(consumerDeviceDTO);
 	}
 
 	

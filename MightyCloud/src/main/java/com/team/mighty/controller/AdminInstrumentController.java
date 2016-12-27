@@ -29,14 +29,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.domain.MightyDeviceFirmware;
 import com.team.mighty.domain.MightyDeviceOrderInfo;
-import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.DeviceFirmWareDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;
 import com.team.mighty.service.MightyCommonService;
-import com.team.mighty.utils.JWTKeyGenerator;
 import com.team.mighty.utils.JsonUtil;
 
 @RestController
@@ -189,11 +187,16 @@ public class AdminInstrumentController {
 			logger.error("System Exception during parsing JSON",e);
 		}
 		
-		logger.debug("HWSerialNumber",obj.get("HWSerialNumber"));
+		
 		String HWSerialNumber=(String)obj.get("HWSerialNumber");
 		String SWVersion=(String)obj.get("SWVersion");
 		String AppVersion=(String)obj.get("AppVersion");
 		String AppBuild=(String)obj.get("AppBuild");
+		logger.debug("HWSerialNumber",obj.get("HWSerialNumber"));
+		logger.debug("SWVersion",obj.get("SWVersion"));
+		logger.debug("AppVersion",obj.get("AppVersion"));
+		logger.debug("AppBuild",obj.get("AppBuild"));
+		
 		try {
 			//Validate X-MIGHTY-TOKEN Value
 			//JWTKeyGenerator.validateXToken(xToken);
@@ -264,7 +267,7 @@ public class AdminInstrumentController {
 				deviceFirmWareDTO.setCompatibleAND(latestMightyDeviceFirmware.getCompatibleAND());
 				deviceFirmWareDTO.setCompatibleHW(latestMightyDeviceFirmware.getCompatibleHW());
 				deviceFirmWareDTO.setLatestRequired(latestMightyDeviceFirmware.getRequires());
-				deviceFirmWareDTO.setLatestVersion(latestMightyDeviceFirmware.getVersion());
+				deviceFirmWareDTO.setLatestVersion(latestMightyDeviceFirmware.getVersion().trim());
 				
 				logger.debug("hashValue",latestMightyDeviceFirmware.getHashValue());
 				logger.debug("Ht",latestMightyDeviceFirmware.getHashType());

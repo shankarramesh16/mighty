@@ -81,11 +81,31 @@ public class ConsumerInstrumentController {
 		
 				
 		try {
-			ConsumerDeviceDTO consumerDeviceDTO=new ConsumerDeviceDTO();
-			consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
-			consumerDeviceDTO.setPassword(obj.get("Password").toString());
-				 
-			mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
+			ConsumerDeviceDTO consumerDeviceDTO=null;
+			String userIndicator=obj.get("UserIndicator").toString();
+			logger.debug("UserIndicator",userIndicator);
+			if(userIndicator.equalsIgnoreCase("L")){
+				consumerDeviceDTO=new ConsumerDeviceDTO();
+				consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
+			    consumerDeviceDTO.setPassword(obj.get("Password").toString());
+			    	mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
+			}else if(userIndicator.equalsIgnoreCase("F")){
+				consumerDeviceDTO=new ConsumerDeviceDTO();
+				consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
+				consumerDeviceDTO.setEmailId(obj.get("EmailID").toString());
+				consumerDeviceDTO.setPassword(obj.get("Password").toString());
+				consumerDeviceDTO.setUserIndicator(obj.get("UserIndicator").toString());
+				consumerDeviceDTO.setDeviceModel(obj.get("DeviceModel").toString());
+				consumerDeviceDTO.setDeviceId(obj.get("DeviceID").toString());
+				consumerDeviceDTO.setDeviceName(obj.get("DeviceName").toString());
+				consumerDeviceDTO.setDeviceOs(obj.get("DeviceOS").toString());
+				consumerDeviceDTO.setDeviceOsVersion(obj.get("DeviceOSVersion").toString());
+				consumerDeviceDTO.setDeviceType(obj.get("DeviceType").toString());
+				consumerDeviceDTO.setAge(obj.get("Age").toString());
+				consumerDeviceDTO.setGender(obj.get("Gender").toString());	
+					mightyUserInfo=consumerInstrumentServiceImpl.mightyFBUserLogin(consumerDeviceDTO);
+			}
+						
 			responseEntity = new ResponseEntity<String>(String.valueOf(mightyUserInfo.getId()), HttpStatus.OK);
 			} catch(MightyAppException e) {
 			String errorMessage = e.getMessage();
