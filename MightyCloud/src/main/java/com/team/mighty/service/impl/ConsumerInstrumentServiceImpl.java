@@ -616,6 +616,11 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	
+	public MightyDeviceInfo getMightyDeviceOnId(long mightyDeviceId) throws MightyAppException {
+		return mightyDeviceInfoDAO.getMightyDeviceOnId(mightyDeviceId);
+	}
+
+	
 
 
 	

@@ -1,6 +1,7 @@
 package com.team.mighty.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class ConsumerDeviceDTO implements Serializable {
 
@@ -8,6 +9,22 @@ public class ConsumerDeviceDTO implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	public Date getCreatedDt() {
+		return createdDt;
+	}
+
+	public void setCreatedDt(Date createdDt) {
+		this.createdDt = createdDt;
+	}
+
+	public Date getUpdatedDt() {
+		return updatedDt;
+	}
+
+	public void setUpdatedDt(Date updatedDt) {
+		this.updatedDt = updatedDt;
+	}
 
 	private String userName;
 	
@@ -30,8 +47,13 @@ public class ConsumerDeviceDTO implements Serializable {
 	private String mightyDeviceId;
 	
 	private String emailId;
+	private Date createdDt;
+	private Date updatedDt;
 	
+	
+
 	private String password;
+	private String userStatus;
 	
 	private String userIndicator;
 	private String gender;
@@ -49,6 +71,14 @@ public class ConsumerDeviceDTO implements Serializable {
 
 	public void setAge(String age) {
 		this.age = age;
+	}
+	
+	public String getUserStatus() {
+		return userStatus;
+	}
+
+	public void setUserStatus(String userStatus) {
+		this.userStatus = userStatus;
 	}
 
 	private String age;

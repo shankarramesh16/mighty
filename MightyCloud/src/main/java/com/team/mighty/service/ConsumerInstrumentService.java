@@ -41,6 +41,8 @@ public interface ConsumerInstrumentService {
 
 	public MightyUserInfo mightyFBUserLogin(ConsumerDeviceDTO consumerDeviceDTO)throws MightyAppException;
 
+	public MightyDeviceInfo getMightyDeviceOnId(long mightyDeviceId) throws MightyAppException;
+
 	
 	
 

@@ -1,5 +1,6 @@
 package com.team.mighty.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyUserInfo;
+import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.ConsumerInstrumentService;
 
@@ -24,7 +26,28 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 	public String getAllMightyDevicesUserInfoHandler(Map<String,Object> map) throws Exception {
 		logger.debug("Getting mighty device User inform");
 		List<MightyUserInfo> mightUserList=consumerInstrumentServiceImpl.getMightyUserInfo();
-		map.put("mightydeviceuserlist", mightUserList);
+		ConsumerDeviceDTO consumerDeviceDTO=null;
+		//MightyDeviceInfo mightyDeviceInfo=null;
+		List<ConsumerDeviceDTO> consumerDeviceDTOList=null;
+		consumerDeviceDTOList=new ArrayList<ConsumerDeviceDTO>();
+		
+		for(MightyUserInfo m:mightUserList){
+			consumerDeviceDTO= new ConsumerDeviceDTO();
+			consumerDeviceDTO.setUserName(m.getUserName());
+			consumerDeviceDTO.setEmailId(m.getEmailId());
+			consumerDeviceDTO.setUserIndicator(m.getUserIndicator());
+			consumerDeviceDTO.setUserStatus(m.getUserStatus());
+			consumerDeviceDTO.setCreatedDt(m.getCreatedDt());
+			consumerDeviceDTO.setUpdatedDt(m.getUpdatedDt());
+			MightyDeviceInfo mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyDeviceOnId(m.getMightyUsrDevMaps1().get(0).getMightyDeviceId());
+			if(mightyDeviceInfo!=null){
+				consumerDeviceDTO.setDeviceId(mightyDeviceInfo.getDeviceId());
+			}
+			
+			consumerDeviceDTOList.add(consumerDeviceDTO);
+		}
+		
+		map.put("mightydeviceuserlist", consumerDeviceDTOList);
 		return "MightyUser";
 	}
 	

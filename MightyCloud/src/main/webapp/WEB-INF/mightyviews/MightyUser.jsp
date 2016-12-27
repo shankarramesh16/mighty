@@ -1,5 +1,6 @@
 <%@page import="java.util.*"%>
 <%@page import="com.team.mighty.domain.*"%>
+<%@page import="com.team.mighty.dto.*"%>
 <%@page import="org.displaytag.decorator.TotalTableDecorator"%>
 <%@page import="org.displaytag.decorator.MultilevelTotalTableDecorator"%>
 <%@page import="com.itextpdf.text.log.SysoLogger"%>
@@ -35,7 +36,7 @@
 	String fname1=("MightyUserList :").concat(new Date().toString()).concat(".csv");
 	String fname2=("MightyUserList :").concat(new Date().toString()).concat(".xls");
 	String fname3=("MightyUserList :").concat(new Date().toString()).concat(".xml");
-	List<MightyUserInfo> mightyUserList=(List<MightyUserInfo>)request.getAttribute("mightydeviceuserlist");
+	List<ConsumerDeviceDTO> mightyUserList=(List<ConsumerDeviceDTO>)request.getAttribute("mightydeviceuserlist");
 	%>
 	<%@include file="Header.jsp"%> 
 	<div class="wrapper">
@@ -102,14 +103,13 @@
 	
 		 <display:table class="alternateColor" name="<%=mightyUserList%>" id="row"
 			export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
-			<display:column property="id" title="ID" sortable="true" headerClass="sortable" />
-			<display:column property="userName" title="User_Name"	format="{0,date,dd-MM-yyyy}" sortable="true"  />
-				
+			<%-- <display:column property="id" title="ID" sortable="true" headerClass="sortable" /> --%>
+				<display:column property="userName" title="User_Name"	format="{0,date,dd-MM-yyyy}" sortable="true"  />
 				<display:column property="emailId" title="EmailID" sortable="true"  />
 				<display:column property="userIndicator" title="UserIndicator" 	sortable="true"  />
 				<display:column property="userStatus" title="Status" sortable="true"  />
+				<display:column property="deviceId" title="Device_Mapping" sortable="true"  />
 				<display:column property="createdDt" title="CreatedDate" format="{0,date,dd-MM-yyyy}" sortable="true"  />
-				
 				<display:column  property="updatedDt" title="UpdatedDate" format="{0,date,dd-MM-yyyy}" sortable="true" />
 				
 				
