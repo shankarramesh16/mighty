@@ -39,11 +39,14 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 			consumerDeviceDTO.setUserStatus(m.getUserStatus());
 			consumerDeviceDTO.setCreatedDt(m.getCreatedDt());
 			consumerDeviceDTO.setUpdatedDt(m.getUpdatedDt());
+			if(m.getMightyUsrDevMaps1().get(0)!=null){
 			MightyDeviceInfo mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyDeviceOnId(m.getMightyUsrDevMaps1().get(0).getMightyDeviceId());
 			if(mightyDeviceInfo!=null){
 				consumerDeviceDTO.setDeviceId(mightyDeviceInfo.getDeviceId());
+			}else{
+			consumerDeviceDTO.setDeviceId("0");
 			}
-			
+			}
 			consumerDeviceDTOList.add(consumerDeviceDTO);
 		}
 		

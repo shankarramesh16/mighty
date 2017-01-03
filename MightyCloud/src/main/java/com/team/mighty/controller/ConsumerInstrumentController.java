@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.team.mighty.constant.MightyAppConstants;
-import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
@@ -23,6 +22,8 @@ import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.ConsumerInstrumentService;
+import com.team.mighty.service.MightyCommonService;
+import com.team.mighty.utils.JWTKeyGenerator;
 import com.team.mighty.utils.JsonUtil;
 
 /**
@@ -38,10 +39,13 @@ public class ConsumerInstrumentController {
 	@Autowired
 	private ConsumerInstrumentService consumerInstrumentServiceImpl;
 	
+	@Autowired
+	private MightyCommonService mightyCommonServiceImpl;
+	
 	private static final MightyLogger logger = MightyLogger.getLogger(ConsumerInstrumentController.class);
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> userLoginFromApp(@RequestBody UserLoginDTO userLoginDTO) {
+	public ResponseEntity<String> userLoginFromApp(@RequestBody UserLoginDTO userLoginDTO)  {
 		logger.info(" /POST User Login API ", userLoginDTO);
 		logger.debug("userId as",userLoginDTO.getUserId());
 		logger.debug("deviceId as",userLoginDTO.getDeviceId());
@@ -52,6 +56,47 @@ public class ConsumerInstrumentController {
 			userLoginDTO = consumerInstrumentServiceImpl.userLogin(userLoginDTO);
 			String response = JsonUtil.objToJson(userLoginDTO);
 			httpHeaders.add(MightyAppConstants.HTTP_HEADER_TOKEN_NAME, userLoginDTO.getApiToken());
+			httpHeaders.add("AccessTokenExpiration:", userLoginDTO.getAccessTokenExpDate().toString());
+			
+			httpHeaders.add(MightyAppConstants.HTTP_HEADER_BASE_TOKEN_NAME, userLoginDTO.getBaseToken());
+			httpHeaders.add("BaseTokenExpiration:", userLoginDTO.getBaseTokenExpDate().toString());
+			/*try {
+			httpHeaders.add("BaseToken expiration:", String.valueOf(new SimpleDateFormat("MMM dd yyyy HH:mm:ss.SSS zzz")
+			.parse(userLoginDTO.getBaseTokenExpDate().toString()).getTime()));
+			httpHeaders.add("APIToken expiration:", String.valueOf(new SimpleDateFormat("MMM dd yyyy HH:mm:ss.SSS zzz")
+			.parse(userLoginDTO.getAccessTokenExpDate().toString()).getTime()));
+			}catch(ParseException pe){
+				logger.error(pe);
+			}*/
+			
+			responseEntity = new ResponseEntity<String>(response,httpHeaders, HttpStatus.OK);
+		}catch(MightyAppException e) {
+			logger.errorException(e, e.getMessage());
+			userLoginDTO.setStatusCode(e.getHttpStatus().toString());
+			userLoginDTO.setStatusDesc(e.getMessage());
+			String response = JsonUtil.objToJson(userLoginDTO);
+			responseEntity = new ResponseEntity<String>(response, e.getHttpStatus());
+		}
+		return responseEntity;
+	}
+	
+	@RequestMapping(value = "/getRefreshToken", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getRefreshTokenHandler(@RequestHeader(value = MightyAppConstants.HTTP_HEADER_BASE_TOKEN_NAME) String refreshToken) {
+		logger.debug("IN POST Refresh Token");
+		ResponseEntity<String> responseEntity = null;
+		HttpHeaders httpHeaders = new HttpHeaders();
+		UserLoginDTO userLoginDTO=null;
+		try {
+			//Validate BASE-MIGHTY-TOKEN Value
+			JWTKeyGenerator.validateXToken(refreshToken);
+			
+			// Validate Expriy Date
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, refreshToken);
+			
+			userLoginDTO = consumerInstrumentServiceImpl.getRefreshTokenOnBaseToken();
+			String response = JsonUtil.objToJson(userLoginDTO);
+			httpHeaders.add(MightyAppConstants.HTTP_HEADER_TOKEN_NAME, userLoginDTO.getApiToken());
+			httpHeaders.add("APITokenExpiration:", userLoginDTO.getAccessTokenExpDate().toString());
 			responseEntity = new ResponseEntity<String>(response,httpHeaders, HttpStatus.OK);
 		}catch(MightyAppException e) {
 			logger.errorException(e, e.getMessage());
@@ -223,7 +268,7 @@ public class ConsumerInstrumentController {
 	}
 	
 	@RequestMapping(value="/mightyRegistration",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> doMightyRegistration(@RequestBody String received) {
+	public ResponseEntity<String> doMightyRegistration(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
 		logger.info(" /POST Consumer API");
 		
 		JSONObject obj=null;
@@ -238,6 +283,13 @@ public class ConsumerInstrumentController {
 				
 				
 		try {
+			
+			//Validate X-MIGHTY-TOKEN Value
+			JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_THRIDPARTY, xToken);
+			
 			DeviceInfoDTO deviceInfoDTO=new DeviceInfoDTO();
 			deviceInfoDTO.setUserId(obj.get("UserID").toString());
 			deviceInfoDTO.setDeviceId(obj.get("HWSerialNumber").toString());

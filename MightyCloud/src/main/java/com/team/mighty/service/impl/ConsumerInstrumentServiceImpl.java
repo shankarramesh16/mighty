@@ -1,7 +1,5 @@
 package com.team.mighty.service.impl;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Date;
@@ -10,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.transaction.Transactional;
 
@@ -124,12 +123,24 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		if(null != mightyKeyConfig && (mightyKeyConfig.getIsEnabled() != null && 
 				mightyKeyConfig.getIsEnabled().equalsIgnoreCase(MightyAppConstants.IND_Y))) {
 			
-			long ttlMillis = Long.parseLong(SpringPropertiesUtil.getProperty(MightyAppConstants.TTL_LOGIN_KEY));
+			//long ttlMillis = Long.parseLong(SpringPropertiesUtil.getProperty(MightyAppConstants.TTL_LOGIN_KEY));
+			long ttlMillis=TimeUnit.HOURS.toMillis(2);
+			long ttlBaseMillis=TimeUnit.DAYS.toMillis(60);
 			
-			String jwtKey = JWTKeyGenerator.createJWTToken(mightyKeyConfig.getMightyKeyValue(), MightyAppConstants.TOKEN_LOGN_ID,
+			logger.debug("ttlMillisVal",ttlMillis);
+			logger.debug("ttlBaseMillisVal",ttlBaseMillis);
+			
+			UserLoginDTO accessToken = JWTKeyGenerator.createJWTAccessToken(mightyKeyConfig.getMightyKeyValue(), MightyAppConstants.TOKEN_LOGN_ID,
 					MightyAppConstants.SUBJECT_SECURE, ttlMillis);
 			
-			userLoginDTO.setApiToken(jwtKey);
+			UserLoginDTO baseToken = JWTKeyGenerator.createJWTBaseToken(mightyKeyConfig.getMightyKeyValue(), MightyAppConstants.TOKEN_LOGN_ID,
+					MightyAppConstants.SUBJECT_SECURE, ttlBaseMillis);
+						
+			userLoginDTO.setApiToken(accessToken.getApiToken());
+			userLoginDTO.setAccessTokenExpDate(accessToken.getAccessTokenExpDate());
+			
+			userLoginDTO.setBaseToken(baseToken.getBaseToken());
+			userLoginDTO.setBaseTokenExpDate(baseToken.getBaseTokenExpDate());
 		}
 		
 		return userLoginDTO;
@@ -621,7 +632,39 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	
+	public static void main(String[] args) {
+		String ttlMillis = SpringPropertiesUtil.getProperty("mighty.token.login.ttlmillis");
+		System.out.println("ttlMillisVal"+ttlMillis);
+	}
 
+	
+	public UserLoginDTO getRefreshTokenOnBaseToken() throws MightyAppException {
+				
+		MightyKeyConfig mightyKeyConfig = mightyKeyConfigDAO.getKeyConfigValue(MightyAppConstants.KEY_MIGHTY_MOBILE);
+		UserLoginDTO userLoginDTO=null;
+		
+		if(null != mightyKeyConfig && (mightyKeyConfig.getIsEnabled() != null && 
+				mightyKeyConfig.getIsEnabled().equalsIgnoreCase(MightyAppConstants.IND_Y))) {
+			
+			userLoginDTO=new UserLoginDTO();
+			userLoginDTO.setStatusCode(HttpStatus.OK.toString());
+			
+			//long ttlMillis = Long.parseLong(SpringPropertiesUtil.getProperty(MightyAppConstants.TTL_LOGIN_KEY));
+			long ttlMillis=TimeUnit.HOURS.toMillis(2);
+					
+			logger.debug("ttlMillisVal",ttlMillis);
+						
+			UserLoginDTO newAccessToken = JWTKeyGenerator.createJWTAccessToken(mightyKeyConfig.getMightyKeyValue(), MightyAppConstants.TOKEN_LOGN_ID,
+					MightyAppConstants.SUBJECT_SECURE, ttlMillis);
+						
+						
+			userLoginDTO.setApiToken(newAccessToken.getApiToken());
+			userLoginDTO.setAccessTokenExpDate(newAccessToken.getAccessTokenExpDate());
+						
+		}
+		
+		return userLoginDTO;
+	}
 
 	
 }

@@ -15,7 +15,6 @@
 
     
 <script type="text/javascript" src="js/jquery-latest.js"></script>
-<!--   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" type="text/javascript"></script> -->
 
 <script  type="text/javascript">
 function browserIdentity()

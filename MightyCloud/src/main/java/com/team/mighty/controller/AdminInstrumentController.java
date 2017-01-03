@@ -35,6 +35,7 @@ import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;
 import com.team.mighty.service.MightyCommonService;
+import com.team.mighty.utils.JWTKeyGenerator;
 import com.team.mighty.utils.JsonUtil;
 
 @RestController
@@ -173,7 +174,7 @@ public class AdminInstrumentController {
 	}*/
 	
 	@RequestMapping(value = "/deviceFirmware", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getDeviceFirmWare(@RequestBody String received) {
+	public ResponseEntity<String> getDeviceFirmWare(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
 		ResponseEntity<String> responseEntity = null;
 		DeviceFirmWareDTO deviceFirmWareDTO = null;
 		MightyDeviceFirmware reqMightyDeviceFirmware=null;
@@ -199,10 +200,10 @@ public class AdminInstrumentController {
 		
 		try {
 			//Validate X-MIGHTY-TOKEN Value
-			//JWTKeyGenerator.validateXToken(xToken);
+			JWTKeyGenerator.validateXToken(xToken);
 			
 			// Validate Expriy Date
-			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			
 			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
 					.getRequestAttributes()).getRequest();

@@ -24,7 +24,7 @@ public class MightyAppConstants {
 	// MIGHTY Config
 	
 	public static final String HTTP_HEADER_TOKEN_NAME = "X-MIGHTY-TOKEN";
-	
+	public static final String HTTP_HEADER_BASE_TOKEN_NAME = "X-BASE-MIGHTY-TOKEN";
 	public static final String TOKEN_ISSUER_KEY = "mighty.token.issuerName";
 	
 	public static final String TTL_LOGIN_KEY = "mighty.token.login.ttlmillis";
