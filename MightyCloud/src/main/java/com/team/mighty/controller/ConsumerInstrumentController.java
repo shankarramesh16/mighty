@@ -1,5 +1,7 @@
 package com.team.mighty.controller;
 
+import java.text.SimpleDateFormat;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,18 +58,21 @@ public class ConsumerInstrumentController {
 			userLoginDTO = consumerInstrumentServiceImpl.userLogin(userLoginDTO);
 			String response = JsonUtil.objToJson(userLoginDTO);
 			httpHeaders.add(MightyAppConstants.HTTP_HEADER_TOKEN_NAME, userLoginDTO.getApiToken());
-			httpHeaders.add("AccessTokenExpiration:", userLoginDTO.getAccessTokenExpDate().toString());
+			//httpHeaders.add("AccessTokenExpiration",userLoginDTO.getAccessTokenExpDate().toString());
 			
+							
 			httpHeaders.add(MightyAppConstants.HTTP_HEADER_BASE_TOKEN_NAME, userLoginDTO.getBaseToken());
-			httpHeaders.add("BaseTokenExpiration:", userLoginDTO.getBaseTokenExpDate().toString());
-			/*try {
-			httpHeaders.add("BaseToken expiration:", String.valueOf(new SimpleDateFormat("MMM dd yyyy HH:mm:ss.SSS zzz")
-			.parse(userLoginDTO.getBaseTokenExpDate().toString()).getTime()));
-			httpHeaders.add("APIToken expiration:", String.valueOf(new SimpleDateFormat("MMM dd yyyy HH:mm:ss.SSS zzz")
-			.parse(userLoginDTO.getAccessTokenExpDate().toString()).getTime()));
-			}catch(ParseException pe){
+			//httpHeaders.add("BaseTokenExpiration",userLoginDTO.getBaseTokenExpDate().toString());
+			try {
+				/*Epoch format for Access,Base Token Expiration Date*/
+			httpHeaders.add("BaseTokenExpiration", String.valueOf(new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+										.parse(userLoginDTO.getBaseTokenExpDate().toString()).getTime()));
+			
+			httpHeaders.add("AccessTokenExpiration", String.valueOf(new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+										.parse(userLoginDTO.getAccessTokenExpDate().toString()).getTime()));
+			}catch(Exception pe){
 				logger.error(pe);
-			}*/
+			}
 			
 			responseEntity = new ResponseEntity<String>(response,httpHeaders, HttpStatus.OK);
 		}catch(MightyAppException e) {
@@ -96,7 +101,13 @@ public class ConsumerInstrumentController {
 			userLoginDTO = consumerInstrumentServiceImpl.getRefreshTokenOnBaseToken();
 			String response = JsonUtil.objToJson(userLoginDTO);
 			httpHeaders.add(MightyAppConstants.HTTP_HEADER_TOKEN_NAME, userLoginDTO.getApiToken());
-			httpHeaders.add("APITokenExpiration:", userLoginDTO.getAccessTokenExpDate().toString());
+			//httpHeaders.add("APITokenExpiration:", userLoginDTO.getAccessTokenExpDate().toString().trim());
+			try{
+			httpHeaders.add("AccessTokenExpiration", String.valueOf(new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+			.parse(userLoginDTO.getAccessTokenExpDate().toString()).getTime()));
+			}catch(Exception e){
+				logger.error(e);
+			}
 			responseEntity = new ResponseEntity<String>(response,httpHeaders, HttpStatus.OK);
 		}catch(MightyAppException e) {
 			logger.errorException(e, e.getMessage());
@@ -227,45 +238,7 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 	}
 	
-	@RequestMapping(value="/fbLogin",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> doFacebookLogin(@RequestBody String received,@RequestHeader String xToken) {
-		logger.info(" /POST FacebookLogin API");
-		
-		JSONObject obj=null;
-		ResponseEntity<String> responseEntity = null;
-			
-		try{		
-				obj=new JSONObject();
-				obj=(JSONObject)new JSONParser().parse(received);
-		}catch(Exception e){
-			logger.error("System Exception during parsing JSON ",e);
-		}
-				
-				
-		try {
-			ConsumerDeviceDTO consumerDeviceDTO=new ConsumerDeviceDTO();
-			consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
-			consumerDeviceDTO.setFirstName(obj.get("FirstName").toString());	
-			consumerDeviceDTO.setLastName(obj.get("LastName").toString());
-			consumerDeviceDTO.setEmailId(obj.get("EmailID").toString());
-			consumerDeviceDTO.setPassword(obj.get("Password").toString());
-			consumerDeviceDTO.setUserIndicator(obj.get("UserIndicator").toString());
-			//consumerDeviceDTO.setMightyDeviceId(obj.get("MightyDeviceID").toString());
-			consumerDeviceDTO.setDeviceModel(obj.get("DeviceModel").toString());
-			consumerDeviceDTO.setDeviceId(obj.get("DeviceID").toString());
-			consumerDeviceDTO.setDeviceName(obj.get("DeviceName").toString());
-			consumerDeviceDTO.setDeviceOs(obj.get("DeviceOS").toString());
-			consumerDeviceDTO.setDeviceOsVersion(obj.get("DeviceOSVersion").toString());
-			consumerDeviceDTO.setDeviceType(obj.get("DeviceType").toString());
-			consumerInstrumentServiceImpl.registerDevice(consumerDeviceDTO);
-			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
-		} catch(MightyAppException e) {
-			String errorMessage = e.getMessage();
-			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
-			logger.errorException(e, e.getMessage());
-		}
-		return responseEntity;
-	}
+	
 	
 	@RequestMapping(value="/mightyRegistration",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> doMightyRegistration(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
@@ -288,7 +261,7 @@ public class ConsumerInstrumentController {
 			JWTKeyGenerator.validateXToken(xToken);
 			
 			// Validate Expriy Date
-			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_THRIDPARTY, xToken);
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			
 			DeviceInfoDTO deviceInfoDTO=new DeviceInfoDTO();
 			deviceInfoDTO.setUserId(obj.get("UserID").toString());
@@ -328,11 +301,18 @@ public class ConsumerInstrumentController {
 	}
 	
 	@RequestMapping(value = "/{deviceId}",method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> doDeRegistration(@PathVariable String deviceId) {
+	public ResponseEntity<String> doDeRegistration(@PathVariable String deviceId,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
 		logger.info(" /POST Consumer API for MightyDeReg",  deviceId);
 			
 		ResponseEntity<String> responseEntity = null;
 		try {
+			
+			//Validate X-MIGHTY-TOKEN Value
+			JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			
 			consumerInstrumentServiceImpl.deregisterDevice(deviceId);
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		} catch(MightyAppException e) {

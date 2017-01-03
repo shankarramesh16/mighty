@@ -77,10 +77,10 @@ public class AdminInstrumentController {
 		ResponseEntity<String> responseEntity = null;
 		try {
 			//Validate X-MIGHTY-TOKEN Value
-			//JWTKeyGenerator.validateXToken(xToken);
+			JWTKeyGenerator.validateXToken(xToken);
 			
 			// Validate Expriy Date
-			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_THRIDPARTY, xToken);
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_THRIDPARTY, xToken);
 			
 			mightyDeviceOrderInfo = adminInstrumentServiceImpl.createDeviceOrder(mightyDeviceOrderInfo);
 			String response = JsonUtil.objToJson(mightyDeviceOrderInfo);
