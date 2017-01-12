@@ -18,9 +18,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Mighty User View</title>
 <link rel="stylesheet" href="css/displaytag.css" media="all">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/style1.css">
-<link rel="stylesheet" href="css/style2.css"> 
+<link href="css/theme.scss.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="js/jquery-latest.js"></script>
 
 <script  src="https://code.jquery.com/jquery-2.2.0.js"></script>
@@ -29,6 +27,7 @@
 
 <script type="text/javascript" src="js/jquery-latest.js"></script>
 <script type="text/javascript" src="js/jquery.validate.js"></script>
+
 </head>
 
 <body>
@@ -101,16 +100,16 @@
 								</div>
 							</div>
 	
-		 <display:table class="alternateColor" name="<%=mightyUserList%>" id="row"
+		 <display:table  class="alternateColor" name="<%=mightyUserList%>" id="row"
 			export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
-			<%-- <display:column property="id" title="ID" sortable="true" headerClass="sortable" /> --%>
-				<display:column property="userName" title="User_Name"	format="{0,date,dd-MM-yyyy}" sortable="true"  />
-				<display:column property="emailId" title="EmailID" sortable="true"  />
-				<display:column property="userIndicator" title="UserIndicator" 	sortable="true"  />
-				<display:column property="userStatus" title="Status" sortable="true"  />
-				<display:column property="deviceId" title="Device_Mapping" sortable="true"  />
-				<display:column property="createdDt" title="CreatedDate" format="{0,date,dd-MM-yyyy}" sortable="true"  />
-				<display:column  property="updatedDt" title="UpdatedDate" format="{0,date,dd-MM-yyyy}" sortable="true" />
+				 <display:column style="text-align:center;" property="id" title="ID" sortable="true" headerClass="sortable" />
+				<display:column style="text-align:center;" property="userName" title="User_Name"	format="{0,date,dd-MM-yyyy}" sortable="true"  />
+				<display:column style="text-align:center;" property="emailId" title="EmailID" sortable="true"  />
+				<display:column style="text-align:center;" property="userIndicator" title="UserIndicator" 	sortable="true"  />
+				<display:column style="text-align:center;" property="userStatus" title="Status" sortable="true"  />
+				<display:column style="text-align:center;" property="deviceId" title="Device_Mapping" sortable="true"  />
+				<display:column style="text-align:center;" property="createdDt" title="CreatedDate" format="{0,date,dd-MM-yyyy}" sortable="true"  />
+				<display:column style="text-align:center;" property="updatedDt" title="UpdatedDate" format="{0,date,dd-MM-yyyy}" sortable="true" />
 				
 				
 				

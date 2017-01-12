@@ -15,10 +15,29 @@ public class UserLoginDTO  extends BaseResponseDTO implements Serializable {
 	
 	private long userId;
 	
-	private String deviceId;
 	
+
+	private String deviceId;
+	private String pwd;
+	private String newPwd;
 	private List<String> lstMightyDeviceId;
 
+	public String getPwd() {
+		return pwd;
+	}
+
+	public void setPwd(String pwd) {
+		this.pwd = pwd;
+	}
+
+	public String getNewPwd() {
+		return newPwd;
+	}
+
+	public void setNewPwd(String newPwd) {
+		this.newPwd = newPwd;
+	}
+	
 	public long getUserId() {
 		return userId;
 	}

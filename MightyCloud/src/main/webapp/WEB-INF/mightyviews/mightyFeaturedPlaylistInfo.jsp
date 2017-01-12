@@ -101,21 +101,21 @@
 	
 		<display:table class="alternateColor" name="<%=mightyFeaturedPlayList%>" id="row"
 			export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
-				<display:column  property="id" title="ID" sortable="true" headerClass="sortable"/>
-				<display:column property="created_Date" title="Created_Date"	sortable="true" format="{0,date,dd-MM-yyyy}" headerClass="sortable" />
-				<display:column  property="playlist_ID" title="Playlist_ID" sortable="true" headerClass="sortable"/>
+				<display:column  style="text-align:center;" property="id" title="ID" sortable="true" headerClass="sortable"/>
+				<display:column style="text-align:center;" property="created_Date" title="Created_Date"	sortable="true" format="{0,date,dd-MM-yyyy}" headerClass="sortable" />
+				<display:column  style="text-align:center;" property="playlist_ID" title="Playlist_ID" sortable="true" headerClass="sortable"/>
 				
-				<display:column  property="playlist_Name" title="Playlist_Name" sortable="true" headerClass="sortable"/>
+				<display:column  style="text-align:center;" property="playlist_Name" title="Playlist_Name" sortable="true" headerClass="sortable"/>
 				
-				<display:column property="playlist_URL" title="Playlist_URL" 	sortable="true" headerClass="sortable" />
+				<display:column style="text-align:center;" property="playlist_URL" title="Playlist_URL" 	sortable="true" headerClass="sortable" />
 				
-				<display:column property="status" title="Status" 	sortable="true" headerClass="sortable" />
+				<display:column style="text-align:center;" property="status" title="Status" 	sortable="true" headerClass="sortable" />
 					
-				<display:column property="created_By" title="Created_By" 	sortable="true" headerClass="sortable" />
+				<display:column style="text-align:center;" property="created_By" title="Created_By" 	sortable="true" headerClass="sortable" />
 						
-				<display:column property="updated_By" title="Updated_By" 	sortable="true" headerClass="sortable" />
+				<display:column style="text-align:center;" property="updated_By" title="Updated_By" 	sortable="true" headerClass="sortable" />
 				
-				<display:column property="updated_Date" title="Updated_Date" 	format="{0,date,dd-MM-yyyy}" sortable="true" headerClass="sortable" />
+				<display:column style="text-align:center;" property="updated_Date" title="Updated_Date" 	format="{0,date,dd-MM-yyyy}" sortable="true" headerClass="sortable" />
 				
 				
 				     		   

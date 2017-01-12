@@ -103,19 +103,23 @@
 	
 		 <display:table class="alternateColor" name="<%=mightDeviceList%>" id="row"
 			export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
-				<display:column property="id" title="ID" sortable="true" headerClass="sortable" />
+				<display:column style="text-align:center;" property="id" title="ID" sortable="true" headerClass="sortable" />
 							
-				<display:column  property="deviceId" title="Device_ID/Hw_SerialNo."	sortable="true" headerClass="sortable" />
+				<display:column  style="text-align:center;" property="deviceId" title="Device_ID/Hw_SerialNo."	sortable="true" headerClass="sortable" />
 				
-				<display:column  property="deviceName" title="Device_Name" sortable="true" headerClass="sortable"/>
+				<display:column  style="text-align:center;" property="deviceName" title="Device_Name" sortable="true" headerClass="sortable"/>
 				
-				<display:column  property="deviceType" title="Device_Type" sortable="true" headerClass="sortable"/>
+				<display:column  style="text-align:center;" property="deviceType" title="Device_Type" sortable="true" headerClass="sortable"/>
 				
-				<display:column property="swVersion" title="Sw_Version"	sortable="true" headerClass="sortable" />
+				<display:column style="text-align:center;" property="swVersion" title="Sw_Version"	sortable="true" headerClass="sortable" />
 				
-				<display:column property="isRegistered" title="Is_Registered" 	sortable="true" headerClass="sortable" />
+				<display:column style="text-align:center;" property="appBuild" title="App_Build"	sortable="true" headerClass="sortable" />
 				
-				<display:column  property="isActive" title="Is_Active" sortable="true" headerClass="sortable"/>
+				<%-- <display:column style="text-align:center;" property="appVersion" title="App_Version"	sortable="true" headerClass="sortable" />
+				 --%>
+				<display:column style="text-align:center;" property="isRegistered" title="Is_Registered" 	sortable="true" headerClass="sortable" />
+				
+				<display:column  style="text-align:center;" property="isActive" title="Is_Active" sortable="true" headerClass="sortable"/>
 				
 			
      		   

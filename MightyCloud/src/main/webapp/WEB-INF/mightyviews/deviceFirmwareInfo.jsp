@@ -17,7 +17,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Mighty Device Firmware View</title>
-<link rel="stylesheet" href="css/displaytag.css" media="all">
+<!-- <link rel="stylesheet" href="css/displaytag.css" media="all"> -->
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/style1.css">
 <link rel="stylesheet" href="css/style2.css"> 
@@ -133,27 +133,28 @@ function fillFields(id) {
 							</div>
 							
 							
+	<div id="ratesTableDiv" style="overflow-y: auto;" >
 	
 		 <display:table class="alternateColor" name="<%=deviceFirmwareList%>" id="row"
 			export="true" requestURI=""  defaultsort="1" defaultorder="descending" pagesize="50">
-			<display:column property="id" title="ID" sortable="true" headerClass="sortable" />
-			 <display:column property="createdDt" title="Created_Date"	format="{0,date,dd-MM-yyyy}" sortable="true"  />
+			<display:column style="text-align:center;" property="id" title="ID" sortable="true" headerClass="sortable" />
+			 <display:column style="text-align:center;" property="createdDt" title="Created_Date"	format="{0,date,dd-MM-yyyy}" sortable="true"  />
 				
-				<display:column property="fileName" title="FileName" sortable="true"  />
-				<display:column property="version" title="Version" 	sortable="true"  />
-				<display:column property="hashValue" title="HashValue" sortable="true"  />
-				<display:column property="hashType" title="HashType" sortable="true"  />
-				<display:column property="requires" title="Requires" sortable="true"  />
-				<display:column property="compatibleIOS" title="Compatible_IOS" sortable="true"  />
-				<display:column property="compatibleAND" title="compatible_AND" sortable="true"  />
-				<display:column property="compatibleHW" title="compatible_HW" sortable="true"  />
+				<display:column style="text-align:center;" property="fileName" title="FileName" sortable="true"  />
+				<display:column style="text-align:center;" property="version" title="Version" 	sortable="true"  />
+				<display:column style="text-align:center;" property="hashValue" title="HashValue" sortable="true"  />
+				<display:column style="text-align:center;" property="hashType" title="HashType" sortable="true"  />
+				<display:column style="text-align:center;" property="requires" title="Requires" sortable="true"  />
+				<display:column style="text-align:center;" property="compatibleIOS" title="Compatible_IOS" sortable="true"  />
+				<display:column style="text-align:center;" property="compatibleAND" title="compatible_AND" sortable="true"  />
+				<display:column style="text-align:center;" property="compatibleHW" title="compatible_HW" sortable="true"  />
 				
 				
-				<display:column  property="effectiveDt" title="Effective_Date" format="{0,date,dd-MM-yyyy}" sortable="true" />
+				<display:column style="text-align:center;" property="effectiveDt" title="Effective_Date" format="{0,date,dd-MM-yyyy}" sortable="true" />
 				
-				<display:column  property="status" title="Status" sortable="true" />
+				<display:column style="text-align:center;" property="status" title="Status" sortable="true" />
 				
-				<display:column  title="Action"   ><a onclick="fillFields('${row.id}')"title="Delete"><i><img src="images/delete1.png" /></i></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<display:column style="text-align:center;" title="Action"   ><a onclick="fillFields('${row.id}')"title="Delete"><i><img src="images/delete1.png" /></i></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				</display:column>
 				
 				
@@ -162,7 +163,7 @@ function fillFields(id) {
 			 <display:setProperty name="export.excel.filename" value="<%=fname2%>" />
 			 <display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
 		</display:table>
-	
+	<div>
 		</div>
 						
 					

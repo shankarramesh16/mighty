@@ -26,6 +26,15 @@ public class ConsumerDeviceDTO implements Serializable {
 		this.updatedDt = updatedDt;
 	}
 
+	private Long id;
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	private String userName;
 	
 	private String firstName;

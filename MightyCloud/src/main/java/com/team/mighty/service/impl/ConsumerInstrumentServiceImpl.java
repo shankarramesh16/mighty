@@ -73,7 +73,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException("Invalid Request, User Login Request is empty", HttpStatus.BAD_REQUEST);
 		}
 		
-		if(userLoginDTO.getUserId() <=0 || (userLoginDTO.getDeviceId().equals(null) || "".equals(userLoginDTO.getDeviceId()))) {
+		if(userLoginDTO.getUserId() <=0 ) {
 			throw new MightyAppException("Invalid Request, User Id or Phone Device Id is empty", HttpStatus.BAD_REQUEST);
 		}
 		
@@ -124,8 +124,12 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 				mightyKeyConfig.getIsEnabled().equalsIgnoreCase(MightyAppConstants.IND_Y))) {
 			
 			//long ttlMillis = Long.parseLong(SpringPropertiesUtil.getProperty(MightyAppConstants.TTL_LOGIN_KEY));
+			
 			long ttlMillis=TimeUnit.HOURS.toMillis(2);
 			long ttlBaseMillis=TimeUnit.DAYS.toMillis(60);
+			
+			//long ttlMillis=TimeUnit.MINUTES.toMillis(1);
+			//long ttlBaseMillis=TimeUnit.MINUTES.toMillis(5);
 			
 			logger.debug("ttlMillisVal",ttlMillis);
 			logger.debug("ttlBaseMillisVal",ttlBaseMillis);
@@ -178,12 +182,13 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		mightyUserInfo=getUserByNameAndEmailWithIndicator(consumerDeviceDto.getUserName(),consumerDeviceDto.getEmailId(),consumerDeviceDto.getUserIndicator());
 		String phoneDeviceId = consumerDeviceDto.getDeviceId();
 		if(mightyUserInfo!=null) {
-			// Check any de-activated account
 			if(mightyUserInfo.getEmailId().equalsIgnoreCase(consumerDeviceDto.getEmailId())){
 				throw new MightyAppException(" Emailaddress is already registered", HttpStatus.CONFLICT);
 			}else if(mightyUserInfo.getUserName().equalsIgnoreCase(consumerDeviceDto.getUserName())){
 				throw new MightyAppException(" Username is already registered", HttpStatus.CONFLICT);
 			}
+			/*
+			// Check any de-activated account---Not Required right now during Mighty User registration. 
 			MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
 			if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
 					logger.info(" Already Disbaled account is there and activating that one ------- ");
@@ -192,9 +197,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 					mightyUserInfo=mightyDeviceUserMapping.getMightyUserInfo();
 					return mightyUserInfo;
 				} else if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_Y)) {
-					throw new MightyAppException(" User details is already registered", HttpStatus.CONFLICT);
+					throw new MightyAppException("User details is already registered", HttpStatus.CONFLICT);
 				}
-			 
+			 */
 		 }
 					
 		
@@ -576,18 +581,27 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 				
 	}
 
-	private void registerMightyWithUser(DeviceInfoDTO deviceInfoDTO) {
+	private void registerMightyWithUser(DeviceInfoDTO deviceInfoDTO) throws MightyAppException {
 		MightyUserInfo mightyUserInfo = null;
 		mightyUserInfo=getUserById(deviceInfoDTO.getUserId());
 		if(mightyUserInfo!=null) {
 			// Check any de-activated account
 			MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
+			
 			if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
-					logger.info(" Already Disbaled account is there --------- ");
-					throw new MightyAppException(" This mighty device for this user is not activated", HttpStatus.EXPECTATION_FAILED);
-					
-				} else if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_Y)) {
+							logger.info(" Already Disbaled account is there and activating that one ------- ");
+							logger.info("active and de-active status",mightyDeviceUserMapping.getRegistrationStatus());
+							mightyDeviceUserMapping.setRegistrationStatus(MightyAppConstants.IND_Y);
+							mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
+							
+							MightyDeviceInfo mightyDeviceInfo=mightyDeviceInfoDAO.getMightyDeviceOnId(mightyDeviceUserMapping.getMightyDeviceId());
+							if(mightyDeviceInfo!=null && mightyDeviceInfo.getIsRegistered().equals(MightyAppConstants.IND_N)){
+								mightyDeviceInfo.setIsRegistered(MightyAppConstants.IND_Y);
+								mightyDeviceInfoDAO.save(mightyDeviceInfo);	
+							}
+			} else if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_Y)) {
 					//MightyDeviceOrderInfo mightyDeviceOrderInfo=mightyDeviceOrderDAO.getDeviceOrderById(deviceInfoDTO.getDeviceId());
+					logger.info("active and de-active status",mightyDeviceUserMapping.getRegistrationStatus());
 					MightyDeviceInfo mightyDeviceInfo=new MightyDeviceInfo();
 					mightyDeviceInfo.setDeviceId(deviceInfoDTO.getDeviceId());
 					mightyDeviceInfo.setDeviceName(deviceInfoDTO.getDeviceName());
@@ -651,6 +665,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			
 			//long ttlMillis = Long.parseLong(SpringPropertiesUtil.getProperty(MightyAppConstants.TTL_LOGIN_KEY));
 			long ttlMillis=TimeUnit.HOURS.toMillis(2);
+			//long ttlMillis=TimeUnit.MINUTES.toMillis(1);
 					
 			logger.debug("ttlMillisVal",ttlMillis);
 						
@@ -664,6 +679,22 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		}
 		
 		return userLoginDTO;
+	}
+
+	
+	public void updatePwd(UserLoginDTO userLoginDTO) throws MightyAppException {
+		try{
+			MightyUserInfo mightyUserInfo=mightyUserInfoDAO.getUserById(userLoginDTO.getUserId());
+				if(mightyUserInfo.getPassword().trim().equalsIgnoreCase(userLoginDTO.getPwd().trim())){
+						mightyUserInfo.setPassword(userLoginDTO.getNewPwd());
+						mightyUserInfoDAO.save(mightyUserInfo);
+				}else{
+						throw new MightyAppException("Invalid password", HttpStatus.EXPECTATION_FAILED);
+				}
+		}catch(Exception e){
+			throw new MightyAppException("Invalid password", HttpStatus.EXPECTATION_FAILED);
+		}
+		
 	}
 
 	

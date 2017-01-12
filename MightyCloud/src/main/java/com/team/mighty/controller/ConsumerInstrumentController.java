@@ -50,8 +50,7 @@ public class ConsumerInstrumentController {
 	public ResponseEntity<String> userLoginFromApp(@RequestBody UserLoginDTO userLoginDTO)  {
 		logger.info(" /POST User Login API ", userLoginDTO);
 		logger.debug("userId as",userLoginDTO.getUserId());
-		logger.debug("deviceId as",userLoginDTO.getDeviceId());
-		
+				
 		ResponseEntity<String> responseEntity = null;
 		HttpHeaders httpHeaders = new HttpHeaders();
 		try {
@@ -119,9 +118,65 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 	}
 	
-
-	
 	@RequestMapping(value="/mightyAppLogin",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> mightyUserLoginHandler(@RequestBody String received) {
+		logger.info(" /POST mightyAppLogin API");
+		
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyUserInfo mightyUserInfo=null;
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON",e);
+		}
+		
+				
+		try {
+			ConsumerDeviceDTO consumerDeviceDTO=null;
+			logger.debug("userindicator",obj.get("UserIndicator"));
+			if(obj.get("UserIndicator")!=null){
+				if(obj.get("UserIndicator").toString().equalsIgnoreCase("F")){
+					consumerDeviceDTO=new ConsumerDeviceDTO();
+					consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
+					consumerDeviceDTO.setEmailId(obj.get("EmailID").toString());
+					consumerDeviceDTO.setPassword(obj.get("Password").toString());
+					consumerDeviceDTO.setUserIndicator(obj.get("UserIndicator").toString());
+					consumerDeviceDTO.setDeviceModel(obj.get("DeviceModel").toString());
+					consumerDeviceDTO.setDeviceId(obj.get("DeviceID").toString());
+					consumerDeviceDTO.setDeviceName(obj.get("DeviceName").toString());
+					consumerDeviceDTO.setDeviceOs(obj.get("DeviceOS").toString());
+					consumerDeviceDTO.setDeviceOsVersion(obj.get("DeviceOSVersion").toString());
+					consumerDeviceDTO.setDeviceType(obj.get("DeviceType").toString());
+					consumerDeviceDTO.setAge(obj.get("Age").toString());
+					consumerDeviceDTO.setGender(obj.get("Gender").toString());	
+						mightyUserInfo=consumerInstrumentServiceImpl.mightyFBUserLogin(consumerDeviceDTO);
+				}else if(obj.get("UserIndicator").toString().equalsIgnoreCase("L")){
+					consumerDeviceDTO=new ConsumerDeviceDTO();
+					consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
+				    consumerDeviceDTO.setPassword(obj.get("Password").toString());
+				    mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
+				}
+			}else{
+				
+					consumerDeviceDTO=new ConsumerDeviceDTO();
+					consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
+				    consumerDeviceDTO.setPassword(obj.get("Password").toString());
+				    mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
+			 }
+			
+						
+			responseEntity = new ResponseEntity<String>(String.valueOf(mightyUserInfo.getId()), HttpStatus.OK);
+			} catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+		return responseEntity;
+	}
+	
+	/*@RequestMapping(value="/mightyAppLogin",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> mightyUserLoginHandler(@RequestBody String received) {
 		logger.info(" /POST mightyAppLogin API");
 		
@@ -169,7 +224,7 @@ public class ConsumerInstrumentController {
 			logger.errorException(e, e.getMessage());
 		}
 		return responseEntity;
-	}
+	}*/
 	
 	/*@RequestMapping(value="/grafana",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> IoITesting(@RequestBody String received) {
@@ -201,7 +256,7 @@ public class ConsumerInstrumentController {
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> doRegistration(@RequestBody String received) {
 		logger.info(" /POST Consumer API");
-		
+		logger.debug("received",received);
 		JSONObject obj=null;
 		ResponseEntity<String> responseEntity = null;
 			
@@ -215,9 +270,9 @@ public class ConsumerInstrumentController {
 				
 		try {
 			ConsumerDeviceDTO consumerDeviceDTO=new ConsumerDeviceDTO();
-			consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
-			consumerDeviceDTO.setEmailId(obj.get("EmailID").toString());
-			consumerDeviceDTO.setPassword(obj.get("Password").toString());
+			consumerDeviceDTO.setUserName(obj.get("UserName").toString().trim());	
+			consumerDeviceDTO.setEmailId(obj.get("EmailID").toString().trim());
+			consumerDeviceDTO.setPassword(obj.get("Password").toString().trim());
 			consumerDeviceDTO.setUserIndicator(obj.get("UserIndicator").toString());
 			//consumerDeviceDTO.setMightyDeviceId(obj.get("MightyDeviceID").toString());
 			consumerDeviceDTO.setDeviceModel(obj.get("DeviceModel").toString());
@@ -238,6 +293,8 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 	}
 	
+	
+		
 	
 	
 	@RequestMapping(value="/mightyRegistration",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -322,6 +379,75 @@ public class ConsumerInstrumentController {
 		}
 		return responseEntity;
 	}
+	
+	@RequestMapping(value="/changePwd", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> changePasswordHandler(@RequestBody String received)  {
+		logger.info(" /POST mightyChange pwd request API");
+		UserLoginDTO userLoginDTO=null;
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyUserInfo mightyUserInfo=null;
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON",e);
+		}
+		
+				
+		try {
+			logger.debug("userId",obj.get("userId").toString());
+			logger.debug("Password",obj.get("Password").toString());
+			logger.debug("NewPassord",obj.get("NewPassword").toString());
+				userLoginDTO=new UserLoginDTO();
+				userLoginDTO.setUserId(Long.valueOf(obj.get("userId").toString()));	
+				userLoginDTO.setPwd(obj.get("Password").toString());
+				userLoginDTO.setNewPwd(obj.get("NewPassword").toString());
+				consumerInstrumentServiceImpl.updatePwd(userLoginDTO);
+		}catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+	}
+	
+	
+	/*@RequestMapping(value= {"/resetPwd"}, method=RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+	public String forgetPasswordActionHandler(@RequestBody String received) throws Exception{
+		logger.debug("IN Reset Pwd");
+
+		String password = new PasswordGenerator().randomString(10);
+		logger.debug("Password generator "+password);
+		String subject = "Password Reset";
+		AdminUser adminUser=loginService.getUserByEmail(email);
+		
+		if(adminUser!=null){
+			adminUser.setPassword(password);
+			adminUser.setPwdChangedDate(null);
+			AdminUser admin=loginService.setGeneratedPwd(adminUser);
+				if (admin!=null) {
+					String message = loginService.getPasswordResetMessage(admin);
+				 SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
+				try{
+				mail.send(admin.getEmailaddress(), subject, message);
+				redirectAttributes.addFlashAttribute("status",
+						"<div class='success'>Password Reset Successfull</div");
+				}catch(Exception ex){
+					logger.error("System Error,",ex);
+				}
+			} else {
+				redirectAttributes.addFlashAttribute("status",	"<div class='failure'>Operation Failed</div");
+			}
+		}else{
+			redirectAttributes.addFlashAttribute("status",	"<div class='failure'>Invalid Email Address</div");
+			return "redirect:/forgotPassword";
+		}
+			return "redirect:/";
+		
+		
+	}*/
 
 	
 }

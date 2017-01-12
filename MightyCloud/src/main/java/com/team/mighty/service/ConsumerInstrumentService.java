@@ -44,6 +44,8 @@ public interface ConsumerInstrumentService {
 	public MightyDeviceInfo getMightyDeviceOnId(long mightyDeviceId) throws MightyAppException;
 
 	public UserLoginDTO getRefreshTokenOnBaseToken() throws MightyAppException;
+
+	public void updatePwd(UserLoginDTO userLoginDTO) throws MightyAppException;
 	
 	
 
