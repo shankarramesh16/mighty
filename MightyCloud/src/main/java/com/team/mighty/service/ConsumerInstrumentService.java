@@ -2,6 +2,7 @@ package com.team.mighty.service;
 
 import java.util.List;
 
+import com.team.mighty.domain.AdminUser;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
@@ -46,7 +47,14 @@ public interface ConsumerInstrumentService {
 	public UserLoginDTO getRefreshTokenOnBaseToken() throws MightyAppException;
 
 	public void updatePwd(UserLoginDTO userLoginDTO) throws MightyAppException;
-	
+
+	public MightyUserInfo getUserByEmail(String email) throws MightyAppException;
+
+	public MightyUserInfo setGeneratedPwd(MightyUserInfo mightyUserInfo) throws MightyAppException;
+
+	public String getPasswordResetMessage(MightyUserInfo mightyUser) throws MightyAppException;
+
+	public void changePwd(UserLoginDTO userLoginDTO) throws MightyAppException;
 	
 
 }

@@ -1,6 +1,7 @@
 package com.team.mighty.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,13 +18,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.team.mighty.constant.MightyAppConstants;
+import com.team.mighty.constant.PasswordGenerator;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
+import com.team.mighty.notification.SendMail;
 import com.team.mighty.service.ConsumerInstrumentService;
+import com.team.mighty.service.LoginService;
 import com.team.mighty.service.MightyCommonService;
 import com.team.mighty.utils.JWTKeyGenerator;
 import com.team.mighty.utils.JsonUtil;
@@ -43,6 +47,9 @@ public class ConsumerInstrumentController {
 	
 	@Autowired
 	private MightyCommonService mightyCommonServiceImpl;
+	
+	@Autowired
+	private LoginService loginService;
 	
 	private static final MightyLogger logger = MightyLogger.getLogger(ConsumerInstrumentController.class);
 
@@ -414,41 +421,102 @@ public class ConsumerInstrumentController {
 	}
 	
 	
-	/*@RequestMapping(value= {"/resetPwd"}, method=RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
-	public String forgetPasswordActionHandler(@RequestBody String received) throws Exception{
-		logger.debug("IN Reset Pwd");
-
-		String password = new PasswordGenerator().randomString(10);
-		logger.debug("Password generator "+password);
-		String subject = "Password Reset";
-		AdminUser adminUser=loginService.getUserByEmail(email);
-		
-		if(adminUser!=null){
-			adminUser.setPassword(password);
-			adminUser.setPwdChangedDate(null);
-			AdminUser admin=loginService.setGeneratedPwd(adminUser);
-				if (admin!=null) {
-					String message = loginService.getPasswordResetMessage(admin);
-				 SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
-				try{
-				mail.send(admin.getEmailaddress(), subject, message);
-				redirectAttributes.addFlashAttribute("status",
-						"<div class='success'>Password Reset Successfull</div");
-				}catch(Exception ex){
-					logger.error("System Error,",ex);
-				}
-			} else {
-				redirectAttributes.addFlashAttribute("status",	"<div class='failure'>Operation Failed</div");
-			}
-		}else{
-			redirectAttributes.addFlashAttribute("status",	"<div class='failure'>Invalid Email Address</div");
-			return "redirect:/forgotPassword";
+	
+	@RequestMapping(value="/changePassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> changePwdHandler(@RequestBody String received)  {
+		logger.info(" /POST mightyChange pwd request API");
+		UserLoginDTO userLoginDTO=null;
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyUserInfo mightyUserInfo=null;
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON",e);
 		}
-			return "redirect:/";
 		
+				
+		try {
+			logger.debug("UserName",obj.get("UserName").toString());
+			logger.debug("NewPassord",obj.get("NewPassword").toString());
+				userLoginDTO=new UserLoginDTO();
+				userLoginDTO.setUserName(obj.get("UserName").toString());	
+				userLoginDTO.setNewPwd(obj.get("NewPassword").toString());
+				userLoginDTO.setPwdChangedDate(new Date(System.currentTimeMillis()));
+				consumerInstrumentServiceImpl.changePwd(userLoginDTO);
+				responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+		}catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+	}
+	
+	
+	@RequestMapping(value= {"/resetPassword"}, method=RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> resetPasswordHandler(@RequestBody String received) throws Exception{
+			logger.info(" /POST ResetPassword API");
 		
-	}*/
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyUserInfo mightyUserInfo=null;
+		UserLoginDTO userLoginDTO=null;
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON",e);
+		}
 
+		
+				
+		try {
+			String password = new PasswordGenerator().randomString(10);
+			logger.debug("Password generator "+password);
+			String subject = "Password Reset";
+		
+			mightyUserInfo=consumerInstrumentServiceImpl.getUserByEmail(String.valueOf(obj.get("Email")));
+				
+				if(mightyUserInfo!=null){
+					mightyUserInfo.setPassword(password);
+					mightyUserInfo.setPwdChangedDate(null);
+						MightyUserInfo mightyUser= null;
+							mightyUser=consumerInstrumentServiceImpl.setGeneratedPwd(mightyUserInfo);
+						if (mightyUser!=null){
+							String message = consumerInstrumentServiceImpl.getPasswordResetMessage(mightyUser);
+							SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
+								try{
+								mail.send(mightyUser.getEmailId(), subject, message);
+								
+								}catch(Exception ex){
+									logger.error("System Error,",ex);
+								}
+								userLoginDTO=new UserLoginDTO();
+								userLoginDTO.setPwdChangedDate(mightyUser.getPwdChangedDate());	
+								String response = JsonUtil.objToJson(userLoginDTO);	
+								responseEntity = new ResponseEntity<String>(response,HttpStatus.OK);
+						}else{
+								responseEntity = new ResponseEntity<String>(HttpStatus.NOT_ACCEPTABLE);
+						}
+						
+						
+		}else{
+					
+					responseEntity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+					
+		}catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+
+	}
 	
 }
 	

@@ -1,6 +1,7 @@
 package com.team.mighty.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class UserLoginDTO  extends BaseResponseDTO implements Serializable {
@@ -14,12 +15,20 @@ public class UserLoginDTO  extends BaseResponseDTO implements Serializable {
 	private String userStatus;
 	
 	private long userId;
-	
-	
-
+	private Date pwdChangedDate;
 	private String deviceId;
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	private String pwd;
 	private String newPwd;
+	
+	private String userName;
 	private List<String> lstMightyDeviceId;
 
 	public String getPwd() {
@@ -40,6 +49,14 @@ public class UserLoginDTO  extends BaseResponseDTO implements Serializable {
 	
 	public long getUserId() {
 		return userId;
+	}
+	
+	public Date getPwdChangedDate() {
+		return pwdChangedDate;
+	}
+
+	public void setPwdChangedDate(Date pwdChangedDate) {
+		this.pwdChangedDate = pwdChangedDate;
 	}
 
 	public void setUserId(long userId) {

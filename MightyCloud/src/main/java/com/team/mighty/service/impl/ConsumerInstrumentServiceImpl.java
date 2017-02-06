@@ -219,7 +219,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			mightyUserInfo.setUserIndicator(consumerDeviceDto.getUserIndicator());
 			mightyUserInfo.setCreatedDt(new Date(System.currentTimeMillis()));
 			mightyUserInfo.setUpdatedDt(new Date(System.currentTimeMillis()));
-			
+			mightyUserInfo.setPwdChangedDate(new Date(System.currentTimeMillis()));
 		}
 		MightyDeviceUserMapping mightyDeviceUserMapping=null;
 		mightyDeviceUserMapping = new MightyDeviceUserMapping();
@@ -695,6 +695,39 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException("Invalid password", HttpStatus.EXPECTATION_FAILED);
 		}
 		
+	}
+
+	public MightyUserInfo getUserByEmail(String email) throws MightyAppException {
+		return mightyUserInfoDAO.getUserByEmail(email);
+	}
+
+	
+	public MightyUserInfo setGeneratedPwd(MightyUserInfo mightyUserInfo) throws MightyAppException {
+		return mightyUserInfoDAO.save(mightyUserInfo);
+	}
+
+	
+	public String getPasswordResetMessage(MightyUserInfo mightyUser) throws MightyAppException {
+		return "Hi "
+				+mightyUser.getUserName()				
+				+",<br/><br/>Your Password has been reset. To access Mighty App use the below information.<br/><br/> "
+				+ ".<br/><br/>"
+				+"<br/><br/>Login Id - "+mightyUser.getUserName()
+				+"<br/><br/>Password - "+mightyUser.getPassword()
+				+"<br/><br/>Regards,<br/>" 
+				+ "<a href='https://bemighty.com/'>https://bemighty.com/</a>\n"
+						+" Mighty Team."
+						+"</a>"+"<br/>---------------<br/> <i><u>Note:</u> This is a system generated email. Please do not reply.</i>";
+	
+		
+	}
+
+	
+	public void changePwd(UserLoginDTO userLoginDTO) throws MightyAppException {
+		MightyUserInfo mightyUserInfo=mightyUserInfoDAO.getUserByName(userLoginDTO.getUserName());
+		mightyUserInfo.setPassword(userLoginDTO.getNewPwd());
+		mightyUserInfo.setPwdChangedDate((Date)userLoginDTO.getPwdChangedDate());
+		mightyUserInfoDAO.save(mightyUserInfo);
 	}
 
 	

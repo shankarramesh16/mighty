@@ -59,6 +59,9 @@ public class MightyUserInfo extends BaseEntityInfo {
 	
 	@Column(name = "GENDER")
 	private String gender;
+	
+	@Column(name = "PwdChangedDate")
+	private Date pwdChangedDate;
 
 
 	@Column(name = "USER_STATUS")
@@ -118,6 +121,14 @@ public class MightyUserInfo extends BaseEntityInfo {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+	
+	public Date getPwdChangedDate() {
+		return pwdChangedDate;
+	}
+
+	public void setPwdChangedDate(Date pwdChangedDate) {
+		this.pwdChangedDate = pwdChangedDate;
 	}
 
 	public String getFirstName() {

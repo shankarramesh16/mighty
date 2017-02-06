@@ -42,6 +42,15 @@ public class ConsumerDeviceDTO implements Serializable {
 	private String lastName;
 	
 	private String deviceId;
+	public Date getPwdChangedDate() {
+		return pwdChangedDate;
+	}
+
+	public void setPwdChangedDate(Date pwdChangedDate) {
+		this.pwdChangedDate = pwdChangedDate;
+	}
+
+	private Date pwdChangedDate;
 	
 	private String deviceName;
 	
