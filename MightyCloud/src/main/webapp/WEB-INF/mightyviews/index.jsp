@@ -171,7 +171,6 @@ function validate() {
 	});	
 	</script>
 	
-</div>	
-	
+
   </body>
 </html>

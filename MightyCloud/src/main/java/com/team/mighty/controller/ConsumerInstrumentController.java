@@ -1,7 +1,6 @@
 package com.team.mighty.controller;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -34,7 +33,7 @@ import com.team.mighty.utils.JsonUtil;
 
 /**
  * 
- * @author Shankara
+ * @author Shankara,Vikky
  *
  */
 
@@ -163,6 +162,7 @@ public class ConsumerInstrumentController {
 					consumerDeviceDTO=new ConsumerDeviceDTO();
 					consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
 				    consumerDeviceDTO.setPassword(obj.get("Password").toString());
+				    consumerDeviceDTO.setUserIndicator(obj.get("UserIndicator").toString());
 				    mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
 				}
 			}else{
@@ -170,6 +170,7 @@ public class ConsumerInstrumentController {
 					consumerDeviceDTO=new ConsumerDeviceDTO();
 					consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
 				    consumerDeviceDTO.setPassword(obj.get("Password").toString());
+				    consumerDeviceDTO.setUserIndicator("L");
 				    mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
 			 }
 			
@@ -388,7 +389,7 @@ public class ConsumerInstrumentController {
 	}
 	
 	@RequestMapping(value="/changePwd", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> changePasswordHandler(@RequestBody String received)  {
+	public ResponseEntity<String> changePasswordHandler(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken)  {
 		logger.info(" /POST mightyChange pwd request API");
 		UserLoginDTO userLoginDTO=null;
 		JSONObject obj=null;
@@ -403,6 +404,13 @@ public class ConsumerInstrumentController {
 		
 				
 		try {
+			//Validate X-MIGHTY-TOKEN Value
+			JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			
+			
 			logger.debug("userId",obj.get("userId").toString());
 			logger.debug("Password",obj.get("Password").toString());
 			logger.debug("NewPassord",obj.get("NewPassword").toString());
@@ -422,8 +430,8 @@ public class ConsumerInstrumentController {
 	
 	
 	
-	@RequestMapping(value="/changePassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> changePwdHandler(@RequestBody String received)  {
+	/*@RequestMapping(value="/changePassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> changePwdHandler(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken)  {
 		logger.info(" /POST mightyChange pwd request API");
 		UserLoginDTO userLoginDTO=null;
 		JSONObject obj=null;
@@ -438,8 +446,15 @@ public class ConsumerInstrumentController {
 		
 				
 		try {
-			logger.debug("UserName",obj.get("UserName").toString());
-			logger.debug("NewPassord",obj.get("NewPassword").toString());
+			
+				//Validate X-MIGHTY-TOKEN Value
+				JWTKeyGenerator.validateXToken(xToken);
+				
+				// Validate Expriy Date
+				mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+				
+				logger.debug("UserName",obj.get("UserName").toString());
+				logger.debug("NewPassord",obj.get("NewPassword").toString());
 				userLoginDTO=new UserLoginDTO();
 				userLoginDTO.setUserName(obj.get("UserName").toString());	
 				userLoginDTO.setNewPwd(obj.get("NewPassword").toString());
@@ -453,12 +468,12 @@ public class ConsumerInstrumentController {
 		}
 				
 		return responseEntity;
-	}
+	}*/
 	
 	
 	@RequestMapping(value= {"/resetPassword"}, method=RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> resetPasswordHandler(@RequestBody String received) throws Exception{
-			logger.info(" /POST ResetPassword API");
+			logger.info("/POST ResetPassword API");
 		
 		JSONObject obj=null;
 		ResponseEntity<String> responseEntity = null;
@@ -476,6 +491,7 @@ public class ConsumerInstrumentController {
 		try {
 			String password = new PasswordGenerator().randomString(10);
 			logger.debug("Password generator "+password);
+			logger.debug("UserName "+String.valueOf(obj.get("Email")));
 			String subject = "Password Reset";
 		
 			mightyUserInfo=consumerInstrumentServiceImpl.getUserByEmail(String.valueOf(obj.get("Email")));
@@ -485,7 +501,7 @@ public class ConsumerInstrumentController {
 					mightyUserInfo.setPwdChangedDate(null);
 						MightyUserInfo mightyUser= null;
 							mightyUser=consumerInstrumentServiceImpl.setGeneratedPwd(mightyUserInfo);
-						if (mightyUser!=null){
+						if(mightyUser!=null){
 							String message = consumerInstrumentServiceImpl.getPasswordResetMessage(mightyUser);
 							SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
 								try{
@@ -517,6 +533,12 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 
 	}
+	
+	
+	
+	
+	
+	
 	
 }
 	

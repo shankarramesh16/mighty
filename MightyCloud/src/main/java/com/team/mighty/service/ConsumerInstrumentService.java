@@ -55,6 +55,7 @@ public interface ConsumerInstrumentService {
 	public String getPasswordResetMessage(MightyUserInfo mightyUser) throws MightyAppException;
 
 	public void changePwd(UserLoginDTO userLoginDTO) throws MightyAppException;
-	
 
+	
+	
 }

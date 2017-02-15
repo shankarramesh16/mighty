@@ -18,8 +18,8 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 public class SendGmail implements Runnable, SendMail {
-	public static String sourceMail = "mighty.helpdesh@gmail.com";
-	public static String password = "mighty@123";
+	public static String sourceMail = "mightynotifications@gmail.com";
+	public static String password = "mighty@2017";
 
 	private String protocol = "smtp";
 	private String host = "smtp.gmail.com";

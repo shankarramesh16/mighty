@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,9 +17,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.team.mighty.constant.PasswordGenerator;
 import com.team.mighty.domain.AdminUser;
+import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.notification.SendMail;
 import com.team.mighty.service.LoginService;
+import com.team.mighty.service.SpotifyAccessService;
 
 @Controller
 public class LoginController {
@@ -27,6 +30,8 @@ public class LoginController {
 	@Autowired
 	private LoginService loginService;
 	
+	@Autowired
+	private SpotifyAccessService spotifyAccessService;
 	
 	@RequestMapping(value= {"/"})
 	public String defaultURL(){
@@ -177,6 +182,19 @@ public class LoginController {
 				}
 					return "redirect:/";
 				
+				
+			}
+		 	
+		 	
+		 	@RequestMapping(value = "/token", method = RequestMethod.POST)
+			public String spotifyAccessTokenHandler() {
+				logger.info("/POST spotifyAccessToken");
+				try {
+					spotifyAccessService.spotifyAccessToken();
+				} catch(MightyAppException e) {
+					logger.errorException(e, e.getMessage());
+				}
+				return "redirect:/spotifyaccess/RedirectedSpotifyAccess";
 				
 			}
 				

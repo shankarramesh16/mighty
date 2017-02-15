@@ -224,7 +224,7 @@ public class AdminInstrumentController {
 				
 				deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
 				/*passing downloading API...*/
-				String URL = "https://mighty2.cloudaccess.host/testing/rest/admin/download/"+reqMightyDeviceFirmware.getId();
+				String URL = "https://mighty2.cloudaccess.host/test/rest/admin/download/"+reqMightyDeviceFirmware.getId();
 				/*if(request.isSecure()) {
 					URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
 				} else {
@@ -322,55 +322,7 @@ public class AdminInstrumentController {
 	}
 	
 	
-	/*@RequestMapping(value = "/deviceFirmware", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getDeviceFirmWare(@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
-		ResponseEntity<String> responseEntity = null;
-		DeviceFirmWareDTO deviceFirmWareDTO = null;
-		MightyDeviceFirmware mightyDeviceFirmware=null;
-		try {
-			//Validate X-MIGHTY-TOKEN Value
-			JWTKeyGenerator.validateXToken(xToken);
-			
-			// Validate Expriy Date
-			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
-			
-			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
-					.getRequestAttributes()).getRequest();
-			logger.info(request.getServerName());
-			logger.info(request.getServerPort());
-			logger.info(request.getProtocol());
-			logger.info(request.isSecure());
-			logger.info(request.getContextPath());
-			logger.info(request.getHeader("x-forwarded-proto"));
-			mightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware();
-			if(mightyDeviceFirmware!=null){
-				deviceFirmWareDTO=new DeviceFirmWareDTO();
-				deviceFirmWareDTO.setLatestVersion(mightyDeviceFirmware.getVersion());
-				passing localhost API...
-				String URL = null;
-				if(request.isSecure()) {
-					URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
-				} else {
-					URL = "http://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
-				}
-				deviceFirmWareDTO.setFileDownloadUrl(URL);
-				deviceFirmWareDTO.setHashValue(mightyDeviceFirmware.getHashValue());
-				deviceFirmWareDTO.setHastType(mightyDeviceFirmware.getHashType());
-				logger.debug("hashValue",mightyDeviceFirmware.getHashValue());
-				logger.debug("hashType",mightyDeviceFirmware.getHashType());
-				String response = JsonUtil.objToJson(deviceFirmWareDTO);
-				responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
-			}
-		} catch(MightyAppException e) {
-			logger.errorException(e);
-			deviceFirmWareDTO = new DeviceFirmWareDTO();
-			deviceFirmWareDTO.setStatusCode(e.getHttpStatus().toString());
-			deviceFirmWareDTO.setStatusDesc(e.getMessage());
-			String response = JsonUtil.objToJson(deviceFirmWareDTO);
-			responseEntity = new ResponseEntity<String>(response, e.getHttpStatus());
-		}
-		return responseEntity;
-	}*/
+	
 	
 	@RequestMapping(value = "/device/upload", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> uploadDeviceListCSV(@RequestParam("file") MultipartFile file) {
