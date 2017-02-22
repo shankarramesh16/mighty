@@ -1,6 +1,11 @@
 package com.team.mighty.service.impl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -11,30 +16,26 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
-import com.team.mighty.constant.MightyConfigConstants;
+import com.team.mighty.dao.SpotifyDao;
+import com.team.mighty.domain.SpotifyInfo;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.SpotifyAccessService;
-import com.team.mighty.utils.JsonUtil;
-import com.team.mighty.utils.SpringPropertiesUtil;
-import com.team.mighty.utils.StringUtil;
 
 @Component("spotifyAccessService")
 public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 
 	private static final MightyLogger logger = MightyLogger.getLogger(SpotifyAccessServiceImpl.class);
 	
-	public String getAccessToken(String code, String error, String state) throws MightyAppException {
+	@Autowired
+	private SpotifyDao spotifyDao;
+	
+	
+	
+	/*public String getAccessToken(String code, String error, String state) throws MightyAppException {
 		String refreshToken = null;
 		if(StringUtil.isEmpty(error)) {
 			String url = SpringPropertiesUtil.getProperty(MightyConfigConstants.SPOTIFY_URL);
@@ -70,59 +71,177 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 		}
 			
 		return null;
+	}*/
+	
+	public String getAccessToken(String code, String error, String state) throws Exception{
+		String tokens=null;
+		
+				String url = "https://accounts.spotify.com/api/token";
+			 SSLContext context = SSLContext.getInstance("TLS"); 
+	         context.init(null, new X509TrustManager[]{new X509TrustManager(){ 
+	                 public void checkClientTrusted(X509Certificate[] chain, 
+	                                 String authType) throws CertificateException {} 
+	                 public void checkServerTrusted(X509Certificate[] chain, 
+	                                 String authType) throws CertificateException {} 
+	                 public X509Certificate[] getAcceptedIssuers() { 
+	                         return new X509Certificate[0]; 
+	                 }}}, new SecureRandom()); 
+	         HttpsURLConnection.setDefaultSSLSocketFactory( 
+	                         context.getSocketFactory()); 
+	      
+	       	URL obj = new URL(url);
+			HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+
+			con.setRequestMethod("POST");
+			con.setDoOutput(true);
+		    Map<String,String> arguments = new HashMap<String, String>();
+		    arguments.put("code", code);
+		    arguments.put("grant_type", "authorization_code");
+		    arguments.put("client_id", "8cda18d9034947759f0b09e68e17c7c1");
+		    arguments.put("client_secret", "5d38b745cb0445f793b950b36eec95aa");
+		    arguments.put("redirect_uri", "http://192.168.0.34:8080/MightyCloud/spotifyaccess/RedirectedSpotifyAccess");
+		    StringBuilder sj = new StringBuilder();
+		    for(Map.Entry<String,String> entry : arguments.entrySet()) {
+		        sj.append(URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8") + "&");
+		    }
+		    byte[] out = sj.toString().getBytes();
+
+		    con.setFixedLengthStreamingMode(out.length);
+		    con.connect();
+		    
+				    try
+				    {
+				        OutputStream os = con.getOutputStream();
+				        os.write(out);
+				        
+				        BufferedReader in = new BufferedReader(
+						        new InputStreamReader(con.getInputStream()));
+						String inputLine;
+						StringBuffer response = new StringBuffer();
+		
+						while ((inputLine = in.readLine()) != null) {
+							response.append(inputLine);
+						}
+						in.close();
+		
+						//print result
+						//logger.debug(response.toString());
+						
+						tokens=response.toString();
+		
+				    }
+				    catch (Exception e)
+				    {
+				    	logger.error(e);
+				    }
+			
+		return tokens;
 	}
 
 	
-	public void spotifyAccessToken() throws MightyAppException {
+	
+
+
+	
+
+
+	
+	public String getRefreshSpotifyToken(String refreshToken) throws Exception,IOException {
+		String newAccessToken=null;
 		
-		try{
-				 String client_id="8cda18d9034947759f0b09e68e17c7c1";
-				 String response_type="code";
-				 String redirect_uri="http://localhost:8088/MightyCloud/spotifyaccess/RedirectedSpotifyAccess";
-				 
-				 String url = "https://accounts.spotify.com/authorize?client_id="+client_id+"&response_type="+response_type+"&redirect_uri="+redirect_uri;
-			
-					
-				 SSLContext context = SSLContext.getInstance("TLS"); 
-			     context.init(null, new X509TrustManager[]{new X509TrustManager(){ 
-			             public void checkClientTrusted(X509Certificate[] chain, 
-			                             String authType) throws CertificateException {} 
-			             public void checkServerTrusted(X509Certificate[] chain, 
-			                             String authType) throws CertificateException {} 
-			             public X509Certificate[] getAcceptedIssuers() { 
-			                     return new X509Certificate[0]; 
-			             }}}, new SecureRandom()); 
-			     HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory()); 
-			
-				URL obj = new URL(url);
-				HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-			
-				// optional default is GET
-				con.setRequestMethod("GET");
-			
-				//add request header
-			
-				int responseCode = con.getResponseCode();
-				logger.debug("\nSending 'GET' request to URL : " + url);
-				logger.debug("Response Code : " + responseCode);
-			
-				/*BufferedReader in = new BufferedReader(
+		String url = "https://accounts.spotify.com/api/token";
+	 SSLContext context = SSLContext.getInstance("TLS"); 
+     context.init(null, new X509TrustManager[]{new X509TrustManager(){ 
+             public void checkClientTrusted(X509Certificate[] chain, 
+                             String authType) throws CertificateException {} 
+             public void checkServerTrusted(X509Certificate[] chain, 
+                             String authType) throws CertificateException {} 
+             public X509Certificate[] getAcceptedIssuers() { 
+                     return new X509Certificate[0]; 
+             }}}, new SecureRandom()); 
+     HttpsURLConnection.setDefaultSSLSocketFactory( 
+                     context.getSocketFactory()); 
+  
+   	URL obj = new URL(url);
+	HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+
+	con.setRequestMethod("POST");
+	con.setDoOutput(true);
+    Map<String,String> arguments = new HashMap<String, String>();
+    arguments.put("grant_type", "refresh_token");
+    arguments.put("client_id", "8cda18d9034947759f0b09e68e17c7c1");
+    arguments.put("client_secret", "5d38b745cb0445f793b950b36eec95aa");
+    //arguments.put("redirect_uri", "https://mighty2.cloudaccess.host/test1/spotifyaccess/RedirectedSpotifyAccess");
+    arguments.put("refresh_token ", refreshToken);
+    StringBuilder sj = new StringBuilder();
+    for(Map.Entry<String,String> entry : arguments.entrySet()) {
+        sj.append(URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8") + "&");
+    }
+    byte[] out = sj.toString().getBytes();
+
+    con.setFixedLengthStreamingMode(out.length);
+    con.connect();
+    
+		    try
+		    {
+		        OutputStream os = con.getOutputStream();
+		        os.write(out);
+		        
+		        BufferedReader in = new BufferedReader(
 				        new InputStreamReader(con.getInputStream()));
 				String inputLine;
 				StringBuffer response = new StringBuffer();
-			
+
 				while ((inputLine = in.readLine()) != null) {
 					response.append(inputLine);
 				}
-				in.close();*/
-			
-			
+				in.close();
 
+				//print result
+				//logger.debug(response.toString());
+				
+				newAccessToken=response.toString();
+
+		    }
+		    catch (Exception e)
+		    {
+		    	logger.error(e);
+		    }
+	
+		return newAccessToken;
+	}
+
+
+
+
+
+
+
+
+
+	public SpotifyInfo save(String access_token, String refresh_token,String expires_in) throws MightyAppException {
+		SpotifyInfo  spotify=null;
+					 spotify=new SpotifyInfo();
+					 spotify.setAccessToken(access_token);
+					 spotify.setRefreshToken(refresh_token);
+					 spotify.setExpiresIn(expires_in);
+					 spotify.setPhoneID("vikky");
+					 
+		return spotifyDao.save(spotify);
+	}
+
+
+
+
+
+
+
+
+
+	
+	public SpotifyInfo getSpotifyInfoByPhoneID(String phoneID) throws MightyAppException {
 		
-  			}catch(Exception e){
-  						throw new MightyAppException("Invalid Spotify access token", HttpStatus.EXPECTATION_FAILED);
-  			}
-
-		}
+		return spotifyDao.getSpotifyInfoByPhoneID(phoneID);
+	}
 	
 }	

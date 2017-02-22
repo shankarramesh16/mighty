@@ -1,18 +1,26 @@
 package com.team.mighty.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.team.mighty.constant.MightyAppConstants;
+import com.team.mighty.domain.SpotifyInfo;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.SpotifyAccessService;
+import com.team.mighty.utils.JsonUtil;
+import com.team.mighty.utils.StringUtil;
 
 /**
  * 
@@ -28,16 +36,41 @@ public class SpotifyAccessController {
 	
 	private static final MightyLogger logger = MightyLogger.getLogger(SpotifyAccessController.class);
 
-	@RequestMapping(value = "/RedirectedSpotifyAccess",method = RequestMethod.GET)
+	@RequestMapping(value = "/RedirectedSpotifyAccess", method = RequestMethod.GET)
 	public ResponseEntity<String> getSpotifyClientCode(@RequestParam(value = "code", required = false) String code,
 			@RequestParam(value = "error", required = false) String error,
-			@RequestParam(value = "state", required = false) String state) {
+			@RequestParam(value = "state", required = false) String state) throws Exception {
 		logger.info(" Code","[" ,code ,"]", "Error ", error, "State", state);
-		logger.info(" /Get IN SpotifyClientCode");
+		logger.info(" /Get IN RedirectedSpotifyAccess");
 		ResponseEntity<String> responseEntity = null;
 		try {
-			spotifyAccessService.getAccessToken(code, error, state);
-			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+
+			if(StringUtil.isEmpty(error) ) {
+				String tokens=spotifyAccessService.getAccessToken(code, error, state);
+				logger.debug("Result",tokens);
+				
+						JSONObject obj=null;
+						try{		
+								obj=new JSONObject();
+								obj=(JSONObject)new JSONParser().parse(tokens);
+						}catch(Exception e){
+							logger.error("System Exception during parsing JSON",e);
+						}
+					
+				logger.debug("access_token",obj.get("access_token"));
+				logger.debug("refresh_token",obj.get("refresh_token"));
+				logger.debug("expires_in",obj.get("expires_in"));
+				
+				SpotifyInfo spotifyInfo=spotifyAccessService.save(String.valueOf(obj.get("access_token")),String.valueOf(obj.get("refresh_token")),String.valueOf(obj.get("expires_in")));
+				
+				if(spotifyInfo!=null){
+				responseEntity = new ResponseEntity<String>("Spotify Login Successful.",HttpStatus.OK);
+				}else{
+					responseEntity = new ResponseEntity<String>("System error",HttpStatus.BAD_REQUEST);
+				}
+			}else{
+				throw new MightyAppException(error, HttpStatus.FORBIDDEN);
+			}
 		} catch(MightyAppException e) {
 			logger.error(e);
 			responseEntity = new ResponseEntity<String>(e.getHttpStatus());
@@ -47,20 +80,78 @@ public class SpotifyAccessController {
 	}
 	
 	
-	/*@RequestMapping(value = "/token", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> spotifyAccessTokenHandler() {
-		logger.info("/POST spotifyAccessToken");
+	@RequestMapping(value = "/authorizeSpotify", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> spotifyAccessTokenHandler(HttpServletResponse response) throws Exception {
+		logger.info("/GET authorizeSpotify");
 		ResponseEntity<String> responseEntity = null;
-		try {
-			spotifyAccessService.spotifyAccessToken();
+		try{
+			String client_id="8cda18d9034947759f0b09e68e17c7c1";
+			String response_type="code";
+			String redirect_uri="http://192.168.0.34:8080/MightyCloud/spotifyaccess/RedirectedSpotifyAccess";
+			 
+			String url = "https://accounts.spotify.com/authorize?client_id="+client_id+"&response_type="+response_type+"&redirect_uri="+redirect_uri;
+			response.sendRedirect(url);
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
-		} catch(MightyAppException e) {
-			String errorMessage = e.getMessage();
-			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
-			logger.errorException(e, e.getMessage());
+		}catch(Exception e){
+			responseEntity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			logger.debug("Error in",e);
+		}
+		return responseEntity;
+	}
+	
+	
+	@RequestMapping(value = "/getRefreshSpotifyToken", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getRefreshSpotifyTokenhandler() throws Exception {
+		logger.info(" /Get IN SpotifyRefreshToken");
+			
+		
+		ResponseEntity<String> responseEntity = null;
+		
+		
+		try {		
+				String refreshToken="AQDTGdHPRYH8Dj4BvIPMnPUnZgxyfaW1pOx85TepcfukzBUnwhkVm6rWldD7XKJ6T4utaGcRlU4iCfh37fCk3a3qbqRKGZhNb-LPxTkTq5OVwOVeJJWAsyiQf69CeeV8Z5A";
+				String newAccestoken=spotifyAccessService.getRefreshSpotifyToken(refreshToken);
+				logger.debug("Result",newAccestoken);
+				responseEntity = new ResponseEntity<String>(newAccestoken,HttpStatus.OK);
+			
+		}catch(MightyAppException e) {
+			logger.error(e);
+			responseEntity = new ResponseEntity<String>(e.getHttpStatus());
 		}
 		
 		return responseEntity;
-	}*/
+	}
 	
+	
+	@RequestMapping(value = "/getTokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getSpotifyTokensHandler(@RequestBody String received) throws Exception {
+		logger.info(" /POST IN SpotifyTokens");
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+	
+				try{		
+						obj=new JSONObject();
+						obj=(JSONObject)new JSONParser().parse(received);
+				}catch(Exception e){
+					logger.error("System Exception during parsing JSON",e);
+				}
+		
+						
+		try {		
+			
+			logger.error("PhoneID As",String.valueOf(obj.get("phoneID")));
+			SpotifyInfo spotifyInfo=spotifyAccessService.getSpotifyInfoByPhoneID(String.valueOf(obj.get("phoneID")));
+			if(spotifyInfo!=null){
+				String response = JsonUtil.objToJson(spotifyInfo);
+				responseEntity = new ResponseEntity<String>(response,HttpStatus.OK);
+			}else{
+				responseEntity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			}
+		}catch(MightyAppException e) {
+			logger.error(e);
+			responseEntity = new ResponseEntity<String>(e.getHttpStatus());
+		}
+		
+		return responseEntity;
+	}
 }
