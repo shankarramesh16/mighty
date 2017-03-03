@@ -16,7 +16,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 
+import org.hibernate.annotations.Synchronize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.team.mighty.dao.SpotifyDao;
@@ -99,7 +101,7 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 		    arguments.put("grant_type", "authorization_code");
 		    arguments.put("client_id", "8cda18d9034947759f0b09e68e17c7c1");
 		    arguments.put("client_secret", "5d38b745cb0445f793b950b36eec95aa");
-		    arguments.put("redirect_uri", "http://192.168.0.34:8080/MightyCloud/spotifyaccess/RedirectedSpotifyAccess");
+		    arguments.put("redirect_uri", "https://mighty2.cloudaccess.host/test/spotifyaccess/RedirectedSpotifyAccess");
 		    StringBuilder sj = new StringBuilder();
 		    for(Map.Entry<String,String> entry : arguments.entrySet()) {
 		        sj.append(URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8") + "&");
@@ -146,9 +148,9 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 
 
 	
-	public String getRefreshSpotifyToken(String refreshToken) throws Exception,IOException {
+	public String getRefreshSpotifyToken(String refreshToken) throws Exception {
 		String newAccessToken=null;
-		
+		logger.debug("refreshTOken",refreshToken);
 		String url = "https://accounts.spotify.com/api/token";
 	 SSLContext context = SSLContext.getInstance("TLS"); 
      context.init(null, new X509TrustManager[]{new X509TrustManager(){ 
@@ -172,18 +174,33 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
     arguments.put("client_id", "8cda18d9034947759f0b09e68e17c7c1");
     arguments.put("client_secret", "5d38b745cb0445f793b950b36eec95aa");
     //arguments.put("redirect_uri", "https://mighty2.cloudaccess.host/test1/spotifyaccess/RedirectedSpotifyAccess");
-    arguments.put("refresh_token ", refreshToken);
+    //arguments.put("refresh_token ",refreshToken);
     StringBuilder sj = new StringBuilder();
     for(Map.Entry<String,String> entry : arguments.entrySet()) {
-        sj.append(URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8") + "&");
+    	logger.debug(" ref",entry.getKey());
+    	if(entry.getKey().toString().equalsIgnoreCase("refresh_token")){
+    		logger.debug("inside refreshTOken",entry.getValue());
+    		sj.append(entry.getKey() + "=" + entry.getValue() + "&");
+    	}else{
+    		logger.debug("outside refreshTOken",entry.getValue());
+    		sj.append(URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8") + "&");
+    	}
     }
-    byte[] out = sj.toString().getBytes();
-
-    con.setFixedLengthStreamingMode(out.length);
-    con.connect();
     
-		    try
-		    {
+    sj.append("refresh_token="+refreshToken);
+    byte[] out = sj.toString().getBytes();
+ 
+    con.setFixedLengthStreamingMode(out.length);
+   
+    con.connect();
+  /*  try{
+    int response=con.getResponseCode();
+    logger.debug("REsu",response);
+    }catch(Exception e){
+    	logger.error("REs",e);
+    }*/
+    	try{
+    		
 		        OutputStream os = con.getOutputStream();
 		        os.write(out);
 		        
@@ -198,16 +215,16 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 				in.close();
 
 				//print result
-				//logger.debug(response.toString());
+				logger.debug(response.toString());
 				
 				newAccessToken=response.toString();
 
-		    }
-		    catch (Exception e)
+		    }catch (Exception e)
 		    {
 		    	logger.error(e);
 		    }
-	
+   		
+		
 		return newAccessToken;
 	}
 
@@ -218,30 +235,29 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 
 
 
-
+	
 	public SpotifyInfo save(String access_token, String refresh_token,String expires_in) throws MightyAppException {
 		SpotifyInfo  spotify=null;
 					 spotify=new SpotifyInfo();
 					 spotify.setAccessToken(access_token);
 					 spotify.setRefreshToken(refresh_token);
 					 spotify.setExpiresIn(expires_in);
-					 spotify.setPhoneID("vikky");
-					 
+					 					 
 		return spotifyDao.save(spotify);
 	}
 
 
 
 
+	public SpotifyInfo getSpotifyInfoByTokenId(String tokenId)	throws MightyAppException {
+			return spotifyDao.getSpotifyInfoByTokenId(Integer.valueOf(tokenId));
+	}
 
 
-
-
+	public SpotifyInfo update(SpotifyInfo spotifyInfo) throws MightyAppException {
+			return spotifyDao.save(spotifyInfo);
+	}
 
 	
-	public SpotifyInfo getSpotifyInfoByPhoneID(String phoneID) throws MightyAppException {
-		
-		return spotifyDao.getSpotifyInfoByPhoneID(phoneID);
-	}
 	
 }	

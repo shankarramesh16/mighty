@@ -24,8 +24,6 @@ public class SpotifyInfo implements Serializable {
 	@Column(name="expires_in")
 	private String expiresIn;
 	
-	@Column(name="phoneID")
-	private String phoneID;
 
 	@Column(name="refresh_token")
 	private String refreshToken;
@@ -57,13 +55,6 @@ public class SpotifyInfo implements Serializable {
 		this.expiresIn = expiresIn;
 	}
 
-	public String getPhoneID() {
-		return this.phoneID;
-	}
-
-	public void setPhoneID(String phoneID) {
-		this.phoneID = phoneID;
-	}
 
 	public String getRefreshToken() {
 		return this.refreshToken;

@@ -10,7 +10,8 @@ import com.team.mighty.domain.SpotifyInfo;
 
 public interface SpotifyDao extends JpaRepository<SpotifyInfo, Serializable> {
 	
-	@Query("SELECT spotify FROM SpotifyInfo spotify WHERE spotify.phoneID =:phoneID")
-	SpotifyInfo getSpotifyInfoByPhoneID(@Param("phoneID") String phoneID);
+	@Query("SELECT spotify FROM SpotifyInfo spotify WHERE spotify.id =:id")
+	SpotifyInfo getSpotifyInfoByTokenId(@Param("id") Integer id);
+
 
 }
