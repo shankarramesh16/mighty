@@ -93,8 +93,9 @@ public class SpotifyAccessController {
 		try{
 			String client_id="8cda18d9034947759f0b09e68e17c7c1";
 			String response_type="code";
+			String scope="user-read-private user-read-email streaming";
 			String redirect_uri="https://mighty2.cloudaccess.host/test/spotifyaccess/RedirectedSpotifyAccess";
-			String url = "https://accounts.spotify.com/authorize?client_id="+client_id+"&response_type="+response_type+"&redirect_uri="+redirect_uri;
+			String url = "https://accounts.spotify.com/authorize?client_id="+client_id+"&response_type="+response_type+"&redirect_uri="+redirect_uri+"&scope="+scope;
 			response.sendRedirect(url);
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		}catch(Exception e){
