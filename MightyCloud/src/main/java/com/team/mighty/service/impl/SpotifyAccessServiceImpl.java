@@ -76,7 +76,7 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 	}*/
 	
 	public String getAccessToken(String code, String error, String state) throws Exception{
-		String tokens=null;
+				String tokens=null;
 		
 				String url = "https://accounts.spotify.com/api/token";
 			 SSLContext context = SSLContext.getInstance("TLS"); 
@@ -256,6 +256,73 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 
 	public SpotifyInfo update(SpotifyInfo spotifyInfo) throws MightyAppException {
 			return spotifyDao.save(spotifyInfo);
+	}
+
+
+
+	
+	public String spotifyAccessToken(String code, String client_id,String client_secret, String redirect_uri) throws Exception {
+		String tokens=null;
+		
+		 String url = "https://accounts.spotify.com/api/token";
+		 SSLContext context = SSLContext.getInstance("TLS"); 
+	     context.init(null, new X509TrustManager[]{new X509TrustManager(){ 
+	             public void checkClientTrusted(X509Certificate[] chain, 
+	                             String authType) throws CertificateException {} 
+	             public void checkServerTrusted(X509Certificate[] chain, 
+	                             String authType) throws CertificateException {} 
+	             public X509Certificate[] getAcceptedIssuers() { 
+	                     return new X509Certificate[0]; 
+	             }}}, new SecureRandom()); 
+	     HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory()); 
+	  
+	   	URL obj = new URL(url);
+		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+
+		con.setRequestMethod("POST");
+		con.setDoOutput(true);
+	    Map<String,String> arguments = new HashMap<String, String>();
+	    arguments.put("code", code);
+	    arguments.put("grant_type", "authorization_code");
+	    arguments.put("client_id", client_id);
+	    arguments.put("client_secret", client_secret);
+	    arguments.put("redirect_uri", redirect_uri);
+	    StringBuilder sj = new StringBuilder();
+	    for(Map.Entry<String,String> entry : arguments.entrySet()) {
+	        sj.append(URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8") + "&");
+	    }
+	    byte[] out = sj.toString().getBytes();
+
+	    con.setFixedLengthStreamingMode(out.length);
+	    con.connect();
+	    
+			    try
+			    {
+			        OutputStream os = con.getOutputStream();
+			        os.write(out);
+			        
+			        BufferedReader in = new BufferedReader(
+					        new InputStreamReader(con.getInputStream()));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+
+					while ((inputLine = in.readLine()) != null) {
+						response.append(inputLine);
+					}
+					in.close();
+
+					//print result
+					//logger.debug(response.toString());
+					
+					tokens=response.toString();
+
+			    }
+			    catch (Exception e)
+			    {
+			    	logger.error(e);
+			    }
+		
+			    	return tokens;
 	}
 
 	

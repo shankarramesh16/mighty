@@ -36,6 +36,71 @@ public class SpotifyAccessController {
 	private SpotifyAccessService spotifyAccessService;
 	
 	private static final MightyLogger logger = MightyLogger.getLogger(SpotifyAccessController.class);
+	
+	@RequestMapping(value = "/spotifyToken", method = RequestMethod.POST)
+	public ResponseEntity<String> spotifyTokenOnCodeHandler(@RequestBody String received) throws Exception {
+		logger.debug("POST/ In SpotifyToken");
+		JSONObject json=null;
+		ResponseEntity<String> responseEntity = null;
+		HttpHeaders httpHeaders = new HttpHeaders();
+		
+		try{		
+			json=new JSONObject();
+			json=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON",e);
+		}
+		
+		
+		
+		try {
+
+				String code=(String)json.get("code");
+				String client_secret=(String)json.get("client_secret");
+				String client_id=(String)json.get("client_id");
+				String redirect_uri=(String)json.get("redirect_uri");
+				
+				logger.debug("code/",code);
+				logger.debug("client_secret/",client_secret);
+				logger.debug("client_id/",client_id);
+				logger.debug("redirect_uri/",redirect_uri);
+				
+				String tokens=spotifyAccessService.spotifyAccessToken(code,client_id,client_secret,redirect_uri);
+				 if(code!=null && client_secret!=null && client_id!=null && redirect_uri!=null){
+				logger.debug("Result",tokens);
+				
+						JSONObject obj=null;
+						try{		
+								obj=new JSONObject();
+								obj=(JSONObject)new JSONParser().parse(tokens);
+						}catch(Exception e){
+							logger.error("System Exception during parsing JSON",e);
+						}
+					
+				logger.debug("access_token",obj.get("access_token"));
+				logger.debug("refresh_token",obj.get("refresh_token"));
+				logger.debug("expires_in",obj.get("expires_in"));
+				
+				SpotifyInfo spotifyInfo=spotifyAccessService.save(String.valueOf(obj.get("access_token")),String.valueOf(obj.get("refresh_token")),String.valueOf(obj.get("expires_in")));
+				
+				if(spotifyInfo!=null){
+										String response=JsonUtil.objToJson(spotifyInfo);
+				responseEntity = new ResponseEntity<String>(response,HttpStatus.OK);
+				}else{
+					responseEntity = new ResponseEntity<String>("System error",HttpStatus.BAD_REQUEST);
+				}
+				
+		}else{
+			responseEntity = new ResponseEntity<String>("Empty or null / code / client_id / client_secret / redirect_uri",HttpStatus.EXPECTATION_FAILED);
+		}
+			
+		} catch(MightyAppException e) {
+			logger.error(e);
+			responseEntity = new ResponseEntity<String>(e.getHttpStatus());
+		}
+		
+		return responseEntity;
+	}
 
 	@RequestMapping(value = "/RedirectedSpotifyAccess", method = RequestMethod.GET)
 	public ResponseEntity<String> getSpotifyClientCode(@RequestParam(value = "code", required = false) String code,
@@ -84,6 +149,7 @@ public class SpotifyAccessController {
 		
 		return responseEntity;
 	}
+	
 	
 	
 	@RequestMapping(value = "/authorizeSpotify", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

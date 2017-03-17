@@ -16,5 +16,6 @@ public interface SpotifyAccessService {
 	public SpotifyInfo save(String access_token, String refresh_token, String expires_in) throws MightyAppException;
 	public SpotifyInfo getSpotifyInfoByTokenId(String tokenId)throws MightyAppException;
 	public SpotifyInfo update(SpotifyInfo spotifyInfo)throws MightyAppException;
+	public String spotifyAccessToken(String code, String client_id, String client_secret, String redirect_uri)throws Exception;
 	
 }

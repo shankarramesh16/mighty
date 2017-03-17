@@ -350,7 +350,7 @@ public class ConsumerInstrumentController {
 	}
 	
 	@RequestMapping(value = "/{deviceId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> validateDevice(@PathVariable String deviceId) {
+	public ResponseEntity<String> validateDevice(@PathVariable String deviceId){
 		logger.info("/GET Validate Devoce", deviceId);
 		ResponseEntity<String> responseEntity = null;
 		try {
@@ -389,7 +389,7 @@ public class ConsumerInstrumentController {
 	}
 	
 	@RequestMapping(value="/changePwd", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> changePasswordHandler(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken)  {
+	public ResponseEntity<String> changePasswordHandler(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken){
 		logger.info(" /POST mightyChange pwd request API");
 		UserLoginDTO userLoginDTO=null;
 		JSONObject obj=null;
