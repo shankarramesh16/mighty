@@ -18,7 +18,7 @@ import com.team.mighty.exception.MightyAppException;
  */
 public interface ConsumerInstrumentService {
 	
-	public void validateDevice(String deviceId) throws MightyAppException; 
+	public void validateDevice(String deviceId)throws MightyAppException; 
 	
 	public UserLoginDTO userLogin(UserLoginDTO userLoginDTO) throws MightyAppException;
 	

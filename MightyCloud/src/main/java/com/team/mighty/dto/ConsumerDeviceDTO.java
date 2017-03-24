@@ -72,7 +72,17 @@ public class ConsumerDeviceDTO implements Serializable {
 
 	private String password;
 	private String userStatus;
+	private String facebookID;
 	
+	
+	public String getFacebookID() {
+		return facebookID;
+	}
+
+	public void setFacebookID(String facebookID) {
+		this.facebookID = facebookID;
+	}
+
 	private String userIndicator;
 	private String gender;
 	public String getGender() {

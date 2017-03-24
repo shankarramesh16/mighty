@@ -281,12 +281,12 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		MightyUserInfo mightyUserInfo = null;
 		
 		List<MightyUserInfo> mightyUsers = null;
-		mightyUsers=getUserByNameAndEmailWithIndicator(consumerDeviceDto.getUserName(),consumerDeviceDto.getEmailId(),consumerDeviceDto.getUserIndicator());
+		mightyUsers=getUserByUserFBAndEmailWithIndicator(consumerDeviceDto.getFacebookID(),consumerDeviceDto.getEmailId(),consumerDeviceDto.getUserIndicator());
 		if(mightyUsers!=null && !mightyUsers.isEmpty()) {
 			mightyUserInfo=mightyUsers.get(0);
 			// Check any de-activated account
 			logger.debug("IN If -before to check active/deactive");
-			MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
+			MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount1(mightyUserInfo.getId());
 			if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
 					logger.info(" Already Disbaled account is there and activating that one ------- ");
 					mightyDeviceUserMapping.setRegistrationStatus(MightyAppConstants.IND_Y);
@@ -312,6 +312,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			mightyUserInfo.setEmailId(consumerDeviceDto.getEmailId());
 			//mightyUserInfo.setPassword(consumerDeviceDto.getPassword());
 			mightyUserInfo.setAge(consumerDeviceDto.getAge());
+			mightyUserInfo.setUserFBId(consumerDeviceDto.getFacebookID());
 			mightyUserInfo.setGender(consumerDeviceDto.getGender());
 			mightyUserInfo.setUserIndicator(consumerDeviceDto.getUserIndicator());
 			mightyUserInfo.setCreatedDt(new Date(System.currentTimeMillis()));
@@ -351,6 +352,10 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		logger.info(" Mighty USer ID ",mightyUserInfo_1.getId());
 		
 		return mightyUserInfo_1;
+	}
+
+	private List<MightyUserInfo> getUserByUserFBAndEmailWithIndicator(String facebookID, String emailId, String userIndicator) {
+		return mightyUserInfoDAO.getUserByUserFBAndEmailWithIndicator(facebookID,emailId,userIndicator);	
 	}
 
 	private void validateFacebookToken(String fbToken) throws MightyAppException{
@@ -564,59 +569,94 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		validateDevice(deviceInfoDTO.getDeviceId());
 		registerMightyWithUser(deviceInfoDTO);
 		
-		//MightyUserInfo mightyUserInfo =  registerUserAndDevice(consumerDeviceDto);
 		
 				
 	}
 
 	private void registerMightyWithUser(DeviceInfoDTO deviceInfoDTO) throws MightyAppException {
 		MightyUserInfo mightyUserInfo = null;
-		mightyUserInfo=getUserById(deviceInfoDTO.getUserId());
+					   mightyUserInfo=getUserById(deviceInfoDTO.getUserId());
+		
 		if(mightyUserInfo!=null) {
 			// Check any de-activated account
-			MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
-			
-			if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
-							logger.info(" Already Disbaled account is there and activating that one ------- ");
-							logger.info("active and de-active status",mightyDeviceUserMapping.getRegistrationStatus());
-							mightyDeviceUserMapping.setRegistrationStatus(MightyAppConstants.IND_Y);
-							mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
-							
-							MightyDeviceInfo mightyDeviceInfo=mightyDeviceInfoDAO.getMightyDeviceOnId(mightyDeviceUserMapping.getMightyDeviceId());
-							if(mightyDeviceInfo!=null && mightyDeviceInfo.getIsRegistered().equals(MightyAppConstants.IND_N)){
-								mightyDeviceInfo.setIsRegistered(MightyAppConstants.IND_Y);
-								mightyDeviceInfoDAO.save(mightyDeviceInfo);	
-							}
-			} else if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_Y)) {
-					//MightyDeviceOrderInfo mightyDeviceOrderInfo=mightyDeviceOrderDAO.getDeviceOrderById(deviceInfoDTO.getDeviceId());
-					logger.info("active and de-active status",mightyDeviceUserMapping.getRegistrationStatus());
-					MightyDeviceInfo mightyDeviceInfo=new MightyDeviceInfo();
-					mightyDeviceInfo.setDeviceId(deviceInfoDTO.getDeviceId());
-					mightyDeviceInfo.setDeviceName(deviceInfoDTO.getDeviceName());
-					mightyDeviceInfo.setDeviceType(deviceInfoDTO.getDeviceType());
-					mightyDeviceInfo.setSwVersion(deviceInfoDTO.getSwVersion());
-					mightyDeviceInfo.setIsActive(deviceInfoDTO.getIsActive());
-					mightyDeviceInfo.setIsRegistered(deviceInfoDTO.getIsRegistered());
-					mightyDeviceInfo.setAppVersion(Float.valueOf(deviceInfoDTO.getAppVersion()));
-					logger.debug("AppVersion",deviceInfoDTO.getAppVersion());
-					mightyDeviceInfo.setAppBuild(deviceInfoDTO.getAppBuild());
-					//mightyDeviceInfo.setDeviceOrderInfo(mightyDeviceOrderInfo);
-					MightyDeviceInfo mightyDevice=null;
-					try{
-						mightyDevice=mightyDeviceInfoDAO.save(mightyDeviceInfo);
-					}catch(Exception e){
-						logger.error(e.getMessage());
-						throw new MightyAppException("Unable to save User Mighty Device Info ", HttpStatus.INTERNAL_SERVER_ERROR, e);
-					}
-					
-						mightyDeviceUserMapping.setMightyDeviceId(mightyDevice.getId());
-						mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
+			//MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
+			List<MightyDeviceUserMapping> mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
+			if(mightyDeviceUserMapping!= null && !mightyDeviceUserMapping.isEmpty()){
+				logger.debug("Size of list",mightyDeviceUserMapping.size());
+				for(MightyDeviceUserMapping m : mightyDeviceUserMapping){
+						MightyDeviceInfo mightyDeviceInfo=mightyDeviceInfoDAO.getMightyDeviceOnId(m.getMightyDeviceId());
+							if(mightyDeviceInfo!=null && mightyDeviceInfo.getDeviceId().equalsIgnoreCase(deviceInfoDTO.getDeviceId())){
+								logger.debug("In existing device registration");							
+									if(mightyDeviceInfo.getIsRegistered().equals(MightyAppConstants.IND_N)){
+										logger.info(" Device is de-registered and registering that one ------- ");	
+										    mightyDeviceInfo.setIsRegistered(MightyAppConstants.IND_Y);
+											mightyDeviceInfoDAO.save(mightyDeviceInfo);	
+									}
+									
+									if(m.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
+										logger.info(" Already Disbaled account is there and activating that one ------- ");
+											m.setRegistrationStatus(MightyAppConstants.IND_Y);
+											mightyDeviceUserMapDAO.save(m);
+									}
+							}else{ 
+								logger.debug("In new device registration into exiting user");
+								MightyDeviceInfo mighty=mightyDeviceInfoDAO.getDeviceInfo(deviceInfoDTO.getDeviceId());
+									if(mighty==null){
+											MightyDeviceInfo mightyDeviceInfo1=new MightyDeviceInfo();
+											mightyDeviceInfo1.setDeviceId(deviceInfoDTO.getDeviceId());
+											mightyDeviceInfo1.setDeviceName(deviceInfoDTO.getDeviceName());
+											mightyDeviceInfo1.setDeviceType(deviceInfoDTO.getDeviceType());
+											mightyDeviceInfo1.setSwVersion(deviceInfoDTO.getSwVersion());
+											mightyDeviceInfo1.setIsActive(deviceInfoDTO.getIsActive());
+											mightyDeviceInfo1.setIsRegistered(deviceInfoDTO.getIsRegistered());
+											mightyDeviceInfo1.setAppVersion(Float.valueOf(deviceInfoDTO.getAppVersion()));
+											mightyDeviceInfo1.setAppBuild(deviceInfoDTO.getAppBuild());
+											//mightyDeviceInfo.setDeviceOrderInfo(mightyDeviceOrderInfo);
+											MightyDeviceInfo mightyDevice=null;
+										try{
+											mightyDevice=mightyDeviceInfoDAO.save(mightyDeviceInfo1);
+										}catch(Exception e){
+											logger.error(e.getMessage());
+											throw new MightyAppException("Unable to save User Mighty Device Info ", HttpStatus.INTERNAL_SERVER_ERROR);
+										}
 										
+										if(m.getMightyDeviceId()==0){
+											m.setMightyDeviceId(mightyDevice.getId());
+											mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
+										}else if(m.getMightyDeviceId()!=mightyDevice.getId()){
+											logger.debug("Inside new mighty Registered");
+											MightyDeviceUserMapping mdum=new MightyDeviceUserMapping();
+														mdum.setMightyDeviceId(mightyDevice.getId());
+														mdum.setMightyUserInfo(mightyUserInfo);
+														mdum.setPhoneDeviceId(m.getPhoneDeviceId());
+														mdum.setPhoneDeviceOSVersion(m.getPhoneDeviceOSVersion());
+														mdum.setPhoneDeviceType(m.getPhoneDeviceType());
+														mdum.setPhoneDeviceVersion(m.getPhoneDeviceVersion());
+														mdum.setRegistrationStatus(MightyAppConstants.IND_Y);
+														mdum.setCreatedDt(new Date(System.currentTimeMillis()));
+														mdum.setUpdatedDt(new Date(System.currentTimeMillis()));
+															MightyDeviceUserMapping deviceRegistered=mightyDeviceUserMapDAO.save(mdum);
+																	 if(deviceRegistered!=null){
+																			 logger.debug("INsert into M:M");
+																			 	Set<MightyUserInfo> setUserInfo = new HashSet<MightyUserInfo>();
+																				Set<MightyDeviceUserMapping> setMightyUserDevice = mightyUserInfo.getMightyDeviceUserMapping();
+																				if(setMightyUserDevice == null || mightyUserInfo.getMightyDeviceUserMapping().isEmpty()) {
+																					setMightyUserDevice = new HashSet<MightyDeviceUserMapping>();
+																				}
+																				setMightyUserDevice.add(deviceRegistered);
+																				mightyUserInfo.setMightyDeviceUserMapping(setMightyUserDevice);
+																				
+																				setUserInfo.add(mightyUserInfo);
+																				consumerInstrumentDAO.save(mightyUserInfo);
+																	 }
+										}
+									}	
+								}
+						}	
 				}
+		  }else{
+				throw new MightyAppException("Invalid request Parameters [UserId] ", HttpStatus.NOT_FOUND);
 		  }
-					
-		
-		
 	}
 
 	private MightyUserInfo getUserById(String userId) {

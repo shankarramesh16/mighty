@@ -138,13 +138,14 @@ public class ConsumerInstrumentController {
 			logger.error("System Exception during parsing JSON",e);
 		}
 		
-				
+
 		try {
 			ConsumerDeviceDTO consumerDeviceDTO=null;
 			logger.debug("userindicator",obj.get("UserIndicator"));
 			if(obj.get("UserIndicator")!=null){
 				if(obj.get("UserIndicator").toString().equalsIgnoreCase("F")){
 					consumerDeviceDTO=new ConsumerDeviceDTO();
+					consumerDeviceDTO.setFacebookID(obj.get("FacebookID").toString());	
 					consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
 					consumerDeviceDTO.setEmailId(obj.get("EmailID").toString());
 					consumerDeviceDTO.setPassword(obj.get("Password").toString());
@@ -157,6 +158,7 @@ public class ConsumerInstrumentController {
 					consumerDeviceDTO.setDeviceType(obj.get("DeviceType").toString());
 					consumerDeviceDTO.setAge(obj.get("Age").toString());
 					consumerDeviceDTO.setGender(obj.get("Gender").toString());	
+					
 						mightyUserInfo=consumerInstrumentServiceImpl.mightyFBUserLogin(consumerDeviceDTO);
 				}else if(obj.get("UserIndicator").toString().equalsIgnoreCase("L")){
 					consumerDeviceDTO=new ConsumerDeviceDTO();
@@ -172,7 +174,7 @@ public class ConsumerInstrumentController {
 				    consumerDeviceDTO.setPassword(obj.get("Password").toString());
 				    consumerDeviceDTO.setUserIndicator("L");
 				    mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
-			 }
+				}
 			
 						
 			responseEntity = new ResponseEntity<String>(String.valueOf(mightyUserInfo.getId()), HttpStatus.OK);
@@ -336,6 +338,7 @@ public class ConsumerInstrumentController {
 			deviceInfoDTO.setSwVersion(obj.get("SWVersion").toString());
 			deviceInfoDTO.setAppVersion(obj.get("AppVersion").toString());
 			deviceInfoDTO.setAppBuild(obj.get("AppBuild").toString());
+			logger.debug("Appbuild",obj.get("AppBuild").toString());
 			deviceInfoDTO.setIsActive(MightyAppConstants.IND_Y);
 			deviceInfoDTO.setIsRegistered(MightyAppConstants.IND_Y);
 			

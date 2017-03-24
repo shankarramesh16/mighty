@@ -22,7 +22,15 @@
 
 	<mvc:annotation-driven />
 	
-
+	<!-- <mvc:interceptors> 
+	 	<bean class="com.team.mighty.interceptor.RequestProcessingInterceptor" />
+				 	<mvc:interceptor>
+						<mvc:mapping path="/transportBooking" />
+						<bean class="com.agiledge.atom.interceptor.TransportBookingInterceptor" />
+					</mvc:interceptor>
+	</mvc:interceptors> -->
+	
+	  
 	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/MightyDB" />
 
 	<bean id="hibernateJpaVendorAdapter"

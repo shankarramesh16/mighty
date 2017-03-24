@@ -190,6 +190,7 @@ public class SpotifyAccessController {
 		try {		
 				logger.debug("Refresh Token",obj.get("refresh_token").toString());
 				logger.debug("ID",obj.get("id").toString());
+								
 				String newAccestoken=spotifyAccessService.getRefreshSpotifyToken(obj.get("refresh_token").toString());
 				
 									JSONObject obj1=null;
@@ -221,6 +222,65 @@ public class SpotifyAccessController {
 	}
 	
 	
+	
+	@RequestMapping(value = "/refreshSpotifyAccessToken", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> reNewSpotifyAccessTokenHanlder(@RequestBody String received) throws Exception {
+		logger.info(" /Get IN SpotifyRefreshToken");
+		ResponseEntity<String> responseEntity = null;
+		JSONObject obj=null;
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			responseEntity = new ResponseEntity<String>("System exception while json received parser ",HttpStatus.METHOD_NOT_ALLOWED);
+		}
+		
+				
+		
+		
+		try {		
+				logger.debug("Refresh Token",obj.get("refresh_token").toString());
+				logger.debug("ID",obj.get("id").toString());
+				logger.debug("client_id",obj.get("client_id").toString());
+				logger.debug("client_secret",obj.get("client_secret").toString());
+				
+				if(obj.get("refresh_token").toString()!=null && obj.get("client_id").toString()!=null && obj.get("client_secret").toString()!=null && obj.get("id").toString()!=null){
+					String refresh_token=obj.get("refresh_token").toString();
+					String client_id=obj.get("client_id").toString();
+					String client_secret=obj.get("client_secret").toString();
+				String newAccestoken=spotifyAccessService.refreshSpotifyAccessToken(refresh_token,client_id,client_secret);
+				
+									JSONObject obj1=null;
+									try{		
+										obj1=new JSONObject();
+										obj1=(JSONObject)new JSONParser().parse(newAccestoken);
+									}catch(Exception e){
+										responseEntity = new ResponseEntity<String>("System exception while json newAccessToken parser ",HttpStatus.METHOD_NOT_ALLOWED);
+									}
+									
+				SpotifyInfo spotifyInfo=spotifyAccessService.getSpotifyInfoByTokenId(obj.get("id").toString());
+				if(spotifyInfo!=null){
+					spotifyInfo.setAccessToken(obj1.get("access_token").toString());
+					SpotifyInfo spotify=spotifyAccessService.update(spotifyInfo);
+					String response = JsonUtil.objToJson(spotify);
+					responseEntity = new ResponseEntity<String>(response,HttpStatus.OK);
+				}else{
+					responseEntity = new ResponseEntity<String>("Refresh Token Id is not found",HttpStatus.NOT_FOUND);
+				}
+				
+		}else{
+			responseEntity = new ResponseEntity<String>("Empty or null /refresh_token /id /client_id /client_secret",HttpStatus.BAD_REQUEST);
+		}
+			
+		}catch(Exception e) {
+			logger.error(e);
+			responseEntity = new ResponseEntity<String>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		}
+		
+		return responseEntity;
+	}
+	
+	
 	@RequestMapping(value = "/getTokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getSpotifyTokensHandler(@RequestBody String received) throws Exception {
 		logger.info(" /POST IN SpotifyTokens");
@@ -235,8 +295,7 @@ public class SpotifyAccessController {
 				}
 		
 						
-		try {		
-			
+		try{		
 			logger.error("Token ID as",String.valueOf(obj.get("tokenID")));
 			SpotifyInfo spotifyInfo=spotifyAccessService.getSpotifyInfoByTokenId(String.valueOf(obj.get("tokenID")));
 			if(spotifyInfo!=null){

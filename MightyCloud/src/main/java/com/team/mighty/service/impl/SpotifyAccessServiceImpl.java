@@ -18,6 +18,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.hibernate.annotations.Synchronize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -320,9 +321,91 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 			    catch (Exception e)
 			    {
 			    	logger.error(e);
+			    	throw new Exception(e.getMessage()+HttpStatus.BAD_REQUEST);
 			    }
 		
 			    	return tokens;
+	}
+
+
+	public String refreshSpotifyAccessToken(String refreshToken,String client_id, String client_secret) throws Exception {
+		String newAccessToken=null;
+		logger.debug("refreshTOken",refreshToken);
+		String url = "https://accounts.spotify.com/api/token";
+	 SSLContext context = SSLContext.getInstance("TLS"); 
+     context.init(null, new X509TrustManager[]{new X509TrustManager(){ 
+             public void checkClientTrusted(X509Certificate[] chain, 
+                             String authType) throws CertificateException {} 
+             public void checkServerTrusted(X509Certificate[] chain, 
+                             String authType) throws CertificateException {} 
+             public X509Certificate[] getAcceptedIssuers() { 
+                     return new X509Certificate[0]; 
+             }}}, new SecureRandom()); 
+     HttpsURLConnection.setDefaultSSLSocketFactory( 
+                     context.getSocketFactory()); 
+  
+   	URL obj = new URL(url);
+	HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+
+	con.setRequestMethod("POST");
+	con.setDoOutput(true);
+    Map<String,String> arguments = new HashMap<String, String>();
+    arguments.put("grant_type", "refresh_token");
+    arguments.put("client_id", client_id);
+    arguments.put("client_secret", client_secret);
+    //arguments.put("redirect_uri", "https://mighty2.cloudaccess.host/test1/spotifyaccess/RedirectedSpotifyAccess");
+    //arguments.put("refresh_token ",refreshToken);
+    StringBuilder sj = new StringBuilder();
+    for(Map.Entry<String,String> entry : arguments.entrySet()) {
+    	logger.debug(" ref",entry.getKey());
+    	if(entry.getKey().toString().equalsIgnoreCase("refresh_token")){
+    		logger.debug("inside refreshTOken",entry.getValue());
+    		sj.append(entry.getKey() + "=" + entry.getValue() + "&");
+    	}else{
+    		logger.debug("outside refreshTOken",entry.getValue());
+    		sj.append(URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8") + "&");
+    	}
+    }
+    
+    sj.append("refresh_token="+refreshToken);
+    byte[] out = sj.toString().getBytes();
+ 
+    con.setFixedLengthStreamingMode(out.length);
+   
+    con.connect();
+  /*  try{
+    int response=con.getResponseCode();
+    logger.debug("REsu",response);
+    }catch(Exception e){
+    	logger.error("REs",e);
+    }*/
+    	try{
+    		
+		        OutputStream os = con.getOutputStream();
+		        os.write(out);
+		        
+		        BufferedReader in = new BufferedReader(
+				        new InputStreamReader(con.getInputStream()));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				//print result
+				logger.debug(response.toString());
+				
+				newAccessToken=response.toString();
+
+		    }catch (Exception e)
+		    {
+		    	logger.error(e);
+		    }
+   		
+		
+		return newAccessToken;
 	}
 
 	

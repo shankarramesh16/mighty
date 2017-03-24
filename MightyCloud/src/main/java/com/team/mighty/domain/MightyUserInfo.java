@@ -47,9 +47,20 @@ public class MightyUserInfo extends BaseEntityInfo {
 	
 	@Column(name = "PASSWORD")
 	private String password;
+	
+	@Column(name = "USERFB_ID")
+	private String userFBId;
 
 	@Column(name = "USER_INDICATOR")
 	private String userIndicator;
+
+	public String getUserFBId() {
+		return userFBId;
+	}
+
+	public void setUserFBId(String userFBId) {
+		this.userFBId = userFBId;
+	}
 
 	@Column(name = "USER_NAME")
 	private String userName;

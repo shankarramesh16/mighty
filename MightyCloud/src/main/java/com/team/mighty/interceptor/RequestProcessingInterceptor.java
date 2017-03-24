@@ -1,13 +1,13 @@
-/*package com.team.mighty.interceptor;
+package com.team.mighty.interceptor;
 
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
@@ -19,7 +19,6 @@ public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 	public static String autherisation_insertion_mode="undefined";
 		
 	
-	@Override
     public boolean preHandle(HttpServletRequest request,HttpServletResponse response, Object handler) throws Exception {
 		
 				
@@ -28,9 +27,7 @@ public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 		String forwardPage="/";
 		String queryString="";
 		HttpSession session = request.getSession();
-	
-			String role="";
-				String preUrl = request.getServletPath();
+			String preUrl = request.getServletPath();
 					String actualPrePage=getURI(request);			
 						String page=preUrl;
 							queryString= getQueryString(request)==null?"": getQueryString(request);
@@ -46,7 +43,8 @@ public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 			}
 			
 			if(page.contains("?"))
-			{ System.out.println("page in ???"+page);
+			{ 
+				System.out.println("page in ???"+page);
 				request.getSession().invalidate();
 				page=page.substring(0,page.indexOf("?"));
 				
@@ -64,11 +62,12 @@ public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 	
 		if(page.equals("/") || page.equals("forgotPassword") || page.equals("resetPassword"))
 		{	
+			logger.debug("IN preURL '/'':");
 			return true;
 		}
 		else if (page.equals("login")) { 
 				return true;
-			  }
+		}
 		
 		return true;
 	
@@ -119,4 +118,3 @@ public String getQueryString( HttpServletRequest servletRequest  )
 	  return queryString.toString();
 }
 }
-*/
