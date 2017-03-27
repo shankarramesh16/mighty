@@ -29,8 +29,8 @@ public interface MightyDeviceFirmwareDAO extends JpaRepository<MightyDeviceFirmw
 	@Query("FROM MightyDeviceFirmware m where m.requires=:requires and (m.compatibleIOS=:compatibleIOSAndAndroid OR m.compatibleAND=:compatibleIOSAndAndroid) and m.status = :status order By m.version desc")
 	List<MightyDeviceFirmware> getFirmwareByCompatible(@Param("compatibleIOSAndAndroid") Float compatibleIOSAndAndroid, @Param("requires") Float requires, @Param("status") String status);
 	
-	@Query("FROM MightyDeviceFirmware m where m.compatibleIOS=:compatibleIOS and m.status = :status order By m.version asc")
-	List<MightyDeviceFirmware> getFirmwareByReqVersion(@Param("compatibleIOS") Float compatibleIOS, @Param("status") String status);
+	@Query("FROM MightyDeviceFirmware m where (m.compatibleIOS=:compatibleIOSAndAndroid OR m.compatibleAND=:compatibleIOSAndAndroid) and m.status = :status order By m.version asc")
+	List<MightyDeviceFirmware> getFirmwareByReqVersion(@Param("compatibleIOSAndAndroid") Float compatibleIOSAndAndroid, @Param("status") String status);
 
 	@Query("FROM MightyDeviceFirmware m where m.status=:status order By m.version asc")	
 	List<MightyDeviceFirmware> getDeviceFirmwareByStatusAsc(@Param("status") String string);

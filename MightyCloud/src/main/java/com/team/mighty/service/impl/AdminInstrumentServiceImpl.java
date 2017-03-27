@@ -205,6 +205,7 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 								
 						}*/
 					   }else {
+						   logger.debug("vikkky",mightyDeviceInfo.getAppVersion());
 							List<MightyDeviceFirmware> compatibleWithVersion= mightyDeviceFirmwareDAO.getFirmwareByReqVersion(mightyDeviceInfo.getAppVersion(),"A");
 							
 							if(compatibleWithVersion!=null && !compatibleWithVersion.isEmpty()){

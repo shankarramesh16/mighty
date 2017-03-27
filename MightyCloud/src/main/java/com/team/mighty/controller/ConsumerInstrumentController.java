@@ -186,56 +186,7 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 	}
 	
-	/*@RequestMapping(value="/mightyAppLogin",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> mightyUserLoginHandler(@RequestBody String received) {
-		logger.info(" /POST mightyAppLogin API");
 		
-		JSONObject obj=null;
-		ResponseEntity<String> responseEntity = null;
-		MightyUserInfo mightyUserInfo=null;
-		try{		
-				obj=new JSONObject();
-				obj=(JSONObject)new JSONParser().parse(received);
-		}catch(Exception e){
-			logger.error("System Exception during parsing JSON",e);
-		}
-		
-				
-		try {
-			ConsumerDeviceDTO consumerDeviceDTO=null;
-			String userIndicator=obj.get("UserIndicator").toString();
-			logger.debug("UserIndicator",userIndicator);
-			if(userIndicator.equalsIgnoreCase("L")){
-				consumerDeviceDTO=new ConsumerDeviceDTO();
-				consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
-			    consumerDeviceDTO.setPassword(obj.get("Password").toString());
-			    	mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
-			}else if(userIndicator.equalsIgnoreCase("F")){
-				consumerDeviceDTO=new ConsumerDeviceDTO();
-				consumerDeviceDTO.setUserName(obj.get("UserName").toString());	
-				consumerDeviceDTO.setEmailId(obj.get("EmailID").toString());
-				consumerDeviceDTO.setPassword(obj.get("Password").toString());
-				consumerDeviceDTO.setUserIndicator(obj.get("UserIndicator").toString());
-				consumerDeviceDTO.setDeviceModel(obj.get("DeviceModel").toString());
-				consumerDeviceDTO.setDeviceId(obj.get("DeviceID").toString());
-				consumerDeviceDTO.setDeviceName(obj.get("DeviceName").toString());
-				consumerDeviceDTO.setDeviceOs(obj.get("DeviceOS").toString());
-				consumerDeviceDTO.setDeviceOsVersion(obj.get("DeviceOSVersion").toString());
-				consumerDeviceDTO.setDeviceType(obj.get("DeviceType").toString());
-				consumerDeviceDTO.setAge(obj.get("Age").toString());
-				consumerDeviceDTO.setGender(obj.get("Gender").toString());	
-					mightyUserInfo=consumerInstrumentServiceImpl.mightyFBUserLogin(consumerDeviceDTO);
-			}
-						
-			responseEntity = new ResponseEntity<String>(String.valueOf(mightyUserInfo.getId()), HttpStatus.OK);
-			} catch(MightyAppException e) {
-			String errorMessage = e.getMessage();
-			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
-			logger.errorException(e, e.getMessage());
-		}
-		return responseEntity;
-	}*/
-	
 	/*@RequestMapping(value="/grafana",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> IoITesting(@RequestBody String received) {
 		logger.info(" /POST mightyAppLogin API");
