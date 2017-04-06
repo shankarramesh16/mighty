@@ -53,7 +53,7 @@ public class ConsumerInstrumentController {
 	private static final MightyLogger logger = MightyLogger.getLogger(ConsumerInstrumentController.class);
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> userLoginFromApp(@RequestBody UserLoginDTO userLoginDTO)  {
+	public ResponseEntity<String> userLoginFromApp(@RequestBody UserLoginDTO userLoginDTO){
 		logger.info(" /POST User Login API ", userLoginDTO);
 		logger.debug("userId as",userLoginDTO.getUserId());
 				
@@ -63,11 +63,8 @@ public class ConsumerInstrumentController {
 			userLoginDTO = consumerInstrumentServiceImpl.userLogin(userLoginDTO);
 			String response = JsonUtil.objToJson(userLoginDTO);
 			httpHeaders.add(MightyAppConstants.HTTP_HEADER_TOKEN_NAME, userLoginDTO.getApiToken());
-			//httpHeaders.add("AccessTokenExpiration",userLoginDTO.getAccessTokenExpDate().toString());
-			
-							
 			httpHeaders.add(MightyAppConstants.HTTP_HEADER_BASE_TOKEN_NAME, userLoginDTO.getBaseToken());
-			//httpHeaders.add("BaseTokenExpiration",userLoginDTO.getBaseTokenExpDate().toString());
+			
 			try {
 				/*Epoch format for Access,Base Token Expiration Date*/
 			httpHeaders.add("BaseTokenExpiration", String.valueOf(new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")

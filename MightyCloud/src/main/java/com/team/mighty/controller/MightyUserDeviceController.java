@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.jpa.criteria.predicate.IsEmptyPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -88,6 +87,7 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 			logger.error("Exception in,",e);
 		}
 		map.put("mightydeviceuserlist", consumerDeviceDTOList);
+		logger.debug("mightydeviceuserlist",consumerDeviceDTOList.size());
 		return "MightyUser";
 	}
 	

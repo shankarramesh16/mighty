@@ -12,7 +12,7 @@
 <!-- <div class="wrapper"> -->
 <div id="PageContainer"> 
     		
-          			<div class="grid grid--no-gutters grid--table site-header__inner">
+          			<div class="grid grid--no-gutters grid--table site-header__inner" >
             			<div class="grid__item small--hide medium-up--one-third">
            				</div>
            					 <div class="grid__item one-third">
