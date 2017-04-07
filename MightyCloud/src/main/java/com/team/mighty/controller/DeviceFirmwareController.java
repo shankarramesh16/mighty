@@ -36,7 +36,8 @@ public class DeviceFirmwareController {
 		logger.debug("Adding DeviceFirmware");
 				return "addDeviceFirmware";
 	}
- 
+	
+	
  
  		
 	@RequestMapping(value = "/deviceFirmwareSubmit",method=RequestMethod.POST)

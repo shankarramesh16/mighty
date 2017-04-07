@@ -1,3 +1,9 @@
+<%--
+    Document   : device_firmware
+    Created on : OCT 09, 2016, 03:51:01 PM
+    Author     : Vikky
+--%>
+
 <%@page import="java.util.*"%>
 <%@page import="com.team.mighty.domain.*"%>
 <%@page import="com.team.mighty.dto.*"%>
@@ -127,7 +133,7 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA</b></a></li>
+            <li><a href="uploadDeviceFirmware"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA</b></a></li>
            
           </ul>
         </li>

@@ -13,7 +13,8 @@
     <link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/unslider-dots.css?10713448530586305152" rel="stylesheet" type="text/css" media="all" />
   	<link href="//cdn.shopify.com/s/files/1/1198/3830/t/6/assets/custom.scss.css?10713448530586305152" rel="stylesheet" type="text/css" media="all" />
 
-    
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">    
 <script type="text/javascript" src="js/jquery-latest.js"></script>
 
 <script  type="text/javascript">
@@ -51,7 +52,7 @@ function validate() {
 		window.location.reload();
 		return false;
 	}else if (uname.length < 1 && password.length < 1) {
-		document.getElementById("passvalid").innerHTML = "Please enter user name/password!";
+		document.getElementById("passvalid").innerHTML = "Please enter username/password!";
 		document.getElementById("uname").focus(); 
 		return false;
 	}else if (uname.length < 1) {
@@ -110,8 +111,8 @@ function validate() {
 			<form action="login" name="user_validation_form" id="user_validation_form" method="post" onsubmit="return validate()">		
 				<div class="row">
 					<div class="col-sm-12">
-						<h6 class="text-regular text-uppercase" style="text-decoration:blink;"><b><i>Please Login</i></b></h6>
-						<input type="text" name="uname" id="uname"  placeholder="Login ID" class="form-control login-fields username mar-top-20" /><label id="namevalid" style="color: red;"></label>
+						<h5 class="text-regular text-uppercase" style="text-decoration:blink;"><b><i class="fa fa-lock">&nbsp;<b>Please Login</b></i></b></h5>
+						<input type="text" name="uname" id="uname"  placeholder="Username" class="form-control login-fields username mar-top-20" /><label id="namevalid" style="color: red;"></label>
 						<input type="password" name="pass" id="pass" placeholder="Password"  class="form-control login-fields password mar-top-10" /><label id="passvalid" style="color: red;"></label>
 						<label id="passvalid" style="color: red;" ><%=message %></label>
 						<input type="hidden" name="sts" id="sts" value="<%=(String)request.getAttribute("status")%>">
@@ -120,11 +121,11 @@ function validate() {
 				
 				<div class="row">
 					<div class="col-sm-6 mar-top-25">
-						<a href="forgotPassword" class="text-grey link-underline">Forgot Password?</a>
+						<a href="forgotPassword" class="text-grey link-underline text-bold ">Forgot Password?</a>
 					</div>
 					
-					<div class="col-sm-6 mar-top-20 text-right">
-						<input type="submit" value="Login" class="btn btn-blue"/>
+					<div class="col-sm-6 mar-top-20 text-right ">
+						<input type="submit" value="Login" class="btn btn-blue text-bold"/>
 					</div>
 					
 					

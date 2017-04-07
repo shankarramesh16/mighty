@@ -17,6 +17,11 @@
 	display:solid;
 }
  
+ 
+ .uploadForm{
+	border: 3px solid  #000000;
+}
+
 .slider {
     display: block;
     vertical-align: middle;

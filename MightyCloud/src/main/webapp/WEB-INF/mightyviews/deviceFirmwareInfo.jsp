@@ -1,3 +1,9 @@
+<%--
+    Document   : device_firmware
+    Created on : OCT 09, 2016, 03:51:01 PM
+    Author     : Vikky
+--%>
+
 <%@page import="java.util.*"%>
 <%@page import="com.team.mighty.domain.*"%>
 <%@page import="com.team.mighty.dto.*"%>
@@ -42,7 +48,10 @@
 <script src="js/scroller.js"></script>
 
 <script type="text/javascript">
-function fillFields(id) {
+
+
+
+function deleteEvent(id) {
 	
 	var x = confirm("Are you sure you want to delete?");
 	
@@ -67,6 +76,12 @@ function fillFields(id) {
     	return false;
     }
       
+  }
+  
+function editEvent(id) {
+	
+	alert("Not implemented");
+	         
   }
 		
 </script>
@@ -157,7 +172,7 @@ function fillFields(id) {
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA</b></a></li>
+            <li><a href="uploadDeviceFirmware"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA</b></a></li>
            
           </ul>
         </li>
@@ -219,7 +234,9 @@ function fillFields(id) {
 								<display:column property="createdDt" title="CreatedDate"	format="{0,date,dd-MM-yyyy}" sortable="true"  />
 								<display:column property="effectiveDt" title="EffectiveDate" format="{0,date,dd-MM-yyyy}" sortable="true" />
 								<display:column property="status" title="Status" sortable="true" />
-								<display:column title="Action"><a onclick="fillFields('${row.id}')" title="Delete"><i class="fa fa-trash" style="color:red;"></i></a>
+								<display:column title="Action">
+								<a onclick="editEvent('${row.id}')" title="EDIT"></i> <i class="fa fa-edit" style="color:blue;"></i></a>&nbsp;&nbsp;&nbsp;
+								<a onclick="deleteEvent('${row.id}')" title="DELETE"></i> <i class="fa fa-trash" style="color:red;"></i></a>
 								</display:column>
 								
 								
