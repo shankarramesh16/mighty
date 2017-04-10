@@ -181,8 +181,46 @@
 						
 						<div class="row">
 							<div class="col-sm-12">	
+							
+							
+							<table class="table table-hover text-center">
+									    <thead>
+									      <tr class="text-blue text-semi-bold">
+									        <th>ID</th>
+									        <th>DeviceID/HwSerialNo.</th>
+									        <th>DeviceName</th>
+									        <th>DeviceType</th>
+									        <th>Sw_Version</th>
+									        <th>AppBuild</th>
+									        <th>AppVersion</th>
+									        <th>Is_Registered</th>
+									        <th>Is_Active</th>
+									      </tr>
+									    </thead>
+									    <tbody>
+									    <% if(mightDeviceList!=null && !mightDeviceList.isEmpty()){
+										    for(MightyDeviceInfo md :mightDeviceList){
+										    %>
+									      <tr>
+									        <td><%=md.getId()%></td>
+									        <td><%=md.getDeviceId()%></td>
+									        <td><%=md.getDeviceName()%></td>
+									        <td><%=md.getDeviceType()%></td>
+									        <td><%=md.getSwVersion()%></td>
+									        <td><%=md.getAppBuild()%></td>
+									        <td><%=md.getAppVersion()%></td>
+									        <td><%=md.getIsRegistered()%></td>
+									        <td><%=md.getIsActive()%></td>
+									        
+									        
+									       
+									      </tr>
+									      	<%}
+									    }%>
+									    </tbody>
+									  </table>
 						
-				        <display:table class="table table-hover" name="<%=mightDeviceList%>" id="row"
+				        <%-- <display:table class="table table-hover" name="<%=mightDeviceList%>" id="row"
 									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
 								<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />
 											
@@ -207,7 +245,7 @@
 							 	<display:setProperty name="export.csv.filename" value="<%=fname1%>" />
 								<display:setProperty name="export.excel.filename" value="<%=fname2%>" />
 								<display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
-						</display:table>
+						</display:table> --%>
 							</div>
 						</div>
 						<a  id="goTop"><i class="fa fa-eject"></i></a>	

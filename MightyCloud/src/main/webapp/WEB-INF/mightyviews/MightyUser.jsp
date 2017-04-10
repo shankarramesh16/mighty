@@ -181,8 +181,41 @@
 						
 						<div class="row">
 							<div class="col-sm-12">	
+							
+								<table class="table table-hover text-center">
+									    <thead>
+									      <tr class="text-blue text-semi-bold">
+									        <th>ID</th>
+									        <th>UserName</th>
+									        <th>EmailID</th>
+									        <th>DeviceMapping</th>
+									        <th>UserIndicator</th>
+									        <th>Status</th>
+									        <th>CreatedDate</th>
+									        <th>UpdatedDate</th>
+									      </tr>
+									    </thead>
+									    <tbody>
+									    <% if(mightyUserList!=null && !mightyUserList.isEmpty()){
+										    for(ConsumerDeviceDTO dto :mightyUserList){
+										    %>
+									      <tr>
+									        <td><%=dto.getId()%></td>
+									        <td><%=dto.getUserName()%></td>
+									        <td><%=dto.getEmailId()%></td>
+									        <td><%=dto.getDeviceId()%></td>
+									        <td><%=dto.getUserIndicator()%></td>
+									        <td><%=dto.getUserStatus()%></td>
+									        <td><%=dto.getCreatedDt()%></td>
+									        <td><%=dto.getUpdatedDt()%></td>
+									       
+									      </tr>
+									      	<%}
+									    }%>
+									    </tbody>
+									  </table>
 						
-					    <display:table  class="table table-hover"  name="<%=mightyUserList%>" id="row"
+					    <%-- <display:table  class="table table-hover"  name="<%=mightyUserList%>" id="row"
 									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
 							<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />
 							<display:column  property="userName" title="UserName" sortable="true"  />
@@ -197,7 +230,7 @@
 						 	<display:setProperty name="export.csv.filename" value="<%=fname1%>" />
 							<display:setProperty name="export.excel.filename" value="<%=fname2%>" />
 							<display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
-						</display:table>
+						</display:table> --%>
 							</div>
 						</div>
 						<a  id="goTop"><i class="fa fa-eject"></i></a>	

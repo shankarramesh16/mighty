@@ -219,8 +219,54 @@ function editEvent(id) {
 						
 						<div class="row" style="overflow-y: auto;">
 							<div class="col-sm-12" >	
+							
+							
+							<table class="table table-hover text-center">
+									    <thead>
+									      <tr class="text-blue text-semi-bold ">
+									        <th>ID</th>
+									        <th>FileName</th>
+									        <th>SwVersion</th>
+									        <th>HashValue</th>
+									        <th>HashType</th>
+									        <th>Requires</th>
+									        <th>CompatibleIOS</th>
+									        <th>CompatibleAND</th>
+									        <th>CompatibleHW</th>
+									        <!-- <th>CreatedDate</th>
+									        <th>EffectiveDate</th> -->
+									        <th>Status</th>
+									        <th>Action</th>
+									      </tr>
+									    </thead>
+									    <tbody>
+									    <% if(deviceFirmwareList!=null && !deviceFirmwareList.isEmpty()){
+										    for(DeviceFirmWareDTO dto :deviceFirmwareList){
+										    %>
+									      <tr>
+									        <td><%=dto.getId()%></td>
+									        <td><%=dto.getFileName()%></td>
+									        <td><%=dto.getVersion()%></td>
+									        <td><%=dto.getHashValue()%></td>
+									        <td><%=dto.getHashType()%></td>
+									        <td><%=dto.getRequires()%></td>
+									        <td><%=dto.getCompatibleIOS()%></td>
+									        <td><%=dto.getCompatibleAND()%></td>
+									        <td><%=dto.getCompatibleHW()%></td>
+									        <%-- <td><%=dto.getCreatedDt()%></td>
+									        <td><%=dto.getUpdatedDt()%></td> --%>
+									        <td><%=dto.getStatus()%></td>
+									        <td>
+									      		 <a onclick="editEvent('<%=dto.getId()%>')" title="EDIT"></i> <i class="fa fa-edit" style="color:blue;"></i></a>&nbsp;&nbsp;&nbsp;
+												 <a onclick="deleteEvent('<%=dto.getId()%>')" title="DELETE"></i> <i class="fa fa-trash" style="color:red;"></i></a>
+											</td>	 
+									      </tr>
+									      	<%}
+									    }%>
+									    </tbody>
+									  </table>
 						
-					    <display:table class="table table-hover" name="<%=deviceFirmwareList%>" id="row"
+					   <%--  <display:table class="table table-hover" name="<%=deviceFirmwareList%>" id="row"
 									export="true" requestURI=""  defaultsort="1" defaultorder="descending" pagesize="50">
 								<display:column property="id" title="ID" sortable="true" headerClass="sortable" />
 							 	<display:column property="fileName" title="FileName" sortable="true"  />
@@ -244,7 +290,7 @@ function editEvent(id) {
 						 	 <display:setProperty name="export.csv.filename" value="<%=fname1%>" />
 							 <display:setProperty name="export.excel.filename" value="<%=fname2%>" />
 							 <display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
-						</display:table>
+						</display:table> --%>
 							</div>
 						</div>
 						<a  id="goTop"><i class="fa fa-eject"></i></a>	
