@@ -11,8 +11,11 @@ import com.team.mighty.domain.MightyUserInfo;
 
 public interface MightyDeviceInfoDAO extends JpaRepository<MightyDeviceInfo, Long> {
 
-	@Query("SELECT m FROM MightyDeviceInfo m WHERE m.deviceId = :deviceId")
+	@Query("SELECT m FROM MightyDeviceInfo m WHERE m.deviceId = :deviceId ")
 	MightyDeviceInfo getDeviceInfo(@Param("deviceId") String deviceId);
+	
+	@Query("SELECT m FROM MightyDeviceInfo m WHERE m.deviceId = :deviceId and m.isRegistered='Y' ")
+	MightyDeviceInfo getDeviceInfoByStatusAndID(@Param("deviceId") String deviceId);
 	
 	@Query("FROM MightyUserInfo")
 	List<MightyUserInfo> getMightyUserInfo() throws Exception;

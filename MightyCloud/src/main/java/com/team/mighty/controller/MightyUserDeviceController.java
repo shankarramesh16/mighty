@@ -57,9 +57,11 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 								consumerDeviceDTO.setUserIndicator(m.getUserIndicator());
 								consumerDeviceDTO.setUserStatus(m.getUserStatus());
 								consumerDeviceDTO.setCreatedDt(m.getCreatedDt());
-								consumerDeviceDTO.setUpdatedDt(m.getUpdatedDt());	
+								consumerDeviceDTO.setUpdatedDt(m.getUpdatedDt());
+								consumerDeviceDTO.setUsrdevReg(md.getRegistrationStatus());
 								if(mightyDeviceInfo!=null){
 										consumerDeviceDTO.setDeviceId(mightyDeviceInfo.getDeviceId());
+										
 								}else{
 										consumerDeviceDTO.setDeviceId("0");
 								}

@@ -63,7 +63,25 @@ public class ConsumerDeviceDTO implements Serializable {
 	private String deviceOsVersion;
 	
 	private String mightyDeviceId;
+	private String usrdevReg;
+	private String devReg;
 	
+	public String getUsrdevReg() {
+		return usrdevReg;
+	}
+
+	public void setUsrdevReg(String usrdevReg) {
+		this.usrdevReg = usrdevReg;
+	}
+
+	public String getDevReg() {
+		return devReg;
+	}
+
+	public void setDevReg(String devReg) {
+		this.devReg = devReg;
+	}
+
 	private String emailId;
 	private Date createdDt;
 	private Date updatedDt;

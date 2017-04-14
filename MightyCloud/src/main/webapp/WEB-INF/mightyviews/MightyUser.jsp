@@ -60,7 +60,8 @@
 <div class="wrapper">  
   	<header class="main-header" >
    
-	    <a href="https://bemighty.com" class="logo affix"  >
+   
+	    <a href="https://bemighty.com" class="logo affix">
 			      
 			     <svg width="121px" height="50px" viewBox="445 13 150 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 			                      					<defs>
@@ -189,8 +190,9 @@
 									        <th>UserName</th>
 									        <th>EmailID</th>
 									        <th>DeviceMapping</th>
+									        <th>User_Dev_Reg</th>
 									        <th>UserIndicator</th>
-									        <th>Status</th>
+									        <th>UserStatus</th>
 									        <th>CreatedDate</th>
 									        <th>UpdatedDate</th>
 									      </tr>
@@ -204,6 +206,7 @@
 									        <td><%=dto.getUserName()%></td>
 									        <td><%=dto.getEmailId()%></td>
 									        <td><%=dto.getDeviceId()%></td>
+									        <td><%=dto.getUsrdevReg()%></td>
 									        <td><%=dto.getUserIndicator()%></td>
 									        <td><%=dto.getUserStatus()%></td>
 									        <td><%=dto.getCreatedDt()%></td>

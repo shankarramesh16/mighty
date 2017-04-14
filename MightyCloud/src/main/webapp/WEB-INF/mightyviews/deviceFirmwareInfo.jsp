@@ -99,7 +99,7 @@ function editEvent(id) {
 <div class="wrapper">  
   	<header class="main-header" >
    
-	    <a href="https://bemighty.com" class="logo" >
+	    <a href="https://bemighty.com" class="logo affix" >
 			      
 			     <svg width="121px" height="50px" viewBox="445 13 150 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 			                      					<defs>
@@ -124,7 +124,7 @@ function editEvent(id) {
    </header>
   
   
-  <aside class="main-sidebar affix">
+  <aside class="main-sidebar affix" style="position:fixed;">
    
     <section class="sidebar">
         

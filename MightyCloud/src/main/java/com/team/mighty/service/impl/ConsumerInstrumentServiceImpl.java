@@ -101,9 +101,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		
 		while(it.hasNext()) {
 			MightyDeviceUserMapping mightDeviceUser = it.next();
-			  if(mightDeviceUser.getRegistrationStatus().equalsIgnoreCase(MightyAppConstants.IND_N)){
+			/*if(mightDeviceUser.getRegistrationStatus().equalsIgnoreCase(MightyAppConstants.IND_N)){
 				throw new MightyAppException(" User Registerd Device Status is In Active ", HttpStatus.UNAUTHORIZED);
-			}
+			}*/
 			
 			long mightyDeviceId = mightDeviceUser.getMightyDeviceId();
 			
@@ -410,28 +410,26 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	public void deregisterDevice(String deviceId) {
-		if(null == deviceId) {
+		if(null == deviceId || "".equalsIgnoreCase(deviceId)) {
 			logger.debug("DeRegister Device, Consumer DeviceId is null");
-			throw new MightyAppException("Invalid request Object", HttpStatus.BAD_REQUEST);
+			throw new MightyAppException("DeRegister Device value is null or empty", HttpStatus.BAD_REQUEST);
 		}
 		
 			
 		MightyDeviceInfo mightDeviceInfo = getDeviceDetails(deviceId);
 		
 		if(mightDeviceInfo == null ) {
-			throw new MightyAppException("Device Details Not Found in System", HttpStatus.NOT_FOUND);
+			throw new MightyAppException("Device not exist", HttpStatus.NOT_FOUND);
 		}
 		
-		if(mightDeviceInfo.getIsActive().equalsIgnoreCase(MightyAppConstants.IND_N)) {
+		/*if(mightDeviceInfo.getIsActive().equalsIgnoreCase(MightyAppConstants.IND_N)) {
 			throw new MightyAppException("Device is In Active, So cannot update", HttpStatus.PRECONDITION_FAILED);
-		}
+		}*/
 		
 		MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.getDeviceInfo(mightDeviceInfo.getId());
 		
 		if(mightyDeviceUserMapping != null) {
-			logger.debug(mightyDeviceUserMapping);
-			logger.debug("Inside",mightyDeviceUserMapping.getMightyUserInfo());
-			logger.debug(mightyDeviceUserMapping.getMightyUserInfo().getId());
+			logger.debug("Inside",mightyDeviceUserMapping.getMightyUserInfo().getId());
 			mightyDeviceUserMapping.setRegistrationStatus(MightyAppConstants.IND_N);
 			updateUserDeviceMap(mightyDeviceUserMapping);
 		}
@@ -560,7 +558,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		
 		if((null == deviceInfoDTO.getUserId() || "".equalsIgnoreCase(deviceInfoDTO.getUserId()))
 				|| (null == deviceInfoDTO.getDeviceId() || "".equals(deviceInfoDTO.getDeviceId())))
-				 {
+		{
 			logger.debug("Register Device, Anyone of the object is empty [UserId, DeviceId] ", deviceInfoDTO.getUserId(), 
 					",",deviceInfoDTO.getDeviceId());
 			throw new MightyAppException("Invalid request Parameters [UserId or Device Id ] ", HttpStatus.BAD_REQUEST);
@@ -602,6 +600,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 								logger.debug("In new device registration into exiting user");
 								MightyDeviceInfo mighty=mightyDeviceInfoDAO.getDeviceInfo(deviceInfoDTO.getDeviceId());
 									if(mighty==null){
+											
 											MightyDeviceInfo mightyDeviceInfo1=new MightyDeviceInfo();
 											mightyDeviceInfo1.setDeviceId(deviceInfoDTO.getDeviceId());
 											mightyDeviceInfo1.setDeviceName(deviceInfoDTO.getDeviceName());
@@ -650,7 +649,53 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 																				consumerInstrumentDAO.save(mightyUserInfo);
 																	 }
 										}
-									}	
+									}else{
+										logger.debug("11111");
+											if(mighty.getIsRegistered().equalsIgnoreCase(MightyAppConstants.IND_N)){
+												logger.debug("22222");
+												mighty.setIsRegistered(MightyAppConstants.IND_Y);
+												mightyDeviceInfoDAO.save(mighty);
+											}	
+											
+											/*if(m.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
+													m.setRegistrationStatus(MightyAppConstants.IND_Y);
+													mightyDeviceUserMapDAO.save(m);
+											}*/
+											
+											if(m.getMightyDeviceId()==0){
+												logger.debug("33333");
+												m.setMightyDeviceId(mighty.getId());
+												mightyDeviceUserMapDAO.save(m);
+											}else if(m.getMightyDeviceId()!=mighty.getId()){
+												logger.debug("Inside new mighty Registered");
+												logger.debug("4444");
+												MightyDeviceUserMapping mdum1=new MightyDeviceUserMapping();
+															mdum1.setMightyDeviceId(mighty.getId());
+															mdum1.setMightyUserInfo(mightyUserInfo);
+															mdum1.setPhoneDeviceId(m.getPhoneDeviceId());
+															mdum1.setPhoneDeviceOSVersion(m.getPhoneDeviceOSVersion());
+															mdum1.setPhoneDeviceType(m.getPhoneDeviceType());
+															mdum1.setPhoneDeviceVersion(m.getPhoneDeviceVersion());
+															mdum1.setRegistrationStatus(MightyAppConstants.IND_Y);
+															mdum1.setCreatedDt(new Date(System.currentTimeMillis()));
+															mdum1.setUpdatedDt(new Date(System.currentTimeMillis()));
+																MightyDeviceUserMapping deviceRegistered=mightyDeviceUserMapDAO.save(mdum1);
+																		 if(deviceRegistered!=null){
+																				 logger.debug("INsert into M:M");
+																				 	Set<MightyUserInfo> setUserInfo = new HashSet<MightyUserInfo>();
+																					Set<MightyDeviceUserMapping> setMightyUserDevice = mightyUserInfo.getMightyDeviceUserMapping();
+																					if(setMightyUserDevice == null || mightyUserInfo.getMightyDeviceUserMapping().isEmpty()) {
+																						setMightyUserDevice = new HashSet<MightyDeviceUserMapping>();
+																					}
+																					setMightyUserDevice.add(deviceRegistered);
+																					mightyUserInfo.setMightyDeviceUserMapping(setMightyUserDevice);
+																					
+																					setUserInfo.add(mightyUserInfo);
+																					consumerInstrumentDAO.save(mightyUserInfo);
+																		 }
+											}
+											
+								 }
 								}
 						}	
 				}

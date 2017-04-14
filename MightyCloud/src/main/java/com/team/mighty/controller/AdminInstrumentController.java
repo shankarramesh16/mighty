@@ -219,7 +219,7 @@ public class AdminInstrumentController {
 							
 							deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
 							/*passing downloading API...*/
-							String URL = "https://mighty2.cloudaccess.host/test/rest/admin/download/"+reqMightyDeviceFirmware.getId();
+							String URL = "https://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
 							/*if(request.isSecure()) {
 								URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
 							} else {

@@ -316,11 +316,20 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 	}
 	
-	@RequestMapping(value = "/{deviceId}",method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> doDeRegistration(@PathVariable String deviceId,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
-		logger.info(" /POST Consumer API for MightyDeReg",  deviceId);
-			
+	@RequestMapping(value = "/mightyDeReg",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> doDeRegistration(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
+		logger.info(" /POST Consumer API for MightyDeReg");
+		
+		JSONObject obj=null;
 		ResponseEntity<String> responseEntity = null;
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON ",e);
+		}
+				
+		
 		try {
 			
 			//Validate X-MIGHTY-TOKEN Value
@@ -328,8 +337,8 @@ public class ConsumerInstrumentController {
 			
 			// Validate Expriy Date
 			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
-			
-			consumerInstrumentServiceImpl.deregisterDevice(deviceId);
+			logger.debug("TestDev",obj.get("deviceID").toString().trim());
+			consumerInstrumentServiceImpl.deregisterDevice(obj.get("deviceID").toString().trim());
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		} catch(MightyAppException e) {
 			String errorMessage = e.getMessage();
