@@ -597,10 +597,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 											mightyDeviceUserMapDAO.save(m);
 									}
 							}else{ 
-								logger.debug("In new device registration into exiting user");
-								MightyDeviceInfo mighty=mightyDeviceInfoDAO.getDeviceInfo(deviceInfoDTO.getDeviceId());
-									if(mighty==null){
-											
+											logger.debug("In new device registration into exiting user");
+											MightyDeviceInfo mighty=mightyDeviceInfoDAO.getDeviceInfo(deviceInfoDTO.getDeviceId());
+								if(mighty==null){											
 											MightyDeviceInfo mightyDeviceInfo1=new MightyDeviceInfo();
 											mightyDeviceInfo1.setDeviceId(deviceInfoDTO.getDeviceId());
 											mightyDeviceInfo1.setDeviceName(deviceInfoDTO.getDeviceName());
@@ -621,7 +620,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 										
 										if(m.getMightyDeviceId()==0){
 											m.setMightyDeviceId(mightyDevice.getId());
-											mightyDeviceUserMapDAO.save(mightyDeviceUserMapping);
+											mightyDeviceUserMapDAO.save(m);
 										}else if(m.getMightyDeviceId()!=mightyDevice.getId()){
 											logger.debug("Inside new mighty Registered");
 											MightyDeviceUserMapping mdum=new MightyDeviceUserMapping();
@@ -649,18 +648,21 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 																				consumerInstrumentDAO.save(mightyUserInfo);
 																	 }
 										}
-									}else{
-										logger.debug("11111");
+									}/*else{
+											MightyDeviceUserMapping m1=mightyDeviceUserMapDAO.getDeviceInfo(mighty.getId());
+										
+										
 											if(mighty.getIsRegistered().equalsIgnoreCase(MightyAppConstants.IND_N)){
 												logger.debug("22222");
 												mighty.setIsRegistered(MightyAppConstants.IND_Y);
 												mightyDeviceInfoDAO.save(mighty);
 											}	
 											
-											/*if(m.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
+											if(m.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
 													m.setRegistrationStatus(MightyAppConstants.IND_Y);
 													mightyDeviceUserMapDAO.save(m);
-											}*/
+											}
+										if(m1==null){												
 											
 											if(m.getMightyDeviceId()==0){
 												logger.debug("33333");
@@ -694,10 +696,12 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 																					consumerInstrumentDAO.save(mightyUserInfo);
 																		 }
 											}
-											
-								 }
-								}
-						}	
+									}		
+								 }*/
+								
+								
+								} /*else loop or new device into existing user ended*/
+						}/* loop ended*/	
 				}
 		  }else{
 				throw new MightyAppException("Invalid request Parameters [UserId] ", HttpStatus.NOT_FOUND);
