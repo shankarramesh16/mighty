@@ -789,8 +789,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		return "Hi "
 				+mightyUser.getUserName()				
 				+",<br/><br/>Your Password has been reset. To access Mighty App use the below information.<br/><br/> "
-				+ ".<br/><br/>"
-				+"<br/><br/>Login Id - "+mightyUser.getUserName()
+				+"Username - "+mightyUser.getUserName()
 				+"<br/><br/>Password - "+mightyUser.getPassword()
 				+"<br/><br/>Regards,<br/>" 
 				+ "<a href='https://bemighty.com/'>https://bemighty.com/</a>\n"

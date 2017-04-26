@@ -101,5 +101,24 @@
 		<property name="prefix" value="/WEB-INF/mightyviews/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
+	
+	
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">  
+		  <property name="host" value="smtp.gmail.com" />  
+		    <property name="username" value="mightynotifications@gmail.com" />  
+		    <property name="password" value="mighty@2017" />  
+		    <property name="javaMailProperties">  
+		        <props>  
+		              <prop key="mail.smtp.auth">true</prop>  
+		              <prop key="mail.smtp.socketFactory.port">465</prop>  
+		              <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>  
+		              <prop key="mail.smtp.port">465</prop>  
+		        </props>  
+		    </property>  
+   </bean>  
+   
+	<!-- <bean id="mailMail" class="com.javatpoint.MailMail">  
+	       <property name="mailSender" ref="mailSender" />  
+	</bean> -->  
 
 </beans>

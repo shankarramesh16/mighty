@@ -24,6 +24,7 @@ import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
+import com.team.mighty.notification.MailMail;
 import com.team.mighty.notification.SendMail;
 import com.team.mighty.service.ConsumerInstrumentService;
 import com.team.mighty.service.LoginService;
@@ -49,6 +50,9 @@ public class ConsumerInstrumentController {
 	
 	@Autowired
 	private LoginService loginService;
+	
+	/*@Autowired
+	private MailMail mail;*/
 	
 	private static final MightyLogger logger = MightyLogger.getLogger(ConsumerInstrumentController.class);
 
@@ -462,13 +466,18 @@ public class ConsumerInstrumentController {
 						MightyUserInfo mightyUser= null;
 							mightyUser=consumerInstrumentServiceImpl.setGeneratedPwd(mightyUserInfo);
 						if(mightyUser!=null){
+							logger.debug("/inside send Mail");
 							String message = consumerInstrumentServiceImpl.getPasswordResetMessage(mightyUser);
-							SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
+								//mail.sendMail("mightynotifications@gmail.com",mightyUser.getEmailId(), subject, message);
+							
+														
+								SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
 								try{
+									logger.debug("/inside try/catch send Mail");
 								mail.send(mightyUser.getEmailId(), subject, message);
 								
 								}catch(Exception ex){
-									logger.error("System Error,",ex);
+									logger.error("/Mail System Error,",ex);
 								}
 								userLoginDTO=new UserLoginDTO();
 								userLoginDTO.setPwdChangedDate(mightyUser.getPwdChangedDate());	

@@ -135,7 +135,7 @@ public class SpotifyAccessController {
 					httpHeaders.add("access_token", spotifyInfo.getAccessToken());
 					httpHeaders.add("refresh_token", spotifyInfo.getRefreshToken());	
 					httpHeaders.add("expire", spotifyInfo.getExpiresIn());
-				responseEntity = new ResponseEntity<String>("Spotify Login Successful "+"<div><input type=hidden value="+spotifyInfo.getId()+"></div>",httpHeaders,HttpStatus.OK);
+				responseEntity = new ResponseEntity<String>("Spotify Login Successful "+tokens+"<div><input type=hidden value="+spotifyInfo.getId()+"></div>",httpHeaders,HttpStatus.OK);
 				}else{
 					responseEntity = new ResponseEntity<String>("System error",HttpStatus.BAD_REQUEST);
 				}
@@ -161,7 +161,9 @@ public class SpotifyAccessController {
 			String response_type="code";
 			String scope="user-read-private user-read-email streaming";
 			String redirect_uri="https://mighty2.cloudaccess.host/test1/spotifyaccess/RedirectedSpotifyAccess";
+			//String redirect_uri="http://192.168.0.11:8080/MightyCloud/spotifyaccess/RedirectedSpotifyAccess";
 			String url = "https://accounts.spotify.com/authorize?client_id="+client_id+"&response_type="+response_type+"&redirect_uri="+redirect_uri+"&scope="+scope;
+			logger.debug("status",response.getStatus());
 			response.sendRedirect(url);
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		}catch(Exception e){

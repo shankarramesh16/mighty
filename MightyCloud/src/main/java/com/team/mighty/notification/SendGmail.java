@@ -17,7 +17,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.team.mighty.logger.MightyLogger;
+
 public class SendGmail implements Runnable, SendMail {
+	
+	private static final MightyLogger logger = MightyLogger.getLogger(SendGmail.class);
 	public static String sourceMail = "mightynotifications@gmail.com";
 	public static String password = "mighty@2017";
 
@@ -186,6 +190,8 @@ public class SendGmail implements Runnable, SendMail {
 	// ------- send to single
 	public void send_invokedByRun(String destadd, String sub, String dat)
 			throws Exception {		
+		logger.debug("Hiiiii"+destadd+sub+dat);
+		
 		Properties props = new Properties();
 		props.put("mail.smtp.user", sourceMail);
 		props.put("mail.smtp.host", host);
