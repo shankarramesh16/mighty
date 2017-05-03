@@ -73,7 +73,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException("Invalid Request, User Login Request is empty", HttpStatus.BAD_REQUEST);
 		}
 		
-		if(userLoginDTO.getUserId() <=0 ) {
+		if(userLoginDTO.getUserId() <=0 ){
 			throw new MightyAppException("Invalid Request, User Id or Phone Device Id is empty", HttpStatus.BAD_REQUEST);
 		}
 		
@@ -786,16 +786,14 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 
 	
 	public String getPasswordResetMessage(MightyUserInfo mightyUser) throws MightyAppException {
-		return "Hi "
-				+mightyUser.getUserName()				
-				+",<br/><br/>Your Password has been reset. To access Mighty App use the below information.<br/><br/> "
+		return "Heyo "
+				+mightyUser.getUserName()	
+				+",<br/><br/>We heard that you forgot your Mighty account password. Fear not, we're here to help."
+				+"<br/><br/>We've generated a new password for you below. It's a bunch of crazy characters, so we recommend that you change your password after you log back into the Mighty mobile app. To change your password, navigate to the User tab and click on the Change Password button.<br/><br/> "
 				+"Username - "+mightyUser.getUserName()
 				+"<br/><br/>Password - "+mightyUser.getPassword()
-				+"<br/><br/>Regards,<br/>" 
-				+ "<a href='https://bemighty.com/'>https://bemighty.com/</a>\n"
-						+" Mighty Team."
-						+"</a>"+"<br/>---------------<br/> <i><u>Note:</u> This is a system generated email. Please do not reply.</i>";
-	
+				+"<br/><br/>This email address can't receive inbound messages. If you have any questions, please email us at heyo@bemighty.com."; 
+				
 		
 	}
 

@@ -180,10 +180,10 @@
 													
 						</div><br/>
 						
-						<div class="row">
-							<div class="col-sm-12">	
+						<div class="row" style="overflow-y: auto;">
+							<div class="col-sm-12 ">	
 							
-								<table class="table table-hover text-center">
+								<%-- <table class="table table-hover text-center">
 									    <thead>
 									      <tr class="text-blue text-semi-bold">
 									        <th>ID</th>
@@ -216,14 +216,15 @@
 									      	<%}
 									    }%>
 									    </tbody>
-									  </table>
+									  </table> --%>
 						
-					    <%-- <display:table  class="table table-hover"  name="<%=mightyUserList%>" id="row"
-									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
+					     	<display:table  class="table table-hover  text-center"  name="<%=mightyUserList%>" id="row"
+									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="100">
 							<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />
 							<display:column  property="userName" title="UserName" sortable="true"  />
 							<display:column  property="emailId" title="EmailID" sortable="true"  />
 							<display:column  property="deviceId" title="DeviceMapping" sortable="true"  />
+							<display:column  property="usrdevReg" title="User_Dev_Reg" sortable="true"  />
 							<display:column  property="userIndicator" title="UserIndicator" 	sortable="true"  />
 							<display:column  property="userStatus" title="Status" sortable="true"  />
 							<display:column  property="createdDt" title="CreatedDate" format="{0,date,dd-MM-yyyy}" sortable="true"  />
@@ -233,7 +234,7 @@
 						 	<display:setProperty name="export.csv.filename" value="<%=fname1%>" />
 							<display:setProperty name="export.excel.filename" value="<%=fname2%>" />
 							<display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
-						</display:table> --%>
+						</display:table> 
 							</div>
 						</div>
 						<a  id="goTop"><i class="fa fa-eject"></i></a>	

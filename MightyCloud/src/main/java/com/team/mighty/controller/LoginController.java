@@ -44,7 +44,7 @@ public class LoginController {
 		return "forgotPassword";
 	}
 	
-	@RequestMapping(value= {"/login"}, method=RequestMethod.POST)
+	@RequestMapping(value= {"/onSubmitlogin"}, method=RequestMethod.POST)
 	public ModelAndView loginUser(HttpServletRequest request, HttpSession session, HttpServletResponse response,RedirectAttributes redirectAttributes) throws Exception{
 		logger.debug("login user");
 		String username = request.getParameter("uname") == null ? "" : request

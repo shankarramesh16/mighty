@@ -195,6 +195,7 @@ public class ConsumerInstrumentController {
 		JSONObject obj=null;
 		ResponseEntity<String> responseEntity = null;
 		MightyUserInfo mightyUserInfo=null;
+		
 		try{		
 				obj=new JSONObject();
 				obj=(JSONObject)new JSONParser().parse(received);
@@ -216,7 +217,7 @@ public class ConsumerInstrumentController {
 	}*/
 	
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> doRegistration(@RequestBody String received) {
+	public ResponseEntity<String> doRegistration(@RequestBody String received){
 		logger.info(" /POST Consumer API");
 		logger.debug("received",received);
 		JSONObject obj=null;

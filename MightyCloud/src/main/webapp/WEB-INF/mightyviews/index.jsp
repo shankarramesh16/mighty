@@ -108,7 +108,7 @@ function validate() {
 						
 		<div class="login-input-wrap">
 			<div class="login-input-border-wrap">
-			<form action="login" name="user_validation_form" id="user_validation_form" method="post" onsubmit="return validate()">		
+			<form action="onSubmitlogin" name="user_validation_form" id="user_validation_form" method="post" onsubmit="return validate()">		
 				<div class="row">
 					<div class="col-sm-12">
 						<h5 class="text-regular text-uppercase" style="text-decoration:blink;"><b><i class="fa fa-lock">&nbsp;<b>Please Login</b></i></b></h5>
