@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
@@ -100,5 +103,91 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		logger.debug("Mighty device List"+mightyDeviceList.size());
 		map.put("mightyDeviceList", mightyDeviceList);
 		return "mightyDeviceInfo";
+	}
+	
+	
+	@RequestMapping(value= {"/searchByUser"},method=RequestMethod.POST)
+	public String searchByUserHandler(HttpServletRequest request,Map<String,Object> map) throws Exception{
+		logger.debug("IN searchhandler Controller....");
+		String searchStr=request.getParameter("searchText");
+		logger.debug("/Search",searchStr);
+		
+		List<ConsumerDeviceDTO> consumerDeviceDTOList=null;
+		consumerDeviceDTOList=new ArrayList<ConsumerDeviceDTO>();
+		
+		ConsumerDeviceDTO consumerDeviceDTO=null;
+		
+		try{
+			
+		List<MightyUserInfo> mightUserList=consumerInstrumentServiceImpl.getSearchUsers(searchStr);	
+			
+			
+		if(mightUserList!=null && !mightUserList.isEmpty()){
+			for(MightyUserInfo m:mightUserList){
+				List<MightyDeviceUserMapping> mList=null;
+				mList=new ArrayList<MightyDeviceUserMapping>();
+				
+				mList.addAll(m.getMightyDeviceUserMapping());
+					//mList=m.getMightyUsrDevMaps1();
+					
+					if(mList!=null && !mList.isEmpty()){
+						
+						for(MightyDeviceUserMapping md : mList){
+							
+								MightyDeviceInfo mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyDeviceOnId(md.getMightyDeviceId());
+								
+								consumerDeviceDTO= new ConsumerDeviceDTO();
+								consumerDeviceDTO.setId(m.getId());
+								consumerDeviceDTO.setUserName(m.getUserName());
+								consumerDeviceDTO.setEmailId(m.getEmailId());
+								consumerDeviceDTO.setUserIndicator(m.getUserIndicator());
+								consumerDeviceDTO.setUserStatus(m.getUserStatus());
+								consumerDeviceDTO.setCreatedDt(m.getCreatedDt());
+								consumerDeviceDTO.setUpdatedDt(m.getUpdatedDt());
+								consumerDeviceDTO.setUsrdevReg(md.getRegistrationStatus());
+								if(mightyDeviceInfo!=null){
+										consumerDeviceDTO.setDeviceId(mightyDeviceInfo.getDeviceId());
+										
+								}else{
+										consumerDeviceDTO.setDeviceId("0");
+								}
+								consumerDeviceDTOList.add(consumerDeviceDTO);		
+						}
+					}else{
+						
+								consumerDeviceDTO= new ConsumerDeviceDTO();
+								consumerDeviceDTO.setId(m.getId());
+								consumerDeviceDTO.setUserName(m.getUserName());
+								consumerDeviceDTO.setEmailId(m.getEmailId());
+								consumerDeviceDTO.setUserIndicator(m.getUserIndicator());
+								consumerDeviceDTO.setUserStatus(m.getUserStatus());
+								consumerDeviceDTO.setCreatedDt(m.getCreatedDt());
+								consumerDeviceDTO.setUpdatedDt(m.getUpdatedDt());
+								consumerDeviceDTO.setDeviceId("0");
+								consumerDeviceDTOList.add(consumerDeviceDTO);
+					}
+				
+				
+			}
+		}	
+				
+		}catch(ArrayIndexOutOfBoundsException  e){
+			logger.error("Exception in,",e);
+		}
+		map.put("mightydeviceuserlist", consumerDeviceDTOList);
+		logger.debug("mightydeviceuserlist",consumerDeviceDTOList.size());
+		return "MightySearchUser";
+	}
+	
+	
+	@RequestMapping(value= {"/searchDevice"},method=RequestMethod.POST)
+	public String searchDeviceHandler(HttpServletRequest request,Map<String,Object> map) throws Exception{
+		logger.debug("IN searchDevice Controller....");
+		String searchDev=request.getParameter("searchDev");
+		logger.debug("/Search",searchDev);
+		
+		List<MightyDeviceInfo> mightyDeviceList=consumerInstrumentServiceImpl.getMightySearchDevice(searchDev);
+		map.put("mightyDeviceList", mightyDeviceList);
+		return "mightySearchDevice";
 	}
 }

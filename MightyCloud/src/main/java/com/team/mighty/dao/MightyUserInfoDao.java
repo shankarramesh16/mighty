@@ -35,6 +35,9 @@ public interface MightyUserInfoDao extends JpaRepository<MightyUserInfo, Long> {
 	
 	@Query("SELECT m FROM MightyUserInfo m WHERE (m.userFBId=:userFBId or m.emailId=:emailId) and m.userIndicator=:userIndicator" )
 	List<MightyUserInfo> getUserByUserFBAndEmailWithIndicator(@Param("userFBId") String userFBId, @Param("emailId") String emailId,@Param("userIndicator") String userIndicator);
+
+	@Query("SELECT m FROM MightyUserInfo m WHERE ((m.userName like '%'||:userName||'%') or (m.emailId like '%'||:userName||'%')) ")
+	List<MightyUserInfo> getSearchUsers(@Param("userName") String userName);
 	
 	
 

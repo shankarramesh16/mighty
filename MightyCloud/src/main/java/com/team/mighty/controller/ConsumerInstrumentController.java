@@ -24,7 +24,6 @@ import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
-import com.team.mighty.notification.MailMail;
 import com.team.mighty.notification.SendMail;
 import com.team.mighty.service.ConsumerInstrumentService;
 import com.team.mighty.service.LoginService;
@@ -454,10 +453,10 @@ public class ConsumerInstrumentController {
 		
 				
 		try {
-			String password = new PasswordGenerator().randomString(10);
+			String password = new PasswordGenerator().randomString(6);
 			logger.debug("Password generator "+password);
 			logger.debug("UserName "+String.valueOf(obj.get("Email")));
-			String subject = "Password Reset";
+			String subject = "Your brand new Mighty password";
 		
 			mightyUserInfo=consumerInstrumentServiceImpl.getUserByEmail(String.valueOf(obj.get("Email")));
 				

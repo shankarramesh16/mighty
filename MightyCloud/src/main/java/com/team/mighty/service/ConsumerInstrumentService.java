@@ -56,6 +56,10 @@ public interface ConsumerInstrumentService {
 
 	public void changePwd(UserLoginDTO userLoginDTO) throws MightyAppException;
 
+	public List<MightyUserInfo> getSearchUsers(String searchStr) throws Exception;
+
+	public List<MightyDeviceInfo> getMightySearchDevice(String searchDev)throws Exception;
+
 	
 	
 }

@@ -1,6 +1,6 @@
 <%--
     Document   : device_firmware
-    Created on : OCT 09, 2016, 03:51:01 PM
+    Created on : DEC 09, 2016, 03:51:01 PM
     Author     : Vikky
 --%>
 
@@ -36,6 +36,7 @@
 <link rel="stylesheet" href="css/skins/_all-skins.min.css">
 <link rel="stylesheet" href="css/slider.css">
 
+
 <script type="text/javascript" src="js/jquery-latest.js"></script>
 <script  src="https://code.jquery.com/jquery-2.2.0.js"></script>
 <script type="text/javascript" src="js/jquery-latest.js"></script>
@@ -50,17 +51,16 @@
 
 <body class="hold-transition skin-blue sidebar-mini">
 						<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
-						String fname1=("MightyUserList :").concat(new Date().toString()).concat(".csv");
-						String fname2=("MightyUserList :").concat(new Date().toString()).concat(".xls");
-						String fname3=("MightyUserList :").concat(new Date().toString()).concat(".xml");
-						List<ConsumerDeviceDTO> mightyUserList=(List<ConsumerDeviceDTO>)request.getAttribute("mightydeviceuserlist");
+											String fname1=("MightyDevices :").concat(new Date().toString()).concat(".csv");
+											String fname2=("MightyDevices :").concat(new Date().toString()).concat(".xls");
+											String fname3=("MightyDevices :").concat(new Date().toString()).concat(".xml");
+					 	   List<MightyDeviceInfo> mightDeviceList=(List<MightyDeviceInfo>)request.getAttribute("mightyDeviceList");
 						%>
 	
 <div class="wrapper">  
   	<header class="main-header" >
    
-   
-	    <a href="https://bemighty.com" class="logo affix">
+	    <a href="https://bemighty.com" class="logo affix" >
 			      
 			     <svg width="121px" height="50px" viewBox="445 13 150 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 			                      					<defs>
@@ -76,7 +76,7 @@
 	    </a>
 
 	    <!-- Header Navbar: style can be found in header.less -->
-	    <nav class="navbar navbar-static-top affix" >
+	    <nav class="navbar navbar-static-top affix">
 	      <!-- Sidebar toggle button-->
 	      <a href="#" class="sidebar-toggle" style="width:2.5em;" data-toggle="offcanvas" role="button">
 	      </a> 
@@ -85,14 +85,14 @@
    </header>
   
   
-  <aside class="main-sidebar affix " style="position:fixed;">
+  <aside class="main-sidebar affix" style="position:fixed;">
    
     <section class="sidebar">
         
       <!-- search form -->
-      <form action="searchByUser" method="POST"  class="sidebar-form">
+      <form action="searchDevice" method="POST" class="sidebar-form">
         <div class="input-group">
-          <input type="text" name="searchText" class="form-control" placeholder="Search User/Email...">
+          <input type="text" name="searchDev" class="form-control" placeholder="Search Hw/Sw SerialNo...">
               <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
@@ -117,7 +117,7 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#"><i class="fa fa-circle-o"></i><b>Mighty User</b></a></li>
+            <li><a href="deviceUserInfo"><i class="fa fa-circle-o"></i><b>Mighty User</b></a></li>
             <li><a href="mightyDeviceInfo"><i class="fa fa-circle-o"></i><b>Mighty Device</b></a></li>
             <li><a href="deviceFirmwareReport"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA </b></a></li>
             <li><a href="#"><i class="fa fa-circle-o"></i> <b>Mighty Feature Playlist </b></a></li>
@@ -160,8 +160,8 @@
 		
 			<section class="content">
 		 		<div class="content-wrap">
-		 			
-			 		
+		 		
+			 			
 						
 						<div class="row">
 							<div class="col-sm-12 text-right ">	
@@ -173,43 +173,46 @@
 					
 						<div class="row">
 								<div class="col-sm-8 page-heading mar-top-20">
-								<i class="page-heading-icon"><img src="images/user_icon.png" /></i>
-								<h5 class="text-blue text-semi-bold"><b>Mighty User</b></h5>
+								
+								<h5 class="text-blue text-semi-bold"><i class="fa fa-music"></i>&nbsp;&nbsp;<b>Mighty Device</b></h5>
 								</div>
 													
 						</div><br/>
 						
 						<div class="row" style="overflow-y: auto;">
-							<div class="col-sm-12 ">	
+							<div class="col-sm-12">	
 							
-								<%-- <table class="table table-hover text-center">
+							
+							<%-- <table class="table table-hover text-center">
 									    <thead>
 									      <tr class="text-blue text-semi-bold">
 									        <th>ID</th>
-									        <th>UserName</th>
-									        <th>EmailID</th>
-									        <th>DeviceMapping</th>
-									        <th>User_Dev_Reg</th>
-									        <th>UserIndicator</th>
-									        <th>UserStatus</th>
-									        <th>CreatedDate</th>
-									        <th>UpdatedDate</th>
+									        <th>DeviceID/HwSerialNo.</th>
+									        <th>DeviceName</th>
+									        <th>DeviceType</th>
+									        <th>Sw_Version</th>
+									        <th>AppBuild</th>
+									        <th>AppVersion</th>
+									        <th>Is_Registered</th>
+									        <th>Is_Active</th>
 									      </tr>
 									    </thead>
 									    <tbody>
-									    <% if(mightyUserList!=null && !mightyUserList.isEmpty()){
-										    for(ConsumerDeviceDTO dto :mightyUserList){
+									    <% if(mightDeviceList!=null && !mightDeviceList.isEmpty()){
+										    for(MightyDeviceInfo md :mightDeviceList){
 										    %>
 									      <tr>
-									        <td><%=dto.getId()%></td>
-									        <td><%=dto.getUserName()%></td>
-									        <td><%=dto.getEmailId()%></td>
-									        <td><%=dto.getDeviceId()%></td>
-									        <td><%=dto.getUsrdevReg()%></td>
-									        <td><%=dto.getUserIndicator()%></td>
-									        <td><%=dto.getUserStatus()%></td>
-									        <td><%=dto.getCreatedDt()%></td>
-									        <td><%=dto.getUpdatedDt()%></td>
+									        <td><%=md.getId()%></td>
+									        <td><%=md.getDeviceId()%></td>
+									        <td><%=md.getDeviceName()%></td>
+									        <td><%=md.getDeviceType()%></td>
+									        <td><%=md.getSwVersion()%></td>
+									        <td><%=md.getAppBuild()%></td>
+									        <td><%=md.getAppVersion()%></td>
+									        <td><%=md.getIsRegistered()%></td>
+									        <td><%=md.getIsActive()%></td>
+									        
+									        
 									       
 									      </tr>
 									      	<%}
@@ -217,27 +220,36 @@
 									    </tbody>
 									  </table> --%>
 						
-					     	<display:table  class="table table-hover  text-center"  name="<%=mightyUserList%>" id="row"
-									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="100">
-							<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />
-							<display:column  property="userName" title="UserName" sortable="true"  />
-							<display:column  property="emailId" title="EmailID" sortable="true"  />
-							<display:column  property="deviceId" title="DeviceMapping" sortable="true"  />
-							<display:column  property="usrdevReg" title="User_Dev_Reg" sortable="true"  />
-							<display:column  property="userIndicator" title="UserIndicator" 	sortable="true"  />
-							<display:column  property="userStatus" title="Status" sortable="true"  />
-							<display:column  property="createdDt" title="CreatedDate" format="{0,date,dd-MM-yyyy}" sortable="true"  />
-							<display:column  property="updatedDt" title="UpdatedDate" format="{0,date,dd-MM-yyyy}" sortable="true" />
+				        <display:table class="table table-hover text-center" name="<%=mightDeviceList%>" id="row"
+									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
+								<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />
+											
+								<display:column  property="deviceId" title="DeviceID/HwSerialNo."	sortable="true" headerClass="sortable" />
+								
+								<display:column  property="deviceName" title="DeviceName" sortable="true" headerClass="sortable"/>
+								
+								<display:column  property="deviceType" title="DeviceType" sortable="true" headerClass="sortable"/>
+								
+								<display:column  property="swVersion" title="Sw_Version"	sortable="true" headerClass="sortable" />
+								
+								<display:column  property="appBuild" title="AppBuild"	sortable="true" headerClass="sortable" />
+								
+								<display:column  property="appVersion" title="AppVersion"	sortable="true" headerClass="sortable" />
+																
+								<display:column  property="isRegistered" title="Is_Registered" 	sortable="true" headerClass="sortable" />
+								
+								<display:column  property="isActive" title="Is_Active" sortable="true" headerClass="sortable"/>
+								
 							
-								     		   
-						 	<display:setProperty name="export.csv.filename" value="<%=fname1%>" />
-							<display:setProperty name="export.excel.filename" value="<%=fname2%>" />
-							<display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
+				     		   
+							 	<display:setProperty name="export.csv.filename" value="<%=fname1%>" />
+								<display:setProperty name="export.excel.filename" value="<%=fname2%>" />
+								<display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
 						</display:table> 
 							</div>
 						</div>
 						<a  id="goTop"><i class="fa fa-eject"></i></a>	
-				 </div>
+				</div>			
 			</section>	
 			<%@include file="Footer.jsp"%>  		
 	</div>	

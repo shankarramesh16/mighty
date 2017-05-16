@@ -142,7 +142,7 @@ public class SendGmail implements Runnable, SendMail {
  //printMail(destadd, sub, dat);
 		this.destadd = destadd;
 		this.sendingType = "single";
-		this.sub = "Mighty: "+sub;
+		this.sub = sub;
 		this.dat = dat;
 		Thread t = new Thread(this);
 		t.start(); 

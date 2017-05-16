@@ -25,6 +25,9 @@ public interface MightyDeviceInfoDAO extends JpaRepository<MightyDeviceInfo, Lon
 
 	@Query("SELECT m FROM MightyDeviceInfo m WHERE m.id=:id")
 	MightyDeviceInfo getMightyDeviceOnId(@Param("id") long id) ;
+	
+	@Query("SELECT m FROM MightyDeviceInfo m WHERE ((m.deviceId like '%'||:deviceId||'%') or (m.swVersion like '%'||:deviceId||'%'))")
+	List<MightyDeviceInfo> getMightySearchDevice(@Param("deviceId") String deviceId);
 
 	
 }

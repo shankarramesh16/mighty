@@ -96,6 +96,8 @@ public class LoginController {
 		
 	}
 	
+	
+	
 	@RequestMapping(value= {"/changePasswordReq"})
 	public String changePwdReqHandler() throws Exception{
 		logger.debug("IN ChangePassword");
@@ -125,6 +127,9 @@ public class LoginController {
         
 		return "redirect:/";
 	}
+	
+	
+	
 		
 		 @RequestMapping(value= {"/adminHome"}, method=RequestMethod.GET)
 		 public ModelAndView home(HttpServletRequest request, HttpServletResponse response) throws Exception{

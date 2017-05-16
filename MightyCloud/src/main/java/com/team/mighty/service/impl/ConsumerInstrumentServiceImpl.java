@@ -283,9 +283,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		List<MightyUserInfo> mightyUsers = null;
 		mightyUsers=getUserByUserFBAndEmailWithIndicator(consumerDeviceDto.getFacebookID(),consumerDeviceDto.getEmailId(),consumerDeviceDto.getUserIndicator());
 		if(mightyUsers!=null && !mightyUsers.isEmpty()) {
-			mightyUserInfo=mightyUsers.get(0);
+			return mightyUsers.get(0);
 			// Check any de-activated account
-			logger.debug("IN If -before to check active/deactive");
+			/*logger.debug("IN If -before to check active/deactive");
 			MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount1(mightyUserInfo.getId());
 			if(mightyDeviceUserMapping != null && mightyDeviceUserMapping.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
 					logger.info(" Already Disbaled account is there and activating that one ------- ");
@@ -295,7 +295,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 					return mightyUserInfo;
 			} else{
 				return mightyUserInfo;
-			}
+			}*/
 			 
 		 }
 					
@@ -787,10 +787,10 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	public String getPasswordResetMessage(MightyUserInfo mightyUser) throws MightyAppException {
 		return "Heyo "
-				+mightyUser.getUserName()	
+				+mightyUser.getUserName().toLowerCase()	
 				+",<br/><br/>We heard that you forgot your Mighty account password. Fear not, we're here to help."
 				+"<br/><br/>We've generated a new password for you below. It's a bunch of crazy characters, so we recommend that you change your password after you log back into the Mighty mobile app. To change your password, navigate to the User tab and click on the Change Password button.<br/><br/> "
-				+"Username - "+mightyUser.getUserName()
+				+"Username - "+mightyUser.getUserName().toLowerCase()
 				+"<br/><br/>Password - "+mightyUser.getPassword()
 				+"<br/><br/>This email address can't receive inbound messages. If you have any questions, please email us at heyo@bemighty.com."; 
 				
@@ -803,6 +803,16 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		mightyUserInfo.setPassword(userLoginDTO.getNewPwd());
 		mightyUserInfo.setPwdChangedDate((Date)userLoginDTO.getPwdChangedDate());
 		mightyUserInfoDAO.save(mightyUserInfo);
+	}
+
+	
+	public List<MightyUserInfo> getSearchUsers(String searchStr) throws Exception {
+			return mightyUserInfoDAO.getSearchUsers(searchStr);
+	}
+
+	
+	public List<MightyDeviceInfo> getMightySearchDevice(String searchDev) throws Exception {
+		   return mightyDeviceInfoDAO.getMightySearchDevice(searchDev);
 	}
 
 	
