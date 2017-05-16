@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyUserInfo;
 
 public interface MightyUserInfoDao extends JpaRepository<MightyUserInfo, Long> {
@@ -38,6 +39,10 @@ public interface MightyUserInfoDao extends JpaRepository<MightyUserInfo, Long> {
 
 	@Query("SELECT m FROM MightyUserInfo m WHERE ((m.userName like '%'||:userName||'%') or (m.emailId like '%'||:userName||'%')) ")
 	List<MightyUserInfo> getSearchUsers(@Param("userName") String userName);
+	
+	@Query("SELECT count(m.id) FROM MightyUserInfo m")
+	List<MightyUserInfo> getAllMightyUsers();
+	
 	
 	
 

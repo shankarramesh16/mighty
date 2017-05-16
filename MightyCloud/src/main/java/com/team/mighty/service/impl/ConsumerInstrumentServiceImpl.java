@@ -816,4 +816,14 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	
+	public List<MightyUserInfo> getAllMightyUsers() throws Exception {
+		return mightyUserInfoDAO.getAllMightyUsers();
+	}
+
+	
+	public List<MightyDeviceInfo> getAllMightyDev() throws Exception {
+		return mightyDeviceInfoDAO.getAllMightyDev();
+	}
+
+	
 }

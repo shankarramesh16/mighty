@@ -198,7 +198,7 @@ function editEvent(id) {
 	<div class="content-wrapper">
 		
 			<section class="content">
-		 		<div class="content-wrap">
+		 		<div class="content-wrap box box-primary">
 		 		
 			 			
 						

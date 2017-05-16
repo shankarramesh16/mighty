@@ -37,4 +37,6 @@ public interface AdminInstrumentService {
 	public MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo, String SWVersion, String AppVersion, String AppBuild)throws MightyAppException; 
 	
 	public MightyDeviceFirmware getMightyLstDeviceFirmware();
+
+	public MightyDeviceFirmware getLatestOTA()throws Exception;
 }

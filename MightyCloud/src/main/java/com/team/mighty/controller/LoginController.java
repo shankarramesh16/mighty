@@ -1,6 +1,7 @@
 package com.team.mighty.controller;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +17,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.team.mighty.constant.PasswordGenerator;
 import com.team.mighty.domain.AdminUser;
+import com.team.mighty.domain.MightyDeviceFirmware;
+import com.team.mighty.domain.MightyDeviceInfo;
+import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.notification.SendMail;
+import com.team.mighty.service.AdminInstrumentService;
+import com.team.mighty.service.ConsumerInstrumentService;
 import com.team.mighty.service.LoginService;
 
 @Controller
@@ -26,6 +32,12 @@ public class LoginController {
 	
 	@Autowired
 	private LoginService loginService;
+	
+	@Autowired
+	private ConsumerInstrumentService consumerInstrumentServiceImpl;
+	
+	@Autowired
+	private AdminInstrumentService adminInstrumentServiceImpl;
 	
 
 	@RequestMapping(value= {"/"})
@@ -132,9 +144,15 @@ public class LoginController {
 	
 		
 		 @RequestMapping(value= {"/adminHome"}, method=RequestMethod.GET)
-		 public ModelAndView home(HttpServletRequest request, HttpServletResponse response) throws Exception{
-		 			    	
-		    	return new ModelAndView("AdminView");
+		 public String home(Map<String,Object> map) throws Exception{
+			 List<MightyUserInfo> mightyUserList=consumerInstrumentServiceImpl.getAllMightyUsers();
+			 List<MightyDeviceInfo> mightyDeviceList=consumerInstrumentServiceImpl.getAllMightyDev();
+			 MightyDeviceFirmware latestOTA=adminInstrumentServiceImpl.getLatestOTA();
+			 			 		    	
+			 map.put("mightyUserList",mightyUserList);
+			 map.put("mightyDeviceList",mightyDeviceList);
+			 map.put("latestOTA",latestOTA);
+			 return "AdminView";
 		    	
 		}
 		 

@@ -158,8 +158,8 @@
  
 	<div class="content-wrapper">
 		
-			<section class="content">
-		 		<div class="content-wrap">
+			<section class="content ">
+		 		<div class="content-wrap box box-primary">
 		 		
 			 			
 						

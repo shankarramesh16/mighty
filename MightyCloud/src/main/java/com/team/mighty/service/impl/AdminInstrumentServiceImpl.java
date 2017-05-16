@@ -275,6 +275,12 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 		return null;
 	}
 
+
+	
+	public MightyDeviceFirmware getLatestOTA() throws Exception {
+		return mightyDeviceFirmwareDAO.getLatestOTA();
+	}
+
 	
 	/*public MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo){
 		MightyDeviceFirmware mightyDeviceFirmware=null;

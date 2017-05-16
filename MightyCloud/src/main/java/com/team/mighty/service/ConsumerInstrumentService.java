@@ -60,6 +60,10 @@ public interface ConsumerInstrumentService {
 
 	public List<MightyDeviceInfo> getMightySearchDevice(String searchDev)throws Exception;
 
+	public List<MightyUserInfo> getAllMightyUsers()throws Exception;
+
+	public List<MightyDeviceInfo> getAllMightyDev()throws Exception;
+
 	
 	
 }

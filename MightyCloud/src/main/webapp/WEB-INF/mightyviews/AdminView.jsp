@@ -30,6 +30,7 @@
 	  <!-- Ionicons -->
 	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
 	  <link rel="stylesheet" href="css/AdminLTE.min.css">
+	  <link rel="stylesheet" href="css/AdminLTE.css">
 	  <link rel="stylesheet" href="css/skins/_all-skins.min.css">
 
 	<script src="js/app.min.js"></script>
@@ -40,6 +41,9 @@
   
   <body class="hold-transition skin-blue sidebar-mini">
   			<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");%>
+  			<% List<MightyUserInfo> mightyUserList=(List<MightyUserInfo>)request.getAttribute("mightyUserList"); %>
+  			<% List<MightyDeviceInfo> mightyDeviceList=(List<MightyDeviceInfo>)request.getAttribute("mightyDeviceList");%>
+  			<% MightyDeviceFirmware latestOTA=(MightyDeviceFirmware)request.getAttribute("latestOTA");%>
 							 
   <div class="wrapper">  
   	<header class="main-header" >
@@ -92,7 +96,7 @@
             <i class="fa fa-dashboard"></i> <span><b>Dashboard</b></span>
           </a>
         </li>
-        <li class="treeview">
+        <li class="treeview"> 
           <a href="#">
             <i class="fa fa-files-o"></i>
             <span><b>Reports</b></span>
@@ -143,7 +147,8 @@
 	<div class="content-wrapper">
 		
 			<section class="content">
-		 		<div class="content-wrap">
+		 		<div class="content-wrap box box-primary">
+		 		
 		 		
 			 			<div class="row">
 							<div class="col-sm-12 text-right">
@@ -155,33 +160,25 @@
 		 		
 		 		
 						<div class="row">
-							<div class="col-sm-8 page-heading mar-top-20">
-								<i class="page-heading-icon"><img src="images/user_icon.png" /></i>
-								<h5 class="text-blue text-semi-bold">My Information </h5>
+							<div class="col-sm-12 page-heading ">
+								<h5 class="text-blue text-center "><span class="fa fa-dashboard"></span>&nbsp;&nbsp;<b>Dashboard</b></h5>
 							</div>
 													
 						</div>
 					
 					
-						<div class="section-heading">
-							<div class="row">
-							<i class="fa fa-info-circle">
-								
-									<b>&nbsp;Personal Information</b>
-								
-							</i>	
-							</div>
-						</div>
 						
 						
 						
-						<div class="row">
+						<%-- <div class="row">
 							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 text-lightgrey"><i class="fa fa-user"><b>&nbsp;First Name:</b></i></div>
 							<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getFirstname()%></b></div>
 							
 							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 col-md-offset-2 text-lightgrey"><i class="fa fa-user"><b>&nbsp;Last Name:</b></i></div>
 							<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getLastname()%></b></div>						
 						</div>
+						
+						
 						
 										
 						
@@ -192,7 +189,38 @@
 							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 col-md-offset-2 text-lightgrey"><i class="fa fa-phone"><b>&nbsp;Mobile No:</b></i></div>
 							<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getContactnumber()%></b></div>						
 						</div>
+						 --%>
 						
+   						
+   						
+   						<div class="row">
+   							<div class="info-box col-sm-4 mar-top-15" >
+							  <!-- Apply any bg-* class to to the icon to color it -->
+							  	<span class="info-box-icon bg-blue"><i class="fa fa-user"></i></span>
+							  	<div class="info-box-content">
+								    <span class="info-box-text"><em>Mighty Users</em></span>
+								    <span class="info-box-number"><b><%=mightyUserList.get(0)%></b></span>
+							 	</div><!-- /.info-box-content -->
+							 </div><!-- /.info-box -->
+						
+   							<div class="info-box col-sm-4 mar-top-15" >
+							  <!-- Apply any bg-* class to to the icon to color it -->
+							  <span class="info-box-icon bg-green"><i class="fa fa-music"></i></span>
+							  <div class="info-box-content">
+							    <span class="info-box-text"><em>Mighty Device</em></span>
+							    <span class="info-box-number"><b><%=mightyDeviceList.get(0)%></b></span>
+							  </div><!-- /.info-box-content -->
+							</div><!-- /.info-box -->
+						
+   							<div class="info-box col-sm-4 mar-top-15" >
+							  <!-- Apply any bg-* class to to the icon to color it -->
+							  <span class="info-box-icon bg-red"><i class="fa fa-upload"></i></span>
+							  <div class="info-box-content">
+							    <span class="info-box-text"><em>Latest Device Firmware/OTA</em></span>
+							    <span class="info-box-number"><b>0.84</b></span>
+							  </div><!-- /.info-box-content -->
+							</div><!-- /.info-box -->
+						</div>
 										
 						</div>	
 			</section>	
