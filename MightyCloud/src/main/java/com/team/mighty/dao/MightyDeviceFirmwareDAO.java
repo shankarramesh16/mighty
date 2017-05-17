@@ -35,8 +35,8 @@ public interface MightyDeviceFirmwareDAO extends JpaRepository<MightyDeviceFirmw
 	@Query("FROM MightyDeviceFirmware m where m.status=:status order By m.version asc")	
 	List<MightyDeviceFirmware> getDeviceFirmwareByStatusAsc(@Param("status") String string);
 	
-	@Query("FROM MightyDeviceFirmware m ")	
-	MightyDeviceFirmware getLatestOTA();
+	@Query("Select m FROM MightyDeviceFirmware m order By m.version desc")	
+	List<MightyDeviceFirmware> getLatestOTA();
 
 	/*@Query("FROM MightyDeviceFirmware m where m.compatibleHw like %:compatibleHw%  and m.status = :status order By m.version desc")
 	MightyDeviceFirmware getFirmwareByLatestVersion(@Param("compatibleHw") String compatibleHw, @Param("status") String status);

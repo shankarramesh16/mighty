@@ -48,7 +48,7 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 		return mightyLstDeviceFirmware;
 	}
 
-	
+	@Transactional
 	public List<DeviceInfoDTO> getAllMightyDevice() throws MightyAppException {
 		logger.info("AdminInstrumentServiceImpl,getAllMightyDevice");
 		List<MightyDeviceInfo> lstMightDeviceInfo = new ArrayList<MightyDeviceInfo>();
@@ -277,7 +277,7 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 
 
 	
-	public MightyDeviceFirmware getLatestOTA() throws Exception {
+	public List<MightyDeviceFirmware> getLatestOTA() throws Exception {
 		return mightyDeviceFirmwareDAO.getLatestOTA();
 	}
 

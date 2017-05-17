@@ -549,7 +549,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		return mightyUserInfo;
 	}
 
-	
+	@Transactional
 	public void registerMightyDevice(DeviceInfoDTO deviceInfoDTO) throws MightyAppException {
 		if(null == deviceInfoDTO) {
 			logger.debug("Register Device, Consumer Device DTO object is null");
@@ -571,6 +571,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 				
 	}
 
+	@Transactional
 	private void registerMightyWithUser(DeviceInfoDTO deviceInfoDTO) throws MightyAppException {
 		MightyUserInfo mightyUserInfo = null;
 					   mightyUserInfo=getUserById(deviceInfoDTO.getUserId());
@@ -728,7 +729,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		System.out.println("ttlMillisVal"+ttlMillis);
 	}
 
-	
+	@Transactional
 	public UserLoginDTO getRefreshTokenOnBaseToken() throws MightyAppException {
 				
 		MightyKeyConfig mightyKeyConfig = mightyKeyConfigDAO.getKeyConfigValue(MightyAppConstants.KEY_MIGHTY_MOBILE);
@@ -758,7 +759,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		return userLoginDTO;
 	}
 
-	
+	@Transactional
 	public void updatePwd(UserLoginDTO userLoginDTO) throws MightyAppException {
 		try{
 			MightyUserInfo mightyUserInfo=mightyUserInfoDAO.getUserById(userLoginDTO.getUserId());

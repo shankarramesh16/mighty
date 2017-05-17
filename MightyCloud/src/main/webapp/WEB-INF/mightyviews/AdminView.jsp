@@ -43,7 +43,7 @@
   			<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");%>
   			<% List<MightyUserInfo> mightyUserList=(List<MightyUserInfo>)request.getAttribute("mightyUserList"); %>
   			<% List<MightyDeviceInfo> mightyDeviceList=(List<MightyDeviceInfo>)request.getAttribute("mightyDeviceList");%>
-  			<% MightyDeviceFirmware latestOTA=(MightyDeviceFirmware)request.getAttribute("latestOTA");%>
+  			<% List<MightyDeviceFirmware> latestOTA=(List<MightyDeviceFirmware>)request.getAttribute("latestOTA");%>
 							 
   <div class="wrapper">  
   	<header class="main-header" >
@@ -149,22 +149,35 @@
 			<section class="content">
 		 		<div class="content-wrap box box-primary">
 		 		
-		 		
-			 			<div class="row">
+		 		<div class="row">
 							<div class="col-sm-12 text-right">
 								<img src="images/user_iocn_header.png" />&nbsp;<b>Welcome  <%=adminUser.getDisplayname()%></b>  &nbsp;&nbsp;&nbsp;<a href="logout"><img src="images/logout_icon_header.png" />&nbsp;<b>Log Out</b></a>
 							</div>
 					
-						</div>
+				</div>
+		 		
+		 		<div class="box-header with-border">
+  					  <h5 class="text-blue text-left "><span class="fa fa-dashboard"></span>&nbsp;&nbsp;<b>Dashboard</b></h5>
+       
+   					 <!-- <div class="box-tools pull-right">
+     					<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+						    Buttons, labels, and many other things can be placed here!
+						    Here is a label for example
+    
+    				</div> --><!-- /.box-tools -->
+   				</div><!-- /.box-header -->
+		 		
+		 		
+			 			
 		 		
 		 		
 		 		
-						<div class="row">
+						<!-- <div class="row">
 							<div class="col-sm-12 page-heading ">
 								<h5 class="text-blue text-center "><span class="fa fa-dashboard"></span>&nbsp;&nbsp;<b>Dashboard</b></h5>
 							</div>
 													
-						</div>
+						</div> -->
 					
 					
 						
@@ -212,12 +225,12 @@
 							  </div><!-- /.info-box-content -->
 							</div><!-- /.info-box -->
 						
-   							<div class="info-box col-sm-4 mar-top-15" >
+   							<div class="info-box col-sm-4 mar-top-10" >
 							  <!-- Apply any bg-* class to to the icon to color it -->
 							  <span class="info-box-icon bg-red"><i class="fa fa-upload"></i></span>
 							  <div class="info-box-content">
 							    <span class="info-box-text"><em>Latest Device Firmware/OTA</em></span>
-							    <span class="info-box-number"><b>0.84</b></span>
+							    <span class="info-box-number"><b><%=latestOTA.get(0).getVersion()%></b></span>
 							  </div><!-- /.info-box-content -->
 							</div><!-- /.info-box -->
 						</div>

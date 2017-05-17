@@ -38,5 +38,5 @@ public interface AdminInstrumentService {
 	
 	public MightyDeviceFirmware getMightyLstDeviceFirmware();
 
-	public MightyDeviceFirmware getLatestOTA()throws Exception;
+	public List<MightyDeviceFirmware> getLatestOTA()throws Exception;
 }

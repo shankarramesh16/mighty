@@ -147,8 +147,9 @@ public class LoginController {
 		 public String home(Map<String,Object> map) throws Exception{
 			 List<MightyUserInfo> mightyUserList=consumerInstrumentServiceImpl.getAllMightyUsers();
 			 List<MightyDeviceInfo> mightyDeviceList=consumerInstrumentServiceImpl.getAllMightyDev();
-			 MightyDeviceFirmware latestOTA=adminInstrumentServiceImpl.getLatestOTA();
-			 			 		    	
+			 List<MightyDeviceFirmware> latestOTA=adminInstrumentServiceImpl.getLatestOTA();
+			 /*final int users=Integer.parseInt(mightyUserList.get(0).toString());	
+			 logger.debug("///users",users);*/			 			 		    	
 			 map.put("mightyUserList",mightyUserList);
 			 map.put("mightyDeviceList",mightyDeviceList);
 			 map.put("latestOTA",latestOTA);
