@@ -7,19 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import com.team.mighty.domain.AdminUser;
+import com.team.mighty.logger.MightyLogger;
+import com.team.mighty.utils.OtherFunctions;
 
 public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 
-	private static final Logger logger = Logger.getLogger(RequestProcessingInterceptor.class);
-
-	public int i;
-	public static  String hasAuthentication="undefined";
-	public static String autherisation_insertion_mode="undefined";
-		
+	private static final MightyLogger logger = MightyLogger.getLogger(RequestProcessingInterceptor.class);
 	
-    public boolean preHandle(HttpServletRequest request,HttpServletResponse response, Object handler) throws Exception {
+	public boolean preHandle(HttpServletRequest request,HttpServletResponse response, Object handler) throws Exception {
 		
 				
 		logger.debug(">> FILTER <<");
@@ -32,6 +30,7 @@ public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 						String page=preUrl;
 							queryString= getQueryString(request)==null?"": getQueryString(request);
 								logger.debug("preUrl as "+page);
+								logger.debug("actualPrePage as "+actualPrePage);
 		page=page==null?"":page;
 		if(page.equals("")==false )
 		{			
@@ -52,7 +51,7 @@ public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 			
 			queryString=queryString==""?"":"?"+queryString;
 			forwardPage=page+queryString;
-			logger.debug("forword page"+forwardPage);
+			
 		}else
 		{
 			page=indexPage;
@@ -65,12 +64,43 @@ public class RequestProcessingInterceptor extends HandlerInterceptorAdapter {
 			logger.debug("IN preURL '/'':");
 			return true;
 		}
-		else if (page.equals("login")) { 
+		else if (page.equals("onSubmitlogin")){ 
 				return true;
 		}
-		
-		return true;
+		else if(OtherFunctions.isEitherJspOrServlet(actualPrePage))
+		{
+						AdminUser user=(AdminUser) session.getAttribute("adminUser");
+						
+						if (user == null || user.equals("null")) 
+						{
+							logger.debug("NO user Id page : ", page);
+							String oPage="/";
+							if(actualPrePage.equals("logout")) {
+								response.sendRedirect(oPage);
+							}
+							else{
+									logger.debug("Actual Prepage = "+ actualPrePage);
+									if(actualPrePage.substring(actualPrePage.length()-3).equals(".do")==false)  
+									{
+											String param = actualPrePage + "___"+ request.getQueryString();
+											oPage="/MightyCloud/?prePage=" + param;
+											response.sendRedirect(oPage);
+											return false;
+									}
+								
+							}
+					    }
+						else{
+							logger.debug("IN user Id page : ", page);
+								return true;
+						}
+		}
+		else {
+			logger.debug("//WebServices Call");
+			request.getRequestDispatcher("/"+page).forward(request, response);
+		}
 	
+	return true;
 	}
 
     

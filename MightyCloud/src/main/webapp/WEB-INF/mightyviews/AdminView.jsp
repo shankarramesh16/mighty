@@ -22,6 +22,7 @@
     
 	  <link href="css/bootstrap.min.css" rel="stylesheet">
 	  <link href="css/custom_siemens.css" rel="stylesheet">
+	   <link href="css/marquees.css" rel="stylesheet">
 	       
     
    
@@ -35,12 +36,18 @@
 
 	<script src="js/app.min.js"></script>
 	<script src="js/demo.js"></script>
+	
+<!-- Pie Charts... -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
     
       
   </head>
   
   <body class="hold-transition skin-blue sidebar-mini">
-  			<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");%>
+  
+  			<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
+  			%>
   			<% List<MightyUserInfo> mightyUserList=(List<MightyUserInfo>)request.getAttribute("mightyUserList"); %>
   			<% List<MightyDeviceInfo> mightyDeviceList=(List<MightyDeviceInfo>)request.getAttribute("mightyDeviceList");%>
   			<% List<MightyDeviceFirmware> latestOTA=(List<MightyDeviceFirmware>)request.getAttribute("latestOTA");%>
@@ -150,6 +157,14 @@
 		 		<div class="content-wrap box box-primary">
 		 		
 		 		<div class="row">
+		 			<div class="col-sm-12">
+				 		<div class=" example5">
+							<span class="ota"><b>Latest Mighty Device Firmware/OTA is <%=latestOTA.get(0).getVersion()%></b> </span>
+						</div>
+					</div>	
+				</div>
+					
+		 		<div class="row">
 							<div class="col-sm-12 text-right">
 								<img src="images/user_iocn_header.png" />&nbsp;<b>Welcome  <%=adminUser.getDisplayname()%></b>  &nbsp;&nbsp;&nbsp;<a href="logout"><img src="images/logout_icon_header.png" />&nbsp;<b>Log Out</b></a>
 							</div>
@@ -211,7 +226,7 @@
 							  <!-- Apply any bg-* class to to the icon to color it -->
 							  	<span class="info-box-icon bg-blue"><i class="fa fa-user"></i></span>
 							  	<div class="info-box-content">
-								    <span class="info-box-text"><em>Mighty Users</em></span>
+								    <span class="info-box-text">Mighty Users</span>
 								    <span class="info-box-number"><b><%=mightyUserList.get(0)%></b></span>
 							 	</div><!-- /.info-box-content -->
 							 </div><!-- /.info-box -->
@@ -220,19 +235,19 @@
 							  <!-- Apply any bg-* class to to the icon to color it -->
 							  <span class="info-box-icon bg-green"><i class="fa fa-music"></i></span>
 							  <div class="info-box-content">
-							    <span class="info-box-text"><em>Mighty Device</em></span>
+							    <span class="info-box-text">Mighty Device</span>
 							    <span class="info-box-number"><b><%=mightyDeviceList.get(0)%></b></span>
 							  </div><!-- /.info-box-content -->
 							</div><!-- /.info-box -->
 						
-   							<div class="info-box col-sm-4 mar-top-10" >
+   							<%-- <div class="info-box col-sm-4 mar-top-10" >
 							  <!-- Apply any bg-* class to to the icon to color it -->
 							  <span class="info-box-icon bg-red"><i class="fa fa-upload"></i></span>
 							  <div class="info-box-content">
 							    <span class="info-box-text"><em>Latest Device Firmware/OTA</em></span>
 							    <span class="info-box-number"><b><%=latestOTA.get(0).getVersion()%></b></span>
 							  </div><!-- /.info-box-content -->
-							</div><!-- /.info-box -->
+							</div><!-- /.info-box --> --%>
 						</div>
 										
 						</div>	
