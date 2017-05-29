@@ -106,8 +106,12 @@ public class ConsumerInstrumentController {
 			userLoginDTO = consumerInstrumentServiceImpl.getRefreshTokenOnBaseToken();
 			String response = JsonUtil.objToJson(userLoginDTO);
 			httpHeaders.add(MightyAppConstants.HTTP_HEADER_TOKEN_NAME, userLoginDTO.getApiToken());
+			httpHeaders.add(MightyAppConstants.HTTP_HEADER_BASE_TOKEN_NAME, userLoginDTO.getBaseToken());
 			//httpHeaders.add("APITokenExpiration:", userLoginDTO.getAccessTokenExpDate().toString().trim());
 			try{
+			httpHeaders.add("BaseTokenExpiration", String.valueOf(new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+				.parse(userLoginDTO.getBaseTokenExpDate().toString()).getTime()));	
+			
 			httpHeaders.add("AccessTokenExpiration", String.valueOf(new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
 			.parse(userLoginDTO.getAccessTokenExpDate().toString()).getTime()));
 			}catch(Exception e){

@@ -743,16 +743,22 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			
 			//long ttlMillis = Long.parseLong(SpringPropertiesUtil.getProperty(MightyAppConstants.TTL_LOGIN_KEY));
 			long ttlMillis=TimeUnit.HOURS.toMillis(2);
+			long ttlBaseMillis=TimeUnit.DAYS.toMillis(60);
 			//long ttlMillis=TimeUnit.MINUTES.toMillis(1);
 					
 			logger.debug("ttlMillisVal",ttlMillis);
 						
 			UserLoginDTO newAccessToken = JWTKeyGenerator.createJWTAccessToken(mightyKeyConfig.getMightyKeyValue(), MightyAppConstants.TOKEN_LOGN_ID,
 					MightyAppConstants.SUBJECT_SECURE, ttlMillis);
-						
+			
+			UserLoginDTO newBaseToken = JWTKeyGenerator.createJWTBaseToken(mightyKeyConfig.getMightyKeyValue(), MightyAppConstants.TOKEN_LOGN_ID,
+					MightyAppConstants.SUBJECT_SECURE, ttlBaseMillis);
 						
 			userLoginDTO.setApiToken(newAccessToken.getApiToken());
 			userLoginDTO.setAccessTokenExpDate(newAccessToken.getAccessTokenExpDate());
+			
+			userLoginDTO.setBaseToken(newBaseToken.getBaseToken());
+			userLoginDTO.setBaseTokenExpDate(newBaseToken.getBaseTokenExpDate());
 						
 		}
 		
