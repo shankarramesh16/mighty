@@ -24,8 +24,8 @@
 			<property name="hibernate.connection.username" value="adminr26Gdqj" />
 			<property name="hibernate.connection.password" value="l-Qh7sDyWMCz"/> -->
 	 		 <!-- <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/mighty?autoReconnect=true" />
-			<property name="hibernate.connection.username" value="root" />
-			<property name="hibernate.connection.password" value="root"/>  -->
+			<property name="hibernate.connection.username" value="mightyc2" />
+			<property name="hibernate.connection.password" value="h23K2Fils4"/>  -->
 			 <!-- <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/mightyc3?autoReconnect=true" />
 			<property name="hibernate.connection.username" value="mightyc3" />
 			<property name="hibernate.connection.password" value="CSsd64x2t4"/>  --> 
