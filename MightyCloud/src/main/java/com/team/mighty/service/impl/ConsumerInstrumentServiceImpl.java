@@ -390,6 +390,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		userDeviceRegistrationDTO.setUserId(mightyUserInfo.getId());
 		userDeviceRegistrationDTO.setUserName(mightyUserInfo.getUserName());
 		userDeviceRegistrationDTO.setStatus(mightyUserInfo.getUserStatus());
+		userDeviceRegistrationDTO.setEmail(mightyUserInfo.getEmailId());
 		return userDeviceRegistrationDTO;
 	}
 	
@@ -795,11 +796,26 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	public String getPasswordResetMessage(MightyUserInfo mightyUser) throws MightyAppException {
 		return "Heyo "
 				+mightyUser.getUserName().toLowerCase()	
-				+",<br/><br/>We heard that you forgot your Mighty account password. Fear not, we're here to help."
-				+"<br/><br/>We've generated a new password for you below. It's a bunch of crazy characters, so we recommend that you change your password after you log back into the Mighty mobile app. To change your password, navigate to the User tab and click on the Change Password button.<br/><br/> "
+				+",<br/><br/>I heard that you forgot your Mighty account password. Fear not, we're here to help."
+				+"<br/><br/>I've generated a new password for you below. It has some crazy characters, so I recommend that you change your password after you log back into the Mighty mobile app. To change your password, navigate to the User tab and click the Change Password link.<br/><br/> "
 				+"Username - "+mightyUser.getUserName().toLowerCase()
-				+"<br/><br/>Password - "+mightyUser.getPassword()
-				+"<br/><br/>This email address can't receive inbound messages. If you have any questions, please email us at heyo@bemighty.com."; 
+				+"<br/>Password - "+mightyUser.getPassword()
+				+"<br/><br/>Much love,"
+				+"<br/>The Mighty Robot"
+				+"<br/><br/><em>I'm a robot and my owners won't let me receive inbound messages. If you have any questions, please send my owners an email at heyo@bemighty.com.</em>"; 
+				
+		
+	}
+	
+	public String getUserAccountMessage(UserDeviceRegistrationDTO dto) throws MightyAppException {
+		return "Heyo "
+				+dto.getUserName().toLowerCase()	
+				+",<br/><br/>I heard that you just created a Mighty account. You're just a few steps away from taking your favorite playlists on-the-go, no phone or connection required. Super exciting."
+				+"<br/><br/>You'll remain logged into your Mighty account unless you login with a different account or uninstall the app. If you happen to get logged out and can't remember your password, click the Forgot Password link on the Mighty login screen to reset it."
+				+"<br/><br/>If you have any questions about anything related to Mighty, please check out our Help Center. You can also email the Mighty team at heyo@bemighty.com"
+				+"<br/><br/>Much love,"
+				+"<br/>The Mighty Robot"
+				+"<br/><br/><em>I'm a robot and my owners won't let me receive inbound messages. If you have any questions, please send my owners an email at heyo@bemighty.com.</em>"; 
 				
 		
 	}

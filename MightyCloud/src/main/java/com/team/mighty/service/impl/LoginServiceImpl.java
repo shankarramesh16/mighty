@@ -35,7 +35,7 @@ public class LoginServiceImpl implements LoginService {
 					+"<br/><br/>Login Id - "+admin.getLoginId()
 					+"<br/><br/>Password - "+admin.getPassword()
 					+"<br/><br/>Regards,<br/>" 
-					+ "<a href='http://mighty2.cloudaccess.host/MightyCloud/'>http://mighty2.cloudaccess.host/MightyCloud/</a>\n"
+					+ "<a href='https://mighty2.cloudaccess.host/test1/'>https://mighty2.cloudaccess.host/test1/</a>\n"
 							+" Mighty Team."
 							+"</a>"+"<br/>---------------<br/> <i><u>Note:</u> This is a system generated email. Please do not reply.</i>";
 		

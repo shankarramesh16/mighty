@@ -155,7 +155,7 @@
 		
 			<section class="content">
 		 		<div class="content-wrap box box-primary">
-		 		
+		 		<% if (latestOTA!=null && !latestOTA.isEmpty()){ %>
 		 		<div class="row">
 		 			<div class="col-sm-12">
 				 		<div class=" example5">
@@ -163,6 +163,7 @@
 						</div>
 					</div>	
 				</div>
+				<% }%>
 					
 		 		<div class="row">
 							<div class="col-sm-12 text-right">

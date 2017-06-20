@@ -10,6 +10,14 @@ public class UserDeviceRegistrationDTO extends BaseResponseDTO {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	public String getEmail() {
+		return Email;
+	}
+
+	public void setEmail(String email) {
+		Email = email;
+	}
+
 	private long userId;
 	
 	private String userName;
@@ -19,6 +27,7 @@ public class UserDeviceRegistrationDTO extends BaseResponseDTO {
 	private String mightyDeviceId;
 	
 	private String status;
+	private String Email;
 
 	public long getUserId() {
 		return userId;

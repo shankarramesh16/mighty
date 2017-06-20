@@ -21,6 +21,7 @@ import com.team.mighty.constant.PasswordGenerator;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
+import com.team.mighty.dto.UserDeviceRegistrationDTO;
 import com.team.mighty.dto.UserLoginDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
@@ -249,7 +250,22 @@ public class ConsumerInstrumentController {
 			consumerDeviceDTO.setDeviceType(obj.get("DeviceType").toString());
 			consumerDeviceDTO.setAge(obj.get("Age").toString());
 			consumerDeviceDTO.setGender(obj.get("Gender").toString());
-			consumerInstrumentServiceImpl.registerDevice(consumerDeviceDTO);
+			UserDeviceRegistrationDTO dto=consumerInstrumentServiceImpl.registerDevice(consumerDeviceDTO);
+				try{
+								
+						if(dto!=null){
+									logger.debug("/inside user account send Mail");
+									String subject = "Your brand new Mighty account";
+									String message = consumerInstrumentServiceImpl.getUserAccountMessage(dto);
+												
+										SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
+										mail.send(dto.getEmail(), subject, message);
+						}
+					
+					}catch(Exception e){
+						logger.error("/Sending user account notification",e);
+					}
+			
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		} catch(MightyAppException e) {
 			String errorMessage = e.getMessage();

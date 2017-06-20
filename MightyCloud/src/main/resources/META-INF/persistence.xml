@@ -17,6 +17,7 @@
 		<class>com.team.mighty.domain.MightyUserInfo</class>
 		<class>com.team.mighty.domain.Role</class>
 		<class>com.team.mighty.domain.SpotifyInfo</class>
+		<class>com.team.mighty.domain.Setting</class>
 
 		<properties>
 			<!-- <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" /> -->

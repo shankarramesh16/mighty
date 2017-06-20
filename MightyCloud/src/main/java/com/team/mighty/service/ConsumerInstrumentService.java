@@ -64,6 +64,8 @@ public interface ConsumerInstrumentService {
 
 	public List<MightyDeviceInfo> getAllMightyDev()throws Exception;
 
+	public String getUserAccountMessage(UserDeviceRegistrationDTO dto) throws Exception;
+
 	
 	
 }
