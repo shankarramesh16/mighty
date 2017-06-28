@@ -307,14 +307,14 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 					        new InputStreamReader(con.getInputStream()));
 					String inputLine;
 					StringBuffer response = new StringBuffer();
-
+					logger.debug("HiiiiiVikkki",response.toString());
 					while ((inputLine = in.readLine()) != null) {
 						response.append(inputLine);
 					}
 					in.close();
 
 					//print result
-					//logger.debug(response.toString());
+					logger.debug("Hiiiiii",response.toString());
 					
 					tokens=response.toString();
 

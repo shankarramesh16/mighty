@@ -43,6 +43,9 @@ public interface MightyUserInfoDao extends JpaRepository<MightyUserInfo, Long> {
 	@Query("SELECT count(m.id) FROM MightyUserInfo m")
 	List<MightyUserInfo> getAllMightyUsers();
 	
+	@Query("SELECT m FROM MightyUserInfo m WHERE m.id=:userId")
+	MightyUserInfo getMightyUserById(@Param("userId") long userId);
+	
 	
 	
 

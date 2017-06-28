@@ -187,7 +187,7 @@ public class AdminInstrumentController {
 		}catch(Exception e){
 			logger.error("System Exception during parsing JSON",e);
 		}
-		
+		 
 		
 					String HWSerialNumber=(String)obj.get("HWSerialNumber");
 					String SWVersion=(String)obj.get("SWVersion");
@@ -198,6 +198,7 @@ public class AdminInstrumentController {
 					logger.debug("AppVersion",obj.get("AppVersion"));
 					logger.debug("AppBuild",obj.get("AppBuild"));
 		
+					
 		try {
 			//Validate X-MIGHTY-TOKEN Value
 			JWTKeyGenerator.validateXToken(xToken);
@@ -210,6 +211,21 @@ public class AdminInstrumentController {
 			
 			if(HWSerialNumber!=null && SWVersion!=null && AppVersion!=null && AppBuild!=null && !HWSerialNumber.isEmpty() 
 					&& !SWVersion.isEmpty() && !AppVersion.isEmpty()  &&  !AppBuild.isEmpty()){
+				String str[]={"MPXC270132371","MPXCFFFFFFFFFF","MPXC270130201","MPXD171050147","MPXC265151379",
+									"MPXC270420672",
+									"MPXC270132107",
+									"MPXD171050024",
+									"MPXD171211926",
+									"MPXD171523134",
+									"MPXC270811505",
+									"MPXD171524756",
+									"MPXD171210520",
+									"MPXD171210546",
+									"MPXD171522334",
+									"MPXD171210575"};	
+				for(String s : str){
+					logger.debug("111111111");
+					if(s.equalsIgnoreCase(HWSerialNumber)){
 						reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);
 								
 						latestMightyDeviceFirmware=adminInstrumentServiceImpl.getMightyLstDeviceFirmware();
@@ -279,7 +295,18 @@ public class AdminInstrumentController {
 									
 						String response = JsonUtil.objToJson(deviceFirmWareDTO);
 						responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
-		
+						return responseEntity;
+					}	
+				}	
+				deviceFirmWareDTO=new DeviceFirmWareDTO();
+				
+				deviceFirmWareDTO.setLatestVersion(SWVersion);
+				deviceFirmWareDTO.setLatestRequired(Float.valueOf(AppVersion));
+				deviceFirmWareDTO.setCompatibleIOS(Float.valueOf(AppVersion));
+				deviceFirmWareDTO.setCompatibleHW("MX");
+				String res = JsonUtil.objToJson(deviceFirmWareDTO);
+				responseEntity = new ResponseEntity<String>(res, HttpStatus.OK);
+				
 			}else{
 				throw new MightyAppException("Passing  empty or null values of HwSerialNo/SWVersion/AppVersion/AppBuild ",HttpStatus.METHOD_NOT_ALLOWED);
 				 

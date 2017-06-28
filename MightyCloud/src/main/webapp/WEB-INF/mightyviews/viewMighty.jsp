@@ -3,17 +3,9 @@
     Created on : OCT 09, 2016, 03:51:01 PM
     Author     : Vikky
 --%>
-
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page import="java.util.*"%>
 <%@page import="com.team.mighty.domain.*"%>
-<%@page import="com.team.mighty.dto.*"%>
-<%@page import="org.displaytag.decorator.TotalTableDecorator"%>
-<%@page import="org.displaytag.decorator.MultilevelTotalTableDecorator"%>
-<%@page import="com.itextpdf.text.log.SysoLogger"%>
- <%@ page buffer = "900kb" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"   pageEncoding="ISO-8859-1"%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
 <!DOCTYPE html >
 <html lang="en">
@@ -24,7 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
-<title>Mighty Users</title>
+<title>User Mgmt</title>
 
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/custom_siemens.css" rel="stylesheet">
@@ -35,6 +27,8 @@
 <link rel="stylesheet" href="css/AdminLTE.min.css">
 <link rel="stylesheet" href="css/skins/_all-skins.min.css">
 <link rel="stylesheet" href="css/slider.css">
+<link rel="stylesheet" href="css/jquery-ui.css">
+
 
 <script type="text/javascript" src="js/jquery-latest.js"></script>
 <script  src="https://code.jquery.com/jquery-2.2.0.js"></script>
@@ -45,22 +39,148 @@
 <script src="js/app.min.js"></script>
 <script src="js/demo.js"></script>
 <script src="js/scroller.js"></script>
+<script type="text/javascript" src="js/jquery.datepick.js"></script>
+<script src="js/dateValidation.js"></script>
+<script src="js/jquery-ui.js"></script>
+
+<style type="text/css">
+@import "css/jquery.datepick.css"; 
+</style>
+
+<script type="text/javascript">
+	
+	 
+	 
+	 
+	 function getUserByDevId(){
+		 var devId=document.getElementById("devId").value;
+		 if(devId=="0")
+	    	{                	
+	    	var user=document.getElementById("tableView");
+	    	user.innerHTML='<table class="table table-bordered text-center">'
+             	+'<thead>'
+			      +'<tr>'
+			        +'<th>UserName</th>'
+			        +'<th>EmailID</th>'
+			        +'<th>MightyDevice</th>'
+			        +'<th>UserIndicator</th>'
+			        +'<th>Is_registered</th>'
+			        +'<th>Action</th>'
+			     + '</tr>'
+			    +'</thead>'
+			    +'<tbody><tr></tr></tbody></table>';
+	    	return;
+	    	}
+	    else
+	    	{
+		 	 var url="getUserByDevId?devId="+devId;                                    
+		     xmlHttp=GetXmlHttpObj()
+		     if (xmlHttp==null)
+		     {
+		         alert ("Browser does not support HTTP Request");
+		         return
+		     }                    
+		     xmlHttp.onreadystatechange=setUser;	
+		     xmlHttp.open("GET",url,true);                
+		     xmlHttp.send(null);
+		     
+		     	}
+             
+             
+	}
+	 
+	  
+	    function GetXmlHttpObject()
+	             {
+	                 var xmlHttp=null;
+	                 if (window.XMLHttpRequest) 
+	                 {
+	                     xmlHttp=new XMLHttpRequest();
+	                 }                
+	                 else if (window.ActiveXObject) 
+	                 { 
+	                     xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+	                 }
+
+	                 return xmlHttp;
+	             }
+	             
+	             
+	             function GetXmlHttpObj()
+	             {
+	                 var xmlHttp=null;
+	                 if (window.XMLHttpRequest) 
+	                 {
+	                     xmlHttp=new XMLHttpRequest();
+	                 }                
+	                 else if (window.ActiveXObject) 
+	                 { 
+	                     xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+	                 }
+
+	                 return xmlHttp;
+	             }
+	         
+	             function setUser() 
+	             {                      
+	                 if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
+	                 { 
+	                     var returnText=xmlHttp.responseText;
+	                     
+	                     var user=document.getElementById("tableView");
+	                     user.innerHTML='<table class="table table-bordered text-center">'
+	                     	+'<thead>'
+						      +'<tr>'
+						        +'<th>UserName</th>'
+						        +'<th>EmailID</th>'
+						        +'<th>MightyDevice</th>'
+						        +'<th>UserIndicator</th>'
+						        +'<th>Is_registered</th>'
+						        +'<th>Action</th>'
+						     + '</tr>'
+						    +'</thead>'
+						    +'<tbody>'+returnText+'</tbody></table>';
+	                    document.getElementById("emailId").focus();
+					}
+	             }
+	             
+	      function updateUserInfo(){
+	    	  var usrId=document.getElementById("usrId").value;
+	    	  var emailId=document.getElementById("emailId").value;
+	    	  $.ajax({
+                  url: 'updateUserInfo',
+                  type: "GET",
+                  data: 'userId='+usrId+'&emailId='+emailId,
+                  success: function (data) {
+                  alert(data);
+               	   //$(".success").html(data);
+                      	
+                      },
+     		 error: function(e){
+     	     			        alert('Error: ' + e);
+     	      }
+
+                     
+                  });
+     	
+     }
+
+	    	 
+	             
+</script>
+
 
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
 						<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
-						String fname1=("MightyUserList :").concat(new Date().toString()).concat(".csv");
-						String fname2=("MightyUserList :").concat(new Date().toString()).concat(".xls");
-						String fname3=("MightyUserList :").concat(new Date().toString()).concat(".xml");
-						List<ConsumerDeviceDTO> mightyUserList=(List<ConsumerDeviceDTO>)request.getAttribute("mightydeviceuserlist");
+						List<MightyDeviceInfo> mightyList=(List<MightyDeviceInfo>)request.getAttribute("mightyList");
 						%>
 	
 <div class="wrapper">  
   	<header class="main-header" >
    
-   
-	    <a href="https://bemighty.com" class="logo affix">
+	    <a href="https://bemighty.com" class="logo affix"  >
 			      
 			     <svg width="121px" height="50px" viewBox="445 13 150 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 			                      					<defs>
@@ -90,9 +210,9 @@
     <section class="sidebar">
         
       <!-- search form -->
-      <form action="searchByUser" method="POST"  class="sidebar-form">
+      <form action="#" method="get" class="sidebar-form">
         <div class="input-group">
-          <input type="text" name="searchText" class="form-control" placeholder="Search User/Email...">
+          <input type="text" name="q" class="form-control" placeholder="Search...">
               <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
@@ -117,7 +237,7 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#"><i class="fa fa-circle-o"></i><b>Mighty User</b></a></li>
+            <li><a href="deviceUserInfo"><i class="fa fa-circle-o"></i><b>Mighty User</b></a></li>
             <li><a href="mightyDeviceInfo"><i class="fa fa-circle-o"></i><b>Mighty Device</b></a></li>
             <li><a href="deviceFirmwareReport"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA </b></a></li>
             <li><a href="#"><i class="fa fa-circle-o"></i> <b>Mighty Feature Playlist </b></a></li>
@@ -146,7 +266,7 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="userMgmt"><i class="fa fa-circle-o"></i><b> User Management</b></a></li>
+            <li><a href="#"><i class="fa fa-circle-o"></i><b> User Management</b></a></li>
            
           </ul>
         </li>
@@ -186,72 +306,71 @@
 					
 						<div class="row">
 								<div class="col-sm-8 page-heading mar-top-20">
-								<i class="page-heading-icon"><img src="images/user_icon.png" /></i>
-								<h5 class="text-blue text-semi-bold"><b>Mighty User</b></h5>
+								
+								<h5 class="text-blue text-semi-bold " ><i class="fa fa-music"></i>&nbsp;&nbsp;<b>Mighty User_Device Mgmt</b></h5>
 								</div>
 													
 						</div><br/>
 						
-						<div class="row" style="overflow-y: auto;">
-							<div class="col-sm-12 ">	
-							
-								<%-- <table class="table table-hover text-center">
-									    <thead>
-									      <tr class="text-blue text-semi-bold">
-									        <th>ID</th>
-									        <th>UserName</th>
-									        <th>EmailID</th>
-									        <th>DeviceMapping</th>
-									        <th>User_Dev_Reg</th>
-									        <th>UserIndicator</th>
-									        <th>UserStatus</th>
-									        <th>CreatedDate</th>
-									        <th>UpdatedDate</th>
-									      </tr>
-									    </thead>
-									    <tbody>
-									    <% if(mightyUserList!=null && !mightyUserList.isEmpty()){
-										    for(ConsumerDeviceDTO dto :mightyUserList){
-										    %>
-									      <tr>
-									        <td><%=dto.getId()%></td>
-									        <td><%=dto.getUserName()%></td>
-									        <td><%=dto.getEmailId()%></td>
-									        <td><%=dto.getDeviceId()%></td>
-									        <td><%=dto.getUsrdevReg()%></td>
-									        <td><%=dto.getUserIndicator()%></td>
-									        <td><%=dto.getUserStatus()%></td>
-									        <td><%=dto.getCreatedDt()%></td>
-									        <td><%=dto.getUpdatedDt()%></td>
-									       
-									      </tr>
-									      	<%}
-									    }%>
-									    </tbody>
-									  </table> --%>
 						
-					     	<display:table  class="table table-hover  text-center"  name="<%=mightyUserList%>" id="row"
-									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="100">
-							<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />
-							<display:column  property="userName" title="UserName" sortable="true"  />
-							<display:column  property="emailId" title="EmailID" sortable="true"  />
-							<display:column  property="deviceId" title="DeviceMapping" sortable="true"  />
-							<display:column  property="usrdevReg" title="User_Dev_Reg" sortable="true"  />
-							<display:column  property="userIndicator" title="UserIndicator" 	sortable="true"  />
-							<display:column  property="userStatus" title="Status" sortable="true"  />
-							<display:column  property="createdDt" title="CreatedDate" format="{0,date,dd-MM-yyyy}" sortable="true"  />
-							<display:column  property="updatedDt" title="UpdatedDate" format="{0,date,dd-MM-yyyy}" sortable="true" />
-							
-								     		   
-						 	<display:setProperty name="export.csv.filename" value="<%=fname1%>" />
-							<display:setProperty name="export.excel.filename" value="<%=fname2%>" />
-							<display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
-						</display:table> 
-							</div>
-						</div>
+						
+						
+					    <form action="deviceFirmwareSubmit" name="form1" 
+											onsubmit="return confirmValidate();" method="post">
+								<div class="push-200 login-input-wrap">
+								
+									<div class="row">
+									
+									<div class="col-sm-12"><i class="fa fa-music"></i>&nbsp;<b>Mighty Device</b>
+										 <select id="devId" name="devId" onchange="getUserByDevId()">
+										 	<option value="0">---Select Mighty---</option>
+										 	<% if(mightyList!=null && !mightyList.isEmpty()){
+										 			for(MightyDeviceInfo m : mightyList){%>	
+										 				<option value="<%=m.getId()%>"><%=m.getDeviceId() %></option>	
+										 			<%}
+										 	}%>
+										 	
+										 </select>	 
+									</div>
+														
+									</div>	
+																
+									
+								</div><br/>
+								
+							<div class="row">
+									
+									<div class="col-sm-12">
+										<div id="tableView">
+									 <table class="table table-bordered text-center">
+											    <thead>
+											      <tr>
+											        <th>UserName</th>
+											        <th>EmailID</th>
+											        <th>MightyDevice</th>
+											        <th>UserIndicator</th>
+											        <th>Is_registered</th>
+											        <th>Action</th>
+											      </tr>
+											    </thead>
+											    <tbody>
+											      <tr>
+											      </tr>
+											    </tbody>
+											  </table> 
+											  </div>
+									</div>
+									
+							</div>		
+							  </form>
+							  
+							  	
+							  
+						
 						<a  id="goTop"><i class="fa fa-eject"></i></a>	
 				 </div>
 			</section>	
+			
 			<%@include file="Footer.jsp"%>  		
 	</div>	
 </div>

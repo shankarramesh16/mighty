@@ -24,7 +24,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
-<title>Mighty Users</title>
+<title>Mighty Device Report</title>
 
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/custom_siemens.css" rel="stylesheet">
@@ -134,6 +134,19 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="uploadDeviceFirmware"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA</b></a></li>
+           
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-shopping-cart"></i>
+            <span><b>Device_UserMgmt</b></span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="userMgmt"><i class="fa fa-circle-o"></i><b> User Management</b></a></li>
            
           </ul>
         </li>

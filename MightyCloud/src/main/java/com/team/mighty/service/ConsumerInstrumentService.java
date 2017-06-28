@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.team.mighty.domain.AdminUser;
 import com.team.mighty.domain.MightyDeviceInfo;
+import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
@@ -65,6 +66,13 @@ public interface ConsumerInstrumentService {
 	public List<MightyDeviceInfo> getAllMightyDev()throws Exception;
 
 	public String getUserAccountMessage(UserDeviceRegistrationDTO dto) throws Exception;
+
+	public List<MightyDeviceUserMapping> getMightyDeviceUserMappingOndevId( long devId) throws Exception;
+
+	public MightyUserInfo getMightyUserById(long userId) throws Exception;
+
+	public MightyUserInfo updateUserEmail(MightyUserInfo user)throws Exception;
+
 
 	
 	

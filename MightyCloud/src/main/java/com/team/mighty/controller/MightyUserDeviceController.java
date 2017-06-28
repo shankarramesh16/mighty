@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.team.mighty.domain.MightyDeviceInfo;
@@ -17,14 +18,18 @@ import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.logger.MightyLogger;
+import com.team.mighty.service.AdminInstrumentService;
 import com.team.mighty.service.ConsumerInstrumentService;
 
 @Controller
 public class MightyUserDeviceController {
 private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDeviceController.class);
 	
- @Autowired
- private ConsumerInstrumentService consumerInstrumentServiceImpl;
+	 @Autowired
+	 private ConsumerInstrumentService consumerInstrumentServiceImpl;
+ 
+	@Autowired
+	private AdminInstrumentService adminInstrumentServiceImpl;
 	
 	@RequestMapping(value = "/deviceUserInfo", method = RequestMethod.GET)
 	public String getAllMightyDevicesUserInfoHandler(Map<String,Object> map) throws Exception {
@@ -105,6 +110,94 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		return "mightyDeviceInfo";
 	}
 	
+	
+	@RequestMapping(value = "/userMgmt", method = RequestMethod.GET)
+	public String userMgmtHandler(Map<String,Object> map) throws Exception {
+		logger.debug("Getting mighty's as per mighty ");	
+		List<MightyDeviceInfo> mightyList=consumerInstrumentServiceImpl.getMightyDeviceInfo();
+			map.put("mightyList", mightyList);
+		return "viewMighty";
+	}
+	
+	
+	@RequestMapping(value = "/getUserByDevId", method = RequestMethod.GET)
+	public @ResponseBody String ajaxForGetUserByDevId(HttpServletRequest request,Map<String,Object> map) throws Exception {
+		logger.debug("Getting User as per mighty id ");	
+		String devId=request.getParameter("devId");
+		logger.debug("DevId as"+devId);
+		MightyDeviceInfo m=consumerInstrumentServiceImpl.getMightyDeviceOnId(Long.parseLong(devId));
+		List<MightyDeviceUserMapping> mdList=consumerInstrumentServiceImpl.getMightyDeviceUserMappingOndevId(Long.parseLong(devId));
+		String retVal="";
+		
+		for(MightyDeviceUserMapping md : mdList){
+			MightyUserInfo usr=md.getMightyUserInfo();
+			if(md.getRegistrationStatus().equalsIgnoreCase("Y")){
+				retVal=retVal+"<tr>"
+							+"<td>"
+							+usr.getUserName()
+							+"</td>"
+							+"<td>"
+							+ "<input type=\"hidden\" id=\"usrId\"  name=\"usrId\" value="+"\""+usr.getId()+"\""+"/>"
+							+ "<input type=\"text\" id=\"emailId\"  name=\"emailId\" value="+"\""+usr.getEmailId()+"\""+"/>"
+							+"</td>"
+							+"<td>"
+							+m.getDeviceId()
+							+"</td>"
+							+"<td>"
+							+usr.getUserIndicator()
+							+"</td>"
+							+"<td>"
+							+md.getRegistrationStatus()
+							+"</td>"
+							+"<td>"
+							+"<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"updateUserInfo() \" >Submit</button>"
+							+"</td>"
+							+"</tr>";
+			}	
+			
+			if(md.getRegistrationStatus().equalsIgnoreCase("N")){
+				retVal=retVal+"<tr>"
+							+"<td>"
+							+usr.getUserName()
+							+"</td>"
+							+"<td>"
+							+usr.getEmailId()
+							+"</td>"
+							+"<td>"
+							+m.getDeviceId()
+							+"</td>"
+							+"<td>"
+							+usr.getUserIndicator()
+							+"</td>"
+							+"<td>"
+							+md.getRegistrationStatus()
+							+"</td>"
+							+"</tr>";
+			}					
+			
+		}
+		return retVal;
+	}
+	
+	
+
+	@RequestMapping(value = "/updateUserInfo", method = RequestMethod.GET)
+	public @ResponseBody String ajaxUpdateUserInfo(HttpServletRequest request,Map<String,Object> map) throws Exception {
+		logger.debug("Getting User as per mighty id ");	
+		String userId=request.getParameter("userId");
+		String emailId=request.getParameter("emailId");
+		String retVal="";
+		MightyUserInfo user=consumerInstrumentServiceImpl.getMightyUserById(Long.parseLong(userId));
+			user.setEmailId(emailId);
+			MightyUserInfo usr=consumerInstrumentServiceImpl.updateUserEmail(user);
+			if(usr!=null){
+				retVal="User updated successfully.";
+			}else{
+				retVal="User updation failure!";
+			}
+		
+		return retVal;
+	}
 	
 	@RequestMapping(value= {"/searchByUser"},method=RequestMethod.POST)
 	public String searchByUserHandler(HttpServletRequest request,Map<String,Object> map) throws Exception{

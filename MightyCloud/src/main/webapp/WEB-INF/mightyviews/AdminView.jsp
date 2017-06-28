@@ -135,6 +135,20 @@
         <li class="treeview">
           <a href="#">
             <i class="fa fa-shopping-cart"></i>
+            <span><b>Device_UserMgmt</b></span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="userMgmt"><i class="fa fa-circle-o"></i><b> User Management</b></a></li>
+           
+          </ul>
+        </li>
+        
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-shopping-cart"></i>
             <span><b>Orders</b></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>

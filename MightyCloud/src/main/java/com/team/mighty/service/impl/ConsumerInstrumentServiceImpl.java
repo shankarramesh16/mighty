@@ -849,4 +849,22 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	
+	public List<MightyDeviceUserMapping> getMightyDeviceUserMappingOndevId(long devId) throws Exception {
+		return mightyDeviceUserMapDAO.getMightyDeviceUserMappingOndevId(devId);
+		 
+	}
+
+	
+	public MightyUserInfo getMightyUserById(long userId) throws Exception {
+		
+		return mightyUserInfoDAO.getMightyUserById(userId);
+	}
+
+	
+	public MightyUserInfo updateUserEmail(MightyUserInfo user) throws Exception {
+		return mightyUserInfoDAO.save(user);
+		
+	}
+
+	
 }
