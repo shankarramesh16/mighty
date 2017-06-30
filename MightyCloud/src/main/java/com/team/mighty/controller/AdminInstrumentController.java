@@ -223,6 +223,14 @@ public class AdminInstrumentController {
 									"MPXD171210546",
 									"MPXD171522334",
 									"MPXD171210575"};	
+				Double val=0.0;
+				try{
+					val=Double.parseDouble(SWVersion);
+				}catch(Exception e){
+					;
+				}
+				
+			if(val>=0.89){
 				for(String s : str){
 					logger.debug("111111111");
 					if(s.equalsIgnoreCase(HWSerialNumber)){
@@ -298,6 +306,7 @@ public class AdminInstrumentController {
 						return responseEntity;
 					}	
 				}	
+				
 				deviceFirmWareDTO=new DeviceFirmWareDTO();
 				
 				deviceFirmWareDTO.setLatestVersion(SWVersion);
@@ -306,6 +315,81 @@ public class AdminInstrumentController {
 				deviceFirmWareDTO.setCompatibleHW("MX");
 				String res = JsonUtil.objToJson(deviceFirmWareDTO);
 				responseEntity = new ResponseEntity<String>(res, HttpStatus.OK);
+				return responseEntity;
+			}else{
+				
+				reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);
+				
+				latestMightyDeviceFirmware=adminInstrumentServiceImpl.getMightyLstDeviceFirmware();
+				
+				deviceFirmWareDTO=new DeviceFirmWareDTO();
+				if(reqMightyDeviceFirmware!=null){
+					
+					deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
+					/*passing downloading API...*/
+					String URL = "https://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
+					/*if(request.isSecure()) {
+						URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
+					} else {
+						URL = "http://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
+					}*/
+					deviceFirmWareDTO.setFileDownloadUrl(URL);
+					deviceFirmWareDTO.setReqHashValue(reqMightyDeviceFirmware.getHashValue().trim());
+					deviceFirmWareDTO.setReqHT(String.valueOf(reqMightyDeviceFirmware.getHashType()));
+					deviceFirmWareDTO.setReqCompatibleIOS(reqMightyDeviceFirmware.getCompatibleIOS());
+					deviceFirmWareDTO.setReqCompatibleLatestAND(reqMightyDeviceFirmware.getCompatibleAND());
+					deviceFirmWareDTO.setReqCompatibleLatestHW(reqMightyDeviceFirmware.getCompatibleHW().trim());
+					deviceFirmWareDTO.setRequires(reqMightyDeviceFirmware.getRequires());
+					try{
+						deviceFirmWareDTO.setFileSize(String.valueOf(reqMightyDeviceFirmware.getFile().length()));
+						logger.debug("size",deviceFirmWareDTO.getFileSize());
+					}catch(SQLException e){
+							logger.error(e);
+					}
+					
+					
+					logger.debug("ReqhashValue",reqMightyDeviceFirmware.getHashValue().trim());
+					logger.debug("ReqHT",reqMightyDeviceFirmware.getHashType());
+					logger.debug("Reqversion",reqMightyDeviceFirmware.getVersion());
+					logger.debug("Reqid",reqMightyDeviceFirmware.getId());
+					logger.debug("ReqIOS",reqMightyDeviceFirmware.getCompatibleIOS());
+					logger.debug("ReqAND",reqMightyDeviceFirmware.getCompatibleAND());
+					logger.debug("ReqHW",reqMightyDeviceFirmware.getCompatibleHW());
+					logger.debug("Requires",reqMightyDeviceFirmware.getRequires());
+					logger.debug("downloadingUrl",deviceFirmWareDTO.getFileDownloadUrl());
+					
+					
+					
+				}
+				
+				/*Latest Firmware*/
+				if(latestMightyDeviceFirmware!=null){
+					
+					deviceFirmWareDTO.setHashValue(latestMightyDeviceFirmware.getHashValue());
+					deviceFirmWareDTO.setHt(String.valueOf(latestMightyDeviceFirmware.getHashType()));
+					deviceFirmWareDTO.setCompatibleIOS(latestMightyDeviceFirmware.getCompatibleIOS());
+					deviceFirmWareDTO.setCompatibleAND(latestMightyDeviceFirmware.getCompatibleAND());
+					deviceFirmWareDTO.setCompatibleHW(latestMightyDeviceFirmware.getCompatibleHW());
+					deviceFirmWareDTO.setLatestRequired(latestMightyDeviceFirmware.getRequires());
+					deviceFirmWareDTO.setLatestVersion(latestMightyDeviceFirmware.getVersion().trim());
+					
+					logger.debug("hashValue",latestMightyDeviceFirmware.getHashValue());
+					logger.debug("Ht",latestMightyDeviceFirmware.getHashType());
+					logger.debug("version",latestMightyDeviceFirmware.getVersion());
+					logger.debug("id",latestMightyDeviceFirmware.getId());
+					logger.debug("IOS",latestMightyDeviceFirmware.getCompatibleIOS());
+					logger.debug("AND",latestMightyDeviceFirmware.getCompatibleAND());
+					logger.debug("HW",latestMightyDeviceFirmware.getCompatibleHW());
+					logger.debug("latestRequires",latestMightyDeviceFirmware.getRequires());
+					
+					
+				}
+							
+				String response = JsonUtil.objToJson(deviceFirmWareDTO);
+				responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
+				return responseEntity;
+			}
+				
 				
 			}else{
 				throw new MightyAppException("Passing  empty or null values of HwSerialNo/SWVersion/AppVersion/AppBuild ",HttpStatus.METHOD_NOT_ALLOWED);
