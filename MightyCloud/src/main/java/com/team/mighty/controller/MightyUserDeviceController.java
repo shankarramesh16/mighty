@@ -1,22 +1,36 @@
 package com.team.mighty.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.team.mighty.domain.MightyDeviceFirmware;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
+import com.team.mighty.domain.Mightylog;
 import com.team.mighty.dto.ConsumerDeviceDTO;
+import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;
 import com.team.mighty.service.ConsumerInstrumentService;
@@ -282,5 +296,85 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		List<MightyDeviceInfo> mightyDeviceList=consumerInstrumentServiceImpl.getMightySearchDevice(searchDev);
 		map.put("mightyDeviceList", mightyDeviceList);
 		return "mightySearchDevice";
+	}
+	
+	
+	@RequestMapping(value= {"/mightyLog"},method=RequestMethod.GET)
+	public String mightyLogHandler(HttpServletRequest request,Map<String,Object> map) throws Exception{
+		logger.debug("IN mightyLogHandler Controller....");
+		List<Mightylog> mightyLogs=consumerInstrumentServiceImpl.getMightyLogs();
+		map.put("mightyLogs", mightyLogs);
+		return "mightylog";
+	}
+	
+	@RequestMapping(value = "/getLogByDevId", method = RequestMethod.GET)
+	public @ResponseBody String ajaxForGetLogByDevId(HttpServletRequest request,Map<String,Object> map) throws Exception {
+		logger.debug("Getting Log as per mighty id ");	
+		String devId=request.getParameter("devId");
+		logger.debug("DevId as"+devId);
+		MightyDeviceInfo m=consumerInstrumentServiceImpl.getMightyOnHwId(devId);
+		List<Mightylog> logList=consumerInstrumentServiceImpl.getMightyLogsOndevId(devId);
+		String retVal="";
+		if(logList!=null){
+			for(Mightylog log : logList){
+				retVal=retVal+"<tr>"
+								+"<td>"
+								+log.getLogType()
+								+"</td>"
+								+"<td>"
+								+log.getDescription()
+								+"</td>"
+								+"<td>"
+								+log.getDeviceId()
+								+"</td>"
+								+"<td>"
+								+log.getDeviceType()
+								+"</td>"
+								+"<td>"
+								+log.getUsername()
+								+"</td>"
+								+"<td>"
+								+log.getEmailId()
+								+"</td>"
+								+"<td>"
+								+log.getCreatedDt()
+								+"</td>"
+								+"<td>"
+								+log.getUpdatedDt()
+								+"</td>"
+								+"<td>"
+								//+"<input type=\"file\" id=\"file1\" name=\"file1\" value="+"\""+log.getFileContent()+"\""+"/>"
+								//+"<input type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"Download\">"
+								+"<input type=\"hidden\" id=\"device\" name=\"device\" value="+"\""+log.getDeviceId()+"\""+"/>"
+								+"<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"downloadMightyLog() \" >Download</button>"
+								+"</td>"
+								+"</tr>";
+				}	
+		}
+		return retVal;
+	}
+	
+	@RequestMapping(value = "/downloadMighylog",method=RequestMethod.POST)
+	public @ResponseBody String downloadMighylogHandler(HttpServletRequest request,HttpServletResponse response,Map<String,Object> map,RedirectAttributes redirectAttributes) throws Exception {
+		logger.debug("In submitting downloadMighylog ");
+		String device=request.getParameter("device");
+		String retVal="";
+		 /* try {
+				//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+					 String headerKey = "Content-Disposition";
+				        String headerValue = String.format("attachment; filename=\"%s\"",mightyDeviceFirmware.getFileName());
+				        response.setHeader(headerKey, headerValue);
+							OutputStream out = response.getOutputStream();
+								response.setContentType("text/plain");
+									IOUtils.copy(mightyDeviceFirmware.getFile().getBinaryStream(), out);
+										out.flush();
+											out.close();
+			
+			}
+			catch(Exception e) {
+				logger.errorException(e, e.getMessage());
+			}
+		*/
+		return retVal;
 	}
 }

@@ -203,7 +203,7 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 					
 					   if(compatibleWithExistRequires!=null && !compatibleWithExistRequires.isEmpty()){
 							logger.debug("Size if",compatibleWithExistRequires.size());
-								return compatibleWithExistRequires.get(0);
+								return compatibleWithExistRequires.get(compatibleWithExistRequires.size()-1);
 						/*if(compatibleWithExistRequires.get(0).getCompatibleHW().contains(compatibleHw)){
 								
 						}*/

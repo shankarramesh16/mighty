@@ -23,10 +23,12 @@ import com.team.mighty.dao.MightyDeviceOrderDAO;
 import com.team.mighty.dao.MightyDeviceUserMapDAO;
 import com.team.mighty.dao.MightyKeyConfigDAO;
 import com.team.mighty.dao.MightyUserInfoDao;
+import com.team.mighty.dao.MightylogDao;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyKeyConfig;
 import com.team.mighty.domain.MightyUserInfo;
+import com.team.mighty.domain.Mightylog;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserDeviceRegistrationDTO;
@@ -64,6 +66,10 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	@Autowired
 	private MightyDeviceOrderDAO mightyDeviceOrderDAO;
+	
+	
+	@Autowired
+	private MightylogDao mightylogDao;
 	
 	
 	
@@ -865,6 +871,34 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		return mightyUserInfoDAO.save(user);
 		
 	}
+
+	
+	public MightyDeviceInfo getMightyOnHwId(String deviceId) throws MightyAppException {
+		return mightyDeviceInfoDAO.getDeviceInfo(deviceId);
+	}
+
+	
+	public void updateMightyLogs(Mightylog logs) throws Exception {
+		mightylogDao.save(logs);	
+	}
+
+
+	public List<Mightylog> getMightyLogs() throws MightyAppException {
+		return mightylogDao.getMightyLogs();
+	}
+
+	
+	public List<Mightylog> getMightyLogsOndevId(String devId) throws MightyAppException {
+		return mightylogDao.getMightyLogsOndevId(devId);
+	}
+
+	
+	public Mightylog getExistingMightylog(String deviceId, String username) throws MightyAppException {
+		return mightylogDao.getExistingMightylog(deviceId,username);
+	}
+
+
+	
 
 	
 }

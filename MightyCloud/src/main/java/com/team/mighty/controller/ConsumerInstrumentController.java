@@ -1,7 +1,10 @@
 package com.team.mighty.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.constant.PasswordGenerator;
+import com.team.mighty.domain.MightyDeviceInfo;
+import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
+import com.team.mighty.domain.Mightylog;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserDeviceRegistrationDTO;
@@ -524,7 +530,97 @@ public class ConsumerInstrumentController {
 	}
 	
 	
-	
+	@RequestMapping(value = "/getMightyLogs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getDebugHandler(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken ) throws Exception{
+		
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyDeviceInfo mightyDeviceInfo=null;
+		List<MightyDeviceUserMapping> md=null;
+		
+		
+		try{		
+						obj=new JSONObject();
+						obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+					responseEntity = new ResponseEntity<String>("Empty received body", HttpStatus.EXPECTATION_FAILED);
+		}
+
+		
+				
+		try {
+			//logger.debug("file_content",file_content);
+			logger.debug("file_content",Base64.decodeBase64(obj.get("file_content").toString()).length);
+			logger.debug("log_type",obj.get("log_type").toString());
+			logger.debug("desc",obj.get("desc").toString());
+			logger.debug("deviceId",obj.get("deviceId").toString());
+			logger.debug("userId",obj.get("userId").toString());
+			Mightylog log=null;
+			
+			//Validate X-MIGHTY-TOKEN Value
+			//JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			
+			mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
+			if(mightyDeviceInfo!=null){
+				md=consumerInstrumentServiceImpl.getMightyDeviceUserMappingOndevId(mightyDeviceInfo.getId());
+					if(md!=null){
+						for(MightyDeviceUserMapping m: md){
+							if(String.valueOf(m.getMightyUserInfo().getId()).equalsIgnoreCase(obj.get("userId").toString()) && 
+									m.getRegistrationStatus().equalsIgnoreCase("Y")){
+									Mightylog lg=null;
+									lg=consumerInstrumentServiceImpl.getExistingMightylog(obj.get("deviceId").toString(),m.getMightyUserInfo().getUserName());
+										if(lg!=null){
+											logger.debug("11111111111");
+												lg.setFileName("MightyLogs");
+												lg.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
+												lg.setLogType(obj.get("log_type").toString());
+												lg.setDescription(obj.get("desc").toString());
+												lg.setUsername(m.getMightyUserInfo().getUserName());
+												lg.setEmailId(m.getMightyUserInfo().getEmailId());
+												lg.setDeviceId(obj.get("deviceId").toString());
+												lg.setDeviceType(m.getPhoneDeviceType());
+												lg.setUpdatedDt(new Date(System.currentTimeMillis()));
+												consumerInstrumentServiceImpl.updateMightyLogs(lg);
+												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+										}else{
+											logger.debug("22222222");
+												log=new Mightylog();
+												log.setFileName("MightyLogs");
+												log.setFileContent(new javax.sql.rowset.serial.SerialBlob(obj.get("file_content").toString().getBytes()));
+												log.setLogType(obj.get("log_type").toString());
+												log.setDescription(obj.get("desc").toString());
+												log.setUsername(m.getMightyUserInfo().getUserName());
+												log.setEmailId(m.getMightyUserInfo().getEmailId());
+												log.setDeviceId(obj.get("deviceId").toString());
+												log.setDeviceType(m.getPhoneDeviceType());
+												log.setCreatedDt(new Date(System.currentTimeMillis()));
+												log.setUpdatedDt(new Date(System.currentTimeMillis()));
+												consumerInstrumentServiceImpl.updateMightyLogs(log);
+												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+										}
+							}else{
+								responseEntity = new ResponseEntity<String>("DeviceId not associated with user or registerstatus is N ", HttpStatus.BAD_REQUEST);
+							}
+						}
+					}else{
+						responseEntity = new ResponseEntity<String>("DeviceId not mapped", HttpStatus.BAD_REQUEST);
+					}
+			}else{
+				responseEntity = new ResponseEntity<String>("Empty deviceId", HttpStatus.BAD_REQUEST);
+			}
+							
+		}catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+
+	}
 	
 	
 	

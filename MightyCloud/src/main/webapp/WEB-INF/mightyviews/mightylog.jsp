@@ -3,59 +3,173 @@
     Created on : OCT 09, 2016, 03:51:01 PM
     Author     : Vikky
 --%>
-
-
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@page import="java.util.*"%>
 <%@page import="com.team.mighty.domain.*"%>
-<%@page import="com.itextpdf.text.log.SysoLogger"%>
-<%@page import="java.util.List"%>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <title>Mighty Admin Home</title>
-    
-	<script type="text/javascript" src="js/jquery-latest.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    
-	  <link href="css/bootstrap.min.css" rel="stylesheet">
-	  <link href="css/custom_siemens.css" rel="stylesheet">
-	   <link href="css/marquees.css" rel="stylesheet">
-	       
-    
-   
-	  <!-- Font Awesome -->
-	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-	  <!-- Ionicons -->
-	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-	  <link rel="stylesheet" href="css/AdminLTE.min.css">
-	  <link rel="stylesheet" href="css/AdminLTE.css">
-	  <link rel="stylesheet" href="css/skins/_all-skins.min.css">
 
-	<script src="js/app.min.js"></script>
-	<script src="js/demo.js"></script>
+<!DOCTYPE html >
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<title>Mighty Logs</title>
+
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/custom_siemens.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+<link rel="stylesheet" href="css/AdminLTE.min.css">
+<link rel="stylesheet" href="css/skins/_all-skins.min.css">
+<link rel="stylesheet" href="css/slider.css">
+<link rel="stylesheet" href="css/jquery-ui.css">
+
+
+<script type="text/javascript" src="js/jquery-latest.js"></script>
+<script  src="https://code.jquery.com/jquery-2.2.0.js"></script>
+<script type="text/javascript" src="js/jquery-latest.js"></script>
+<script type="text/javascript" src="js/jquery.validate.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script src="js/app.min.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/scroller.js"></script>
+<script type="text/javascript" src="js/jquery.datepick.js"></script>
+<script src="js/dateValidation.js"></script>
+<script src="js/jquery-ui.js"></script>
+
+<style type="text/css">
+@import "css/jquery.datepick.css"; 
+</style>
+
+<script type="text/javascript">
 	
-<!-- Pie Charts... -->
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-    
-      
-  </head>
-  
-  <body class="hold-transition skin-blue sidebar-mini">
-  
-  			<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
-  			%>
-  			<% List<MightyUserInfo> mightyUserList=(List<MightyUserInfo>)request.getAttribute("mightyUserList"); %>
-  			<% List<MightyDeviceInfo> mightyDeviceList=(List<MightyDeviceInfo>)request.getAttribute("mightyDeviceList");%>
-  			<% List<MightyDeviceFirmware> latestOTA=(List<MightyDeviceFirmware>)request.getAttribute("latestOTA");%>
-							 
-  <div class="wrapper">  
+	 
+	 
+	 
+	 function getDevId(){
+		 var devId=document.getElementById("devId").value;
+		 if(devId=="0")
+	    	{                	
+			 
+	    	var user=document.getElementById("tableView");
+	    	user.innerHTML='<table class="table table-bordered text-center">'
+             	+'<thead>'
+			      +'<tr>'
+			        +'<th>LogType</th>'
+			        +'<th>Desc</th>'
+			        +'<th>MightyDevice</th>'
+			        +'<th>PhoneDevice</th>'
+			        +'<th>Username</th>'
+			        +'<th>EmailID</th>'
+			        +'<th>CreatedDt</th>'
+			        +'<th>UpdatedDt</th>'
+			        +'<th>Action</th>'
+			        + '</tr>'
+			    +'</thead>'
+			    +'<tbody><tr></tr></tbody></table>';
+	    	return;
+	    	}
+	    else
+	    	{
+		 	 var url="getLogByDevId?devId="+devId;                                    
+		     xmlHttp=GetXmlHttpObj()
+		     if (xmlHttp==null)
+		     {
+		         alert ("Browser does not support HTTP Request");
+		         return
+		     }                    
+		     xmlHttp.onreadystatechange=setLog;	
+		     xmlHttp.open("GET",url,true);                
+		     xmlHttp.send(null);
+		     
+		     	}
+             
+             
+	}
+	 
+	  
+	    function GetXmlHttpObject()
+	             {
+	                 var xmlHttp=null;
+	                 if (window.XMLHttpRequest) 
+	                 {
+	                     xmlHttp=new XMLHttpRequest();
+	                 }                
+	                 else if (window.ActiveXObject) 
+	                 { 
+	                     xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+	                 }
+
+	                 return xmlHttp;
+	             }
+	             
+	             
+	             function GetXmlHttpObj()
+	             {
+	                 var xmlHttp=null;
+	                 if (window.XMLHttpRequest) 
+	                 {
+	                     xmlHttp=new XMLHttpRequest();
+	                 }                
+	                 else if (window.ActiveXObject) 
+	                 { 
+	                     xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+	                 }
+
+	                 return xmlHttp;
+	             }
+	         
+	             function setLog() 
+	             {                      
+	                 if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
+	                 { 
+	                     var returnText=xmlHttp.responseText;
+	                     
+	                     var user=document.getElementById("tableView");
+	                     user.innerHTML='<table class="table table-bordered text-center">'
+	                     	+'<thead>'
+						      +'<tr>'
+						      	+'<th>LogType</th>'
+						        +'<th>Desc</th>'
+						        +'<th>MightyDevice</th>'
+						        +'<th>PhoneDevice</th>'
+						        +'<th>Username</th>'
+						        +'<th>EmailID</th>'
+						        +'<th>CreatedDt</th>'
+						        +'<th>UpdatedDt</th>'
+						        +'<th>Action</th>'
+						     + '</tr>'
+						    +'</thead>'
+						    +'<tbody>'+returnText+'</tbody></table>';
+	                   
+					}
+	             }
+	             
+	      function  downloadMightyLog(){
+	    	  
+	      }
+	    	 
+	             
+</script>
+
+
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+						<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
+						List<Mightylog> mightyLogs=(List<Mightylog>)request.getAttribute("mightyLogs");
+						%>
+	
+<div class="wrapper">  
   	<header class="main-header" >
    
-	    <a href="https://bemighty.com" class="logo affix">
+	    <a href="https://bemighty.com" class="logo affix"  >
 			      
 			     <svg width="121px" height="50px" viewBox="445 13 150 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 			                      					<defs>
@@ -80,7 +194,7 @@
    </header>
   
   
-  <aside class="main-sidebar" style="position:fixed;">
+  <aside class="main-sidebar affix " style="position:fixed;">
    
     <section class="sidebar">
         
@@ -99,11 +213,11 @@
       <ul class="sidebar-menu">
         <li class="header"><b>MAIN NAVIGATION</b></li>
         <li class="active treeview">
-          <a href="#">
+          <a href="adminHome">
             <i class="fa fa-dashboard"></i> <span><b>Dashboard</b></span>
           </a>
         </li>
-        <li class="treeview"> 
+        <li class="treeview">
           <a href="#">
             <i class="fa fa-files-o"></i>
             <span><b>Reports</b></span>
@@ -145,8 +259,7 @@
            
           </ul>
         </li>
-        
-        <li class="treeview">
+         <li class="treeview">
           <a href="#">
             <i class="fa fa-download"></i>
             <span><b>Log Handling</b></span>
@@ -155,7 +268,7 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="mightyLog"><i class="fa fa-circle-o"></i><b> MightyLogs</b></a></li>
+            <li><a href="#"><i class="fa fa-circle-o"></i><b> MightyLogs</b></a></li>
            
           </ul>
         </li>
@@ -183,107 +296,90 @@
 		
 			<section class="content">
 		 		<div class="content-wrap box box-primary">
-		 		<% if (latestOTA!=null && !latestOTA.isEmpty()){ %>
-		 		<div class="row">
-		 			<div class="col-sm-12">
-				 		<div class=" example5">
-							<span class="ota"><b>Latest Mighty Device Firmware/OTA is <%=latestOTA.get(0).getVersion()%></b> </span>
-						</div>
-					</div>	
-				</div>
-				<% }%>
-					
-		 		<div class="row">
-							<div class="col-sm-12 text-right">
-								<img src="images/user_iocn_header.png" />&nbsp;<b>Welcome  <%=adminUser.getDisplayname()%></b>  &nbsp;&nbsp;&nbsp;<a href="logout"><img src="images/logout_icon_header.png" />&nbsp;<b>Log Out</b></a>
-							</div>
-					
-				</div>
-		 		
-		 		<div class="box-header with-border">
-  					  <h5 class="text-blue text-left "><span class="fa fa-dashboard"></span>&nbsp;&nbsp;<b>Dashboard</b></h5>
-       
-   					 <!-- <div class="box-tools pull-right">
-     					<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-						    Buttons, labels, and many other things can be placed here!
-						    Here is a label for example
-    
-    				</div> --><!-- /.box-tools -->
-   				</div><!-- /.box-header -->
-		 		
-		 		
-			 			
-		 		
-		 		
-		 		
-						<!-- <div class="row">
-							<div class="col-sm-12 page-heading ">
-								<h5 class="text-blue text-center "><span class="fa fa-dashboard"></span>&nbsp;&nbsp;<b>Dashboard</b></h5>
-							</div>
-													
-						</div> -->
-					
-					
-						
-						
-						
-						<%-- <div class="row">
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 text-lightgrey"><i class="fa fa-user"><b>&nbsp;First Name:</b></i></div>
-							<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getFirstname()%></b></div>
-							
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 col-md-offset-2 text-lightgrey"><i class="fa fa-user"><b>&nbsp;Last Name:</b></i></div>
-							<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getLastname()%></b></div>						
-						</div>
-						
-						
-						
-										
+		 			
+			 		
 						
 						<div class="row">
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 text-lightgrey"><i class="fa fa-envelope"><b>&nbsp;Email:</b></i></div>
-							<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15 text-break"><b><%=adminUser.getEmailaddress()%></b></div>
-							
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 col-md-offset-2 text-lightgrey"><i class="fa fa-phone"><b>&nbsp;Mobile No:</b></i></div>
-							<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getContactnumber()%></b></div>						
-						</div>
-						 --%>
+							<div class="col-sm-12 text-right ">	
+							    <img src="images/user_iocn_header.png" />&nbsp;<b>Welcome  <%=adminUser.getDisplayname()%></b>  &nbsp;&nbsp;&nbsp;<a href="logout"><img src="images/logout_icon_header.png" />&nbsp;<b>Log Out</b></a>
+							</div>
+													
+						</div><br/>
+					
+					
+						<div class="row">
+								<div class="col-sm-8 page-heading mar-top-20">
+								
+								<h5 class="text-blue text-semi-bold " ><i class="fa fa-download"></i>&nbsp;&nbsp;<b>Logs Handling</b></h5>
+								</div>
+													
+						</div><br/>
 						
-   						
-   						
-   						<div class="row">
-   							<div class="info-box col-sm-4 mar-top-15" >
-							  <!-- Apply any bg-* class to to the icon to color it -->
-							  	<span class="info-box-icon bg-blue"><i class="fa fa-user"></i></span>
-							  	<div class="info-box-content">
-								    <span class="info-box-text">Mighty Users</span>
-								    <span class="info-box-number"><b><%=mightyUserList.get(0)%></b></span>
-							 	</div><!-- /.info-box-content -->
-							 </div><!-- /.info-box -->
 						
-   							<div class="info-box col-sm-4 mar-top-15" >
-							  <!-- Apply any bg-* class to to the icon to color it -->
-							  <span class="info-box-icon bg-green"><i class="fa fa-music"></i></span>
-							  <div class="info-box-content">
-							    <span class="info-box-text">Mighty Device</span>
-							    <span class="info-box-number"><b><%=mightyDeviceList.get(0)%></b></span>
-							  </div><!-- /.info-box-content -->
-							</div><!-- /.info-box -->
 						
-   							<%-- <div class="info-box col-sm-4 mar-top-10" >
-							  <!-- Apply any bg-* class to to the icon to color it -->
-							  <span class="info-box-icon bg-red"><i class="fa fa-upload"></i></span>
-							  <div class="info-box-content">
-							    <span class="info-box-text"><em>Latest Device Firmware/OTA</em></span>
-							    <span class="info-box-number"><b><%=latestOTA.get(0).getVersion()%></b></span>
-							  </div><!-- /.info-box-content -->
-							</div><!-- /.info-box --> --%>
-						</div>
-										
-						</div>	
+						
+					    <form action="downloadMighylog" name="mightylogform" enctype="multipart/form-data"	 method="post">
+								<div class="push-200 login-input-wrap">
+								
+									<div class="row">
+									
+									<div class="col-sm-12"><i class="fa fa-music"></i>&nbsp;<b>Mighty Device</b>
+										 <select id="devId" name="devId" onchange="getDevId()">
+										 	<option value="0">---Select Mighty---</option>
+										 	<% if(mightyLogs!=null && !mightyLogs.isEmpty()){
+										 			for(Mightylog e : mightyLogs){%>	
+										 				<option value="<%=e.getDeviceId()%>"><%=e.getDeviceId() %></option>	
+										 			<%}
+										 	}%>
+										 	
+										 </select>	 
+									</div>
+														
+									</div>	
+																
+									
+								</div><br/>
+								
+							<div class="row">
+									
+									<div class="col-sm-12">
+										<div id="tableView">
+									 <table class="table table-bordered text-center">
+											    <thead>
+											      <tr>
+											      	<th>LogType</th>
+											        <th>Desc</th>
+											        <th>MightyDevice</th>
+											        <th>PhoneDevice</th>
+											        <th>Username</th>
+											        <th>EmailID</th>
+											        <th>CreatedDt</th>
+											        <th>UpdatedDt</th>
+											        <th>Action</th>
+											      </tr>
+											    </thead>
+											    <tbody>
+											      <tr>
+											      </tr>
+											    </tbody>
+											  </table> 
+											  </div>
+									</div>
+									
+							</div>		
+							  </form>
+							  
+							  	
+							  
+						
+						<a  id="goTop"><i class="fa fa-eject"></i></a>	
+				 </div>
 			</section>	
+			
 			<%@include file="Footer.jsp"%>  		
 	</div>	
-	</div>
-			
-  </body>
+</div>
+		 
+		
+</body>
 </html>

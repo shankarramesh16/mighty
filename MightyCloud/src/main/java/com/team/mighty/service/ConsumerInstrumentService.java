@@ -2,10 +2,10 @@ package com.team.mighty.service;
 
 import java.util.List;
 
-import com.team.mighty.domain.AdminUser;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
+import com.team.mighty.domain.Mightylog;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserDeviceRegistrationDTO;
@@ -72,6 +72,18 @@ public interface ConsumerInstrumentService {
 	public MightyUserInfo getMightyUserById(long userId) throws Exception;
 
 	public MightyUserInfo updateUserEmail(MightyUserInfo user)throws Exception;
+
+	public MightyDeviceInfo getMightyOnHwId(String deviceId)throws MightyAppException;
+
+	public void updateMightyLogs(Mightylog logs)throws Exception;
+
+	public List<Mightylog> getMightyLogs()throws MightyAppException;
+
+	public List<Mightylog> getMightyLogsOndevId(String devId)throws MightyAppException;
+
+	public Mightylog getExistingMightylog(String string, String userName) throws MightyAppException;
+
+	
 
 
 	
