@@ -241,7 +241,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		MightyUserInfo mightyUserInfo_1 = null;
 		try {
 			mightyUserInfo_1 = consumerInstrumentDAO.save(mightyUserInfo);
-		} catch(Exception e) {
+		} catch(Exception e){
 			logger.error(e.getMessage());
 			throw new MightyAppException("Unable to save User Device Mapping", HttpStatus.INTERNAL_SERVER_ERROR, e);
 		}

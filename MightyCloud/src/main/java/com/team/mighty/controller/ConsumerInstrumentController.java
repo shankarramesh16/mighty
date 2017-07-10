@@ -325,7 +325,7 @@ public class ConsumerInstrumentController {
 		} catch(MightyAppException e) {
 			String errorMessage = e.getMessage();
 			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
-			logger.errorException(e, e.getMessage());
+			
 		}
 		return responseEntity;
 	}

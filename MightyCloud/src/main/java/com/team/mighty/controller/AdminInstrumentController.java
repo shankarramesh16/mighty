@@ -176,7 +176,7 @@ public class AdminInstrumentController {
 		return responseEntity;
 	}*/
 	
-	@RequestMapping(value = "/deviceFirmware", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	/*@RequestMapping(value = "/deviceFirmware", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getDeviceFirmWare(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) throws Exception {
 		ResponseEntity<String> responseEntity = null;
 		DeviceFirmWareDTO deviceFirmWareDTO = null;
@@ -237,14 +237,14 @@ public class AdminInstrumentController {
 						if(reqMightyDeviceFirmware!=null){
 							
 							deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
-							/*passing downloading API...*/
+							passing downloading API...
 							String URL = "https://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
 							//String URL = "http://192.168.1.100:8089/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
-							/*if(request.isSecure()) {
+							if(request.isSecure()) {
 								URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
 							} else {
 								URL = "http://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
-							}*/
+							}
 							deviceFirmWareDTO.setFileDownloadUrl(URL);
 							deviceFirmWareDTO.setReqHashValue(reqMightyDeviceFirmware.getHashValue().trim());
 							deviceFirmWareDTO.setReqHT(String.valueOf(reqMightyDeviceFirmware.getHashType()));
@@ -274,7 +274,7 @@ public class AdminInstrumentController {
 							
 						}
 						
-						/*Latest Firmware*/
+						Latest Firmware
 						if(latestMightyDeviceFirmware!=null){
 							
 							deviceFirmWareDTO.setHashValue(latestMightyDeviceFirmware.getHashValue());
@@ -314,6 +314,136 @@ public class AdminInstrumentController {
 				return responseEntity;
 			}else{
 				
+				reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);
+				
+				latestMightyDeviceFirmware=adminInstrumentServiceImpl.getMightyLstDeviceFirmware();
+				
+				deviceFirmWareDTO=new DeviceFirmWareDTO();
+				if(reqMightyDeviceFirmware!=null){
+					
+					deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
+					passing downloading API...
+					String URL = "https://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
+					//String URL = "http://192.168.1.100:8089/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
+					if(request.isSecure()) {
+						URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
+					} else {
+						URL = "http://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
+					}
+					deviceFirmWareDTO.setFileDownloadUrl(URL);
+					deviceFirmWareDTO.setReqHashValue(reqMightyDeviceFirmware.getHashValue().trim());
+					deviceFirmWareDTO.setReqHT(String.valueOf(reqMightyDeviceFirmware.getHashType()));
+					deviceFirmWareDTO.setReqCompatibleIOS(reqMightyDeviceFirmware.getCompatibleIOS());
+					deviceFirmWareDTO.setReqCompatibleLatestAND(reqMightyDeviceFirmware.getCompatibleAND());
+					deviceFirmWareDTO.setReqCompatibleLatestHW(reqMightyDeviceFirmware.getCompatibleHW().trim());
+					deviceFirmWareDTO.setRequires(reqMightyDeviceFirmware.getRequires());
+					try{
+						deviceFirmWareDTO.setFileSize(String.valueOf(reqMightyDeviceFirmware.getFile().length()));
+						logger.debug("size",deviceFirmWareDTO.getFileSize());
+					}catch(SQLException e){
+							logger.error(e);
+					}
+					
+					
+					logger.debug("ReqhashValue",reqMightyDeviceFirmware.getHashValue().trim());
+					logger.debug("ReqHT",reqMightyDeviceFirmware.getHashType());
+					logger.debug("Reqversion",reqMightyDeviceFirmware.getVersion());
+					logger.debug("Reqid",reqMightyDeviceFirmware.getId());
+					logger.debug("ReqIOS",reqMightyDeviceFirmware.getCompatibleIOS());
+					logger.debug("ReqAND",reqMightyDeviceFirmware.getCompatibleAND());
+					logger.debug("ReqHW",reqMightyDeviceFirmware.getCompatibleHW());
+					logger.debug("Requires",reqMightyDeviceFirmware.getRequires());
+					logger.debug("downloadingUrl",deviceFirmWareDTO.getFileDownloadUrl());
+					
+					
+					
+				}
+				
+				Latest Firmware
+				if(latestMightyDeviceFirmware!=null){
+					
+					deviceFirmWareDTO.setHashValue(latestMightyDeviceFirmware.getHashValue());
+					deviceFirmWareDTO.setHt(String.valueOf(latestMightyDeviceFirmware.getHashType()));
+					deviceFirmWareDTO.setCompatibleIOS(latestMightyDeviceFirmware.getCompatibleIOS());
+					deviceFirmWareDTO.setCompatibleAND(latestMightyDeviceFirmware.getCompatibleAND());
+					deviceFirmWareDTO.setCompatibleHW(latestMightyDeviceFirmware.getCompatibleHW());
+					deviceFirmWareDTO.setLatestRequired(latestMightyDeviceFirmware.getRequires());
+					deviceFirmWareDTO.setLatestVersion(latestMightyDeviceFirmware.getVersion().trim());
+					
+					logger.debug("hashValue",latestMightyDeviceFirmware.getHashValue());
+					logger.debug("Ht",latestMightyDeviceFirmware.getHashType());
+					logger.debug("version",latestMightyDeviceFirmware.getVersion());
+					logger.debug("id",latestMightyDeviceFirmware.getId());
+					logger.debug("IOS",latestMightyDeviceFirmware.getCompatibleIOS());
+					logger.debug("AND",latestMightyDeviceFirmware.getCompatibleAND());
+					logger.debug("HW",latestMightyDeviceFirmware.getCompatibleHW());
+					logger.debug("latestRequires",latestMightyDeviceFirmware.getRequires());
+					
+					
+				}
+							
+				String response = JsonUtil.objToJson(deviceFirmWareDTO);
+				responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
+				return responseEntity;
+			}
+				
+				
+			}else{
+				throw new MightyAppException("Passing  empty or null values of HwSerialNo/SWVersion/AppVersion/AppBuild ",HttpStatus.METHOD_NOT_ALLOWED);
+				 
+			}
+			
+			
+		} catch(MightyAppException e) {
+			logger.errorException(e);
+			deviceFirmWareDTO = new DeviceFirmWareDTO();
+			deviceFirmWareDTO.setStatusCode(e.getHttpStatus().toString());
+			deviceFirmWareDTO.setStatusDesc(e.getMessage());
+			String response = JsonUtil.objToJson(deviceFirmWareDTO);
+			responseEntity = new ResponseEntity<String>(response, e.getHttpStatus());
+		}
+		return responseEntity;
+	}*/
+	
+	@RequestMapping(value = "/deviceFirmware", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getDeviceFirmWare(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) throws Exception {
+		ResponseEntity<String> responseEntity = null;
+		DeviceFirmWareDTO deviceFirmWareDTO = null;
+		MightyDeviceFirmware reqMightyDeviceFirmware=null;
+		MightyDeviceFirmware latestMightyDeviceFirmware=null;
+		
+		JSONObject obj=null;
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON",e);
+		}
+		 
+		
+					String HWSerialNumber=(String)obj.get("HWSerialNumber");
+					String SWVersion=(String)obj.get("SWVersion");
+					String AppVersion=(String)obj.get("AppVersion");
+					String AppBuild=(String)obj.get("AppBuild");
+					logger.debug("HWSerialNumber",obj.get("HWSerialNumber"));
+					logger.debug("SWVersion",obj.get("SWVersion"));
+					logger.debug("AppVersion",obj.get("AppVersion"));
+					logger.debug("AppBuild",obj.get("AppBuild"));
+		
+					
+		try {
+			//Validate X-MIGHTY-TOKEN Value
+			JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			
+			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
+					.getRequestAttributes()).getRequest();
+			
+			if(HWSerialNumber!=null && SWVersion!=null && AppVersion!=null && AppBuild!=null && !HWSerialNumber.isEmpty() 
+					&& !SWVersion.isEmpty() && !AppVersion.isEmpty()  &&  !AppBuild.isEmpty()){				
+					
 				reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);
 				
 				latestMightyDeviceFirmware=adminInstrumentServiceImpl.getMightyLstDeviceFirmware();
@@ -385,7 +515,7 @@ public class AdminInstrumentController {
 				String response = JsonUtil.objToJson(deviceFirmWareDTO);
 				responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
 				return responseEntity;
-			}
+			
 				
 				
 			}else{
@@ -413,8 +543,8 @@ public class AdminInstrumentController {
 		return null;
 	}
 	
-		
- @RequestMapping(value="/download/{deviceFirmwareId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	
+	/*@RequestMapping(value="/download/{deviceFirmwareId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> download(@PathVariable("deviceFirmwareId") String deviceFirmwareId,HttpServletResponse response) throws IOException, SQLException {
 		ResponseEntity<String> responseEntity = null;
 		MightyDeviceFirmware mightyDeviceFirmware=null;
@@ -423,11 +553,10 @@ public class AdminInstrumentController {
 			if(mightyDeviceFirmware!= null && mightyDeviceFirmware.getFile() != null){
 					//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
 				 String headerKey = "Content-Disposition";
-			       String headerValue = String.format("attachment; filename=\"%s\"",mightyDeviceFirmware.getFileName());
+			        String headerValue = String.format("attachment; filename=\"%s\"",mightyDeviceFirmware.getFileName());
 			        response.setHeader(headerKey, headerValue);
 						OutputStream out = response.getOutputStream();
-							response.setContentType("text/plain");
-								IOUtils.copy(mightyDeviceFirmware.getFile().getBinaryStream(), out);
+							IOUtils.copy(mightyDeviceFirmware.getFile().getBinaryStream(), out);
 									out.flush();
 										out.close();
 											responseEntity = new ResponseEntity<String>(HttpStatus.OK);
@@ -442,37 +571,70 @@ public class AdminInstrumentController {
 		}
 				
 		return responseEntity;
+	}	*/
+		
+ @RequestMapping(value="/download/{deviceFirmwareId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> download(@PathVariable("deviceFirmwareId") String deviceFirmwareId,HttpServletResponse response){
+	logger.debug("/In downloading firmware");	
+	 ResponseEntity<String> responseEntity = null;
+		MightyDeviceFirmware mightyDeviceFirmware=null;
+		try {
+			mightyDeviceFirmware=adminInstrumentServiceImpl.getDeviceFirmwareById(deviceFirmwareId);
+			if(mightyDeviceFirmware!= null && mightyDeviceFirmware.getFile() != null){
+					//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+				 String headerKey = "Content-Disposition";
+			       String headerValue = String.format("attachment; filename=\"%s\"",mightyDeviceFirmware.getFileName());
+			        response.setHeader(headerKey, headerValue);
+						OutputStream out = response.getOutputStream();
+							  IOUtils.copy(mightyDeviceFirmware.getFile().getBinaryStream(), out);
+							  out.flush();
+							  out.close();
+							  responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+			}else{
+				responseEntity = new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			}
+		}
+		catch(MightyAppException e) {
+			logger.error(e, e.getMessage());
+		}catch (IOException e) {
+			responseEntity = new ResponseEntity<String>("IO /OTA failed",HttpStatus.EXPECTATION_FAILED);
+			logger.error(e, e.getMessage());
+		} catch (SQLException e) {
+			responseEntity = new ResponseEntity<String>("SQL Exception /OTA failed",HttpStatus.EXPECTATION_FAILED);
+			logger.error(e, e.getMessage());
+		}
+		
+		logger.debug("Done downloading...");
+				
+		return responseEntity;
 	}	
 	
 	
+ 		/*For testing prospective using*/
 	@RequestMapping(value="/download1/{deviceFirmwareId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> download1(@PathVariable("deviceFirmwareId") String deviceFirmwareId,HttpServletResponse response) throws IOException, SQLException {
+	public ResponseEntity<String> download1(@PathVariable("deviceFirmwareId") String deviceFirmwareId,HttpServletResponse response)  {
 		ResponseEntity<String> responseEntity = null;
 		logger.debug("IN file downloading....");
 		try {
-			/*mightyDeviceFirmware=adminInstrumentServiceImpl.getDeviceFirmwareById(deviceFirmwareId);
-			if(mightyDeviceFirmware== null && mightyDeviceFirmware.getFile() == null){*/
-					//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
 				 String headerKey = "Content-Disposition";
-				 //File file =new File("C:\\Users\\Dell\\Desktop\\mighty.txt");
-				 //File file =new File("C:\\Users\\Dell\\Desktop\\file\\mighty_ota_upgrade_v0.93_kavalan_build_2.zip");
-				 File file =new File("/mnt/data/vhosts/casite-733550.cloudaccess.net/testfile/mighty_ota_upgrade_v0.93_kavalan_build_2.zip");
+				 File file =new File("C:\\Users\\Dell\\Desktop\\file\\mighty_ota_upgrade_v0.93_kavalan_build_2.zip");
 				 byte[] fileData = new byte[(int) file.length()];
 				 FileInputStream in = new FileInputStream(file);
-				 /* in.read(fileData);
+	/*			 in.read(fileData);
 				 in.close();*/
-			       String headerValue = String.format("attachment; filename=\"%s\"",file.getName());
-			        response.setHeader(headerKey, headerValue);
-						OutputStream out = response.getOutputStream();
+			     String headerValue = String.format("attachment; filename=\"%s\"",file.getName());
+			     response.setHeader(headerKey, headerValue);
+				 OutputStream out = response.getOutputStream();
 							response.setContentType("text/plain");
 								IOUtils.copy(in, out);
 									out.flush();
 										out.close();
-											responseEntity = new ResponseEntity<String>(HttpStatus.OK);
-			/*}else{
-				responseEntity = new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-			}*/
+										responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+			
 		}
+		catch (IOException ex){
+        	logger.error("Exceptions IO as/,",ex);
+        }
 		catch(MightyAppException e) {
 			String errorMessage = e.getMessage();
 			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
