@@ -31,4 +31,8 @@ public interface MightyDeviceUserMapDAO extends JpaRepository<MightyDeviceUserMa
 	List<MightyDeviceUserMapping> getMightyDeviceUserMappingOndevId( @Param("deviceId") long deviceId);
 	
 	
+	@Query("SELECT m FROM MightyDeviceUserMapping m WHERE m.mightyDeviceId = :deviceId and m.mightyUserInfo.id=:userId")
+	List<MightyDeviceUserMapping> getDeviceInfoList(@Param("deviceId") long deviceId,@Param("userId") long userId);
+	
+	
 }

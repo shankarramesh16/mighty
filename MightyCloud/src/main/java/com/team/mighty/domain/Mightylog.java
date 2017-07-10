@@ -31,7 +31,7 @@ public class Mightylog extends BaseEntityInfo implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="created_dt")
 	private Date createdDt;
 
@@ -40,7 +40,35 @@ public class Mightylog extends BaseEntityInfo implements Serializable {
 
 	@Column(name="device_type")
 	private String deviceType;
+	
+	@Column(name="phoneDeviceOSVersion")
+	private String phoneDeviceOSVersion;
+	
+	public String getPhoneDeviceOSVersion() {
+		return phoneDeviceOSVersion;
+	}
 
+
+
+	public void setPhoneDeviceOSVersion(String phoneDeviceOSVersion) {
+		this.phoneDeviceOSVersion = phoneDeviceOSVersion;
+	}
+
+	
+
+	public String getTicket() {
+		return ticket;
+	}
+
+
+
+	public void setTicket(String ticket) {
+		this.ticket = ticket;
+	}
+
+	@Column(name="ticket")
+	private String ticket;
+	
 	private String deviceId;
 
 	private String emailId;
@@ -51,6 +79,19 @@ public class Mightylog extends BaseEntityInfo implements Serializable {
 
 	public Blob getFileContent() {
 		return fileContent;
+	}
+
+	@Column(name="devReg")
+	private String devReg;
+
+	public String getDevReg() {
+		return devReg;
+	}
+
+
+
+	public void setDevReg(String devReg) {
+		this.devReg = devReg;
 	}
 
 
@@ -65,7 +106,7 @@ public class Mightylog extends BaseEntityInfo implements Serializable {
 	@Column(name="log_type")
 	private String logType;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="updated_dt")
 	private Date updatedDt;
 

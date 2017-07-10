@@ -579,7 +579,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	@Transactional
-	private void registerMightyWithUser(DeviceInfoDTO deviceInfoDTO) throws MightyAppException {
+	private MightyDeviceUserMapping registerMightyWithUser(DeviceInfoDTO deviceInfoDTO) throws MightyAppException {
 		MightyUserInfo mightyUserInfo = null;
 					   mightyUserInfo=getUserById(deviceInfoDTO.getUserId());
 		
@@ -588,6 +588,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			//MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
 			List<MightyDeviceUserMapping> mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
 			if(mightyDeviceUserMapping!= null && !mightyDeviceUserMapping.isEmpty()){
+				int val=0;
 				logger.debug("Size of list",mightyDeviceUserMapping.size());
 				for(MightyDeviceUserMapping m : mightyDeviceUserMapping){
 						MightyDeviceInfo mightyDeviceInfo=mightyDeviceInfoDAO.getMightyDeviceOnId(m.getMightyDeviceId());
@@ -604,109 +605,130 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 											m.setRegistrationStatus(MightyAppConstants.IND_Y);
 											mightyDeviceUserMapDAO.save(m);
 									}
-							}else{ 
+							}
+							else
+							{ 
 											logger.debug("In new device registration into exiting user");
 											MightyDeviceInfo mighty=mightyDeviceInfoDAO.getDeviceInfo(deviceInfoDTO.getDeviceId());
-								if(mighty==null){											
-											MightyDeviceInfo mightyDeviceInfo1=new MightyDeviceInfo();
-											mightyDeviceInfo1.setDeviceId(deviceInfoDTO.getDeviceId());
-											mightyDeviceInfo1.setDeviceName(deviceInfoDTO.getDeviceName());
-											mightyDeviceInfo1.setDeviceType(deviceInfoDTO.getDeviceType());
-											mightyDeviceInfo1.setSwVersion(deviceInfoDTO.getSwVersion());
-											mightyDeviceInfo1.setIsActive(deviceInfoDTO.getIsActive());
-											mightyDeviceInfo1.setIsRegistered(deviceInfoDTO.getIsRegistered());
-											mightyDeviceInfo1.setAppVersion(Float.valueOf(deviceInfoDTO.getAppVersion()));
-											mightyDeviceInfo1.setAppBuild(deviceInfoDTO.getAppBuild());
-											//mightyDeviceInfo.setDeviceOrderInfo(mightyDeviceOrderInfo);
-											MightyDeviceInfo mightyDevice=null;
-										try{
-											mightyDevice=mightyDeviceInfoDAO.save(mightyDeviceInfo1);
-										}catch(Exception e){
-											logger.error(e.getMessage());
-											throw new MightyAppException("Unable to save User Mighty Device Info ", HttpStatus.INTERNAL_SERVER_ERROR);
-										}
-										
-										if(m.getMightyDeviceId()==0){
-											m.setMightyDeviceId(mightyDevice.getId());
-											mightyDeviceUserMapDAO.save(m);
-										}else if(m.getMightyDeviceId()!=mightyDevice.getId()){
-											logger.debug("Inside new mighty Registered");
-											MightyDeviceUserMapping mdum=new MightyDeviceUserMapping();
-														mdum.setMightyDeviceId(mightyDevice.getId());
-														mdum.setMightyUserInfo(mightyUserInfo);
-														mdum.setPhoneDeviceId(m.getPhoneDeviceId());
-														mdum.setPhoneDeviceOSVersion(m.getPhoneDeviceOSVersion());
-														mdum.setPhoneDeviceType(m.getPhoneDeviceType());
-														mdum.setPhoneDeviceVersion(m.getPhoneDeviceVersion());
-														mdum.setRegistrationStatus(MightyAppConstants.IND_Y);
-														mdum.setCreatedDt(new Date(System.currentTimeMillis()));
-														mdum.setUpdatedDt(new Date(System.currentTimeMillis()));
-															MightyDeviceUserMapping deviceRegistered=mightyDeviceUserMapDAO.save(mdum);
-																	 if(deviceRegistered!=null){
-																			 logger.debug("INsert into M:M");
-																			 	Set<MightyUserInfo> setUserInfo = new HashSet<MightyUserInfo>();
-																				Set<MightyDeviceUserMapping> setMightyUserDevice = mightyUserInfo.getMightyDeviceUserMapping();
-																				if(setMightyUserDevice == null || mightyUserInfo.getMightyDeviceUserMapping().isEmpty()) {
-																					setMightyUserDevice = new HashSet<MightyDeviceUserMapping>();
-																				}
-																				setMightyUserDevice.add(deviceRegistered);
-																				mightyUserInfo.setMightyDeviceUserMapping(setMightyUserDevice);
+											
+								   if(mighty!=null){
 																				
-																				setUserInfo.add(mightyUserInfo);
-																				consumerInstrumentDAO.save(mightyUserInfo);
-																	 }
-										}
-									}/*else{
-											MightyDeviceUserMapping m1=mightyDeviceUserMapDAO.getDeviceInfo(mighty.getId());
-										
-										
-											if(mighty.getIsRegistered().equalsIgnoreCase(MightyAppConstants.IND_N)){
-												logger.debug("22222");
-												mighty.setIsRegistered(MightyAppConstants.IND_Y);
-												mightyDeviceInfoDAO.save(mighty);
-											}	
+									   			logger.debug("987651");
+									   			
+												if(mighty.getIsRegistered().equalsIgnoreCase(MightyAppConstants.IND_N)){
+													logger.debug("22222");
+													mighty.setIsRegistered(MightyAppConstants.IND_Y);
+													mightyDeviceInfoDAO.save(mighty);
+												}
+												
+												logger.debug("loggerdevice1",mighty.getId());	
+											List<MightyDeviceUserMapping>	mList=mightyDeviceUserMapDAO.getDeviceInfoList(mighty.getId(),mightyUserInfo.getId());
+											logger.debug("loggerdevice1list",mList);
 											
-											if(m.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
-													m.setRegistrationStatus(MightyAppConstants.IND_Y);
-													mightyDeviceUserMapDAO.save(m);
-											}
-										if(m1==null){												
-											
-											if(m.getMightyDeviceId()==0){
-												logger.debug("33333");
-												m.setMightyDeviceId(mighty.getId());
-												mightyDeviceUserMapDAO.save(m);
-											}else if(m.getMightyDeviceId()!=mighty.getId()){
-												logger.debug("Inside new mighty Registered");
-												logger.debug("4444");
+											if(mList!=null && !mList.isEmpty()){
+												logger.debug("loggerdevice1list",mList.size());
+												for(MightyDeviceUserMapping md: mList) {
+													if(md.getMightyDeviceId()==m.getMightyDeviceId()){
+														if(md.getRegistrationStatus().equals(MightyAppConstants.IND_N)){
+															m.setRegistrationStatus(MightyAppConstants.IND_Y);
+															return mightyDeviceUserMapDAO.save(m);
+															
+														}
+													
+												}
+											 }
+											}else{
+												logger.debug("786786");
+													if(m.getMightyDeviceId()==0){
+														logger.debug("1786786");
+														m.setMightyDeviceId(mighty.getId());
+														mightyDeviceUserMapDAO.save(m);
+													}else if(m.getMightyDeviceId()!=mighty.getId()){
+														logger.debug("2786786");
+														if(val==0){
+															logger.debug("3786786");
 												MightyDeviceUserMapping mdum1=new MightyDeviceUserMapping();
-															mdum1.setMightyDeviceId(mighty.getId());
-															mdum1.setMightyUserInfo(mightyUserInfo);
-															mdum1.setPhoneDeviceId(m.getPhoneDeviceId());
-															mdum1.setPhoneDeviceOSVersion(m.getPhoneDeviceOSVersion());
-															mdum1.setPhoneDeviceType(m.getPhoneDeviceType());
-															mdum1.setPhoneDeviceVersion(m.getPhoneDeviceVersion());
-															mdum1.setRegistrationStatus(MightyAppConstants.IND_Y);
-															mdum1.setCreatedDt(new Date(System.currentTimeMillis()));
-															mdum1.setUpdatedDt(new Date(System.currentTimeMillis()));
-																MightyDeviceUserMapping deviceRegistered=mightyDeviceUserMapDAO.save(mdum1);
-																		 if(deviceRegistered!=null){
-																				 logger.debug("INsert into M:M");
-																				 	Set<MightyUserInfo> setUserInfo = new HashSet<MightyUserInfo>();
-																					Set<MightyDeviceUserMapping> setMightyUserDevice = mightyUserInfo.getMightyDeviceUserMapping();
-																					if(setMightyUserDevice == null || mightyUserInfo.getMightyDeviceUserMapping().isEmpty()) {
-																						setMightyUserDevice = new HashSet<MightyDeviceUserMapping>();
-																					}
-																					setMightyUserDevice.add(deviceRegistered);
-																					mightyUserInfo.setMightyDeviceUserMapping(setMightyUserDevice);
-																					
-																					setUserInfo.add(mightyUserInfo);
-																					consumerInstrumentDAO.save(mightyUserInfo);
-																		 }
+												mdum1.setMightyDeviceId(mighty.getId());
+												mdum1.setMightyUserInfo(mightyUserInfo);
+												mdum1.setPhoneDeviceId(m.getPhoneDeviceId());
+												mdum1.setPhoneDeviceOSVersion(m.getPhoneDeviceOSVersion());
+												mdum1.setPhoneDeviceType(m.getPhoneDeviceType());
+												mdum1.setPhoneDeviceVersion(m.getPhoneDeviceVersion());
+												mdum1.setRegistrationStatus(MightyAppConstants.IND_Y);
+												mdum1.setCreatedDt(new Date(System.currentTimeMillis()));
+												mdum1.setUpdatedDt(new Date(System.currentTimeMillis()));
+													MightyDeviceUserMapping deviceRegistered=mightyDeviceUserMapDAO.save(mdum1);
+															 if(deviceRegistered!=null){
+																	 logger.debug("INsert into M:M");
+																	 	Set<MightyUserInfo> setUserInfo = new HashSet<MightyUserInfo>();
+																		Set<MightyDeviceUserMapping> setMightyUserDevice = mightyUserInfo.getMightyDeviceUserMapping();
+																		if(setMightyUserDevice == null || mightyUserInfo.getMightyDeviceUserMapping().isEmpty()) {
+																			setMightyUserDevice = new HashSet<MightyDeviceUserMapping>();
+																		}
+																		setMightyUserDevice.add(deviceRegistered);
+																		mightyUserInfo.setMightyDeviceUserMapping(setMightyUserDevice);
+																		
+																		setUserInfo.add(mightyUserInfo);
+																		consumerInstrumentDAO.save(mightyUserInfo);
+															 }
+															 
+															val=val+1; 
 											}
-									}		
-								 }*/
-								
+												}			
+										  }	
+										}
+								   else
+								   {
+										MightyDeviceInfo mightyDeviceInfo1=new MightyDeviceInfo();
+										mightyDeviceInfo1.setDeviceId(deviceInfoDTO.getDeviceId());
+										mightyDeviceInfo1.setDeviceName(deviceInfoDTO.getDeviceName());
+										mightyDeviceInfo1.setDeviceType(deviceInfoDTO.getDeviceType());
+										mightyDeviceInfo1.setSwVersion(deviceInfoDTO.getSwVersion());
+										mightyDeviceInfo1.setIsActive(deviceInfoDTO.getIsActive());
+										mightyDeviceInfo1.setIsRegistered(deviceInfoDTO.getIsRegistered());
+										mightyDeviceInfo1.setAppVersion(Float.valueOf(deviceInfoDTO.getAppVersion()));
+										mightyDeviceInfo1.setAppBuild(deviceInfoDTO.getAppBuild());
+										//mightyDeviceInfo.setDeviceOrderInfo(mightyDeviceOrderInfo);
+										MightyDeviceInfo mightyDevice=null;
+									try{
+										mightyDevice=mightyDeviceInfoDAO.save(mightyDeviceInfo1);
+									}catch(Exception e){
+										logger.error(e.getMessage());
+										throw new MightyAppException("Unable to save User Mighty Device Info ", HttpStatus.INTERNAL_SERVER_ERROR);
+									}
+									
+									if(m.getMightyDeviceId()==0){
+										m.setMightyDeviceId(mightyDevice.getId());
+										mightyDeviceUserMapDAO.save(m);
+									}else if(m.getMightyDeviceId()!=mightyDevice.getId()){
+										logger.debug("1111111 Inside new mighty Registered");
+										MightyDeviceUserMapping mdum=new MightyDeviceUserMapping();
+													mdum.setMightyDeviceId(mightyDevice.getId());
+													mdum.setMightyUserInfo(mightyUserInfo);
+													mdum.setPhoneDeviceId(m.getPhoneDeviceId());
+													mdum.setPhoneDeviceOSVersion(m.getPhoneDeviceOSVersion());
+													mdum.setPhoneDeviceType(m.getPhoneDeviceType());
+													mdum.setPhoneDeviceVersion(m.getPhoneDeviceVersion());
+													mdum.setRegistrationStatus(MightyAppConstants.IND_Y);
+													mdum.setCreatedDt(new Date(System.currentTimeMillis()));
+													mdum.setUpdatedDt(new Date(System.currentTimeMillis()));
+														MightyDeviceUserMapping deviceRegistered=mightyDeviceUserMapDAO.save(mdum);
+																 if(deviceRegistered!=null){
+																		 logger.debug("INsert into M:M");
+																		 	Set<MightyUserInfo> setUserInfo = new HashSet<MightyUserInfo>();
+																			Set<MightyDeviceUserMapping> setMightyUserDevice = mightyUserInfo.getMightyDeviceUserMapping();
+																			if(setMightyUserDevice == null || mightyUserInfo.getMightyDeviceUserMapping().isEmpty()) {
+																				setMightyUserDevice = new HashSet<MightyDeviceUserMapping>();
+																			}
+																			setMightyUserDevice.add(deviceRegistered);
+																			mightyUserInfo.setMightyDeviceUserMapping(setMightyUserDevice);
+																			
+																			setUserInfo.add(mightyUserInfo);
+																			consumerInstrumentDAO.save(mightyUserInfo);
+																 }
+									 }
+								 }
+																
 								
 								} /*else loop or new device into existing user ended*/
 						}/* loop ended*/	
@@ -714,6 +736,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		  }else{
 				throw new MightyAppException("Invalid request Parameters [UserId] ", HttpStatus.NOT_FOUND);
 		  }
+		return null;
 	}
 
 	private MightyUserInfo getUserById(String userId) {
@@ -883,7 +906,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 
-	public List<Mightylog> getMightyLogs() throws MightyAppException {
+	public Set<String> getMightyLogs() throws MightyAppException {
 		return mightylogDao.getMightyLogs();
 	}
 

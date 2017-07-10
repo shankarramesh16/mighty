@@ -4,33 +4,27 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.team.mighty.domain.MightyDeviceFirmware;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.domain.Mightylog;
 import com.team.mighty.dto.ConsumerDeviceDTO;
-import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;
 import com.team.mighty.service.ConsumerInstrumentService;
@@ -302,7 +296,7 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 	@RequestMapping(value= {"/mightyLog"},method=RequestMethod.GET)
 	public String mightyLogHandler(HttpServletRequest request,Map<String,Object> map) throws Exception{
 		logger.debug("IN mightyLogHandler Controller....");
-		List<Mightylog> mightyLogs=consumerInstrumentServiceImpl.getMightyLogs();
+		Set<String> mightyLogs=consumerInstrumentServiceImpl.getMightyLogs();
 		map.put("mightyLogs", mightyLogs);
 		return "mightylog";
 	}
@@ -322,6 +316,9 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 								+log.getLogType()
 								+"</td>"
 								+"<td>"
+								+log.getTicket()
+								+"</td>"
+								+"<td>"
 								+log.getDescription()
 								+"</td>"
 								+"<td>"
@@ -331,10 +328,16 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 								+log.getDeviceType()
 								+"</td>"
 								+"<td>"
+								+log.getPhoneDeviceOSVersion()
+								+"</td>"
+								+"<td>"
 								+log.getUsername()
 								+"</td>"
 								+"<td>"
 								+log.getEmailId()
+								+"</td>"
+								+"<td>"
+								+log.getDevReg()
 								+"</td>"
 								+"<td>"
 								+log.getCreatedDt()
@@ -346,7 +349,9 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 								//+"<input type=\"file\" id=\"file1\" name=\"file1\" value="+"\""+log.getFileContent()+"\""+"/>"
 								//+"<input type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"Download\">"
 								+"<input type=\"hidden\" id=\"device\" name=\"device\" value="+"\""+log.getDeviceId()+"\""+"/>"
-								+"<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"downloadMightyLog() \" >Download</button>"
+								+"<input type=\"hidden\" id=\"usrId\" name=\"usrId\" value="+"\""+log.getUsername()+"\""+"/>"
+								+"<input type=\"hidden\" id=\"dat\" name=\"dat\" value="+"\""+log.getUpdatedDt()+"\""+"/>"
+								+"<input type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"Download\" />"
 								+"</td>"
 								+"</tr>";
 				}	
@@ -354,27 +359,39 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/downloadMighylog",method=RequestMethod.POST)
-	public @ResponseBody String downloadMighylogHandler(HttpServletRequest request,HttpServletResponse response,Map<String,Object> map,RedirectAttributes redirectAttributes) throws Exception {
+	@RequestMapping(value = "/getLogs",method=RequestMethod.POST)
+	public void downloadMighylogHandler(HttpServletRequest request,HttpServletResponse response,Map<String,Object> map,RedirectAttributes redirectAttributes) throws IOException, SQLException {
 		logger.debug("In submitting downloadMighylog ");
-		String device=request.getParameter("device");
-		String retVal="";
-		 /* try {
+		String devId=request.getParameter("devId");
+		String username=request.getParameter("usrId");
+		String dat=request.getParameter("dat");
+		logger.debug("deviceId"+devId);
+		logger.debug("username"+username);
+	
+		  try {
+			  
+			  Mightylog mlog=consumerInstrumentServiceImpl.getExistingMightylog(devId, username);
+			  
 				//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
 					 String headerKey = "Content-Disposition";
-				        String headerValue = String.format("attachment; filename=\"%s\"",mightyDeviceFirmware.getFileName());
+				        String headerValue = String.format("attachment; filename=\"%s\"","Mightylogs "+" "+dat+" "+mlog.getDeviceId()+".gz");
 				        response.setHeader(headerKey, headerValue);
 							OutputStream out = response.getOutputStream();
 								response.setContentType("text/plain");
-									IOUtils.copy(mightyDeviceFirmware.getFile().getBinaryStream(), out);
+								  logger.debug("Size of file content"+mlog.getFileContent().length());
+								  //logger.debug("Size of file content"+new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString())));
+								  //new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString()));
+									IOUtils.copy(mlog.getFileContent().getBinaryStream(), out);
 										out.flush();
 											out.close();
+												
 			
 			}
-			catch(Exception e) {
-				logger.errorException(e, e.getMessage());
-			}
-		*/
-		return retVal;
+		     catch (IOException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} 
+	
 	}
 }

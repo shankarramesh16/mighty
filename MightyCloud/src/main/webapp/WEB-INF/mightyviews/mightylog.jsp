@@ -62,11 +62,14 @@
              	+'<thead>'
 			      +'<tr>'
 			        +'<th>LogType</th>'
+			        +'<th>Ticket#</th>'
 			        +'<th>Desc</th>'
 			        +'<th>MightyDevice</th>'
 			        +'<th>PhoneDevice</th>'
+			        +'<th>PhoneDeviceOSVersion</th>'
 			        +'<th>Username</th>'
 			        +'<th>EmailID</th>'
+			        +'<th>Is_Registered</th>'
 			        +'<th>CreatedDt</th>'
 			        +'<th>UpdatedDt</th>'
 			        +'<th>Action</th>'
@@ -136,11 +139,14 @@
 	                     	+'<thead>'
 						      +'<tr>'
 						      	+'<th>LogType</th>'
+						      	+'<th>Ticket#</th>'
 						        +'<th>Desc</th>'
 						        +'<th>MightyDevice</th>'
 						        +'<th>PhoneDevice</th>'
+						        +'<th>PhoneDeviceOSVersion</th>'
 						        +'<th>Username</th>'
 						        +'<th>EmailID</th>'
+						        +'<th>Is_Registered</th>'
 						        +'<th>CreatedDt</th>'
 						        +'<th>UpdatedDt</th>'
 						        +'<th>Action</th>'
@@ -152,7 +158,26 @@
 	             }
 	             
 	      function  downloadMightyLog(){
-	    	  
+	    	  var devId=document.getElementById("device").value;
+	    	  var usrId=document.getElementById("usrId").value;
+	    	  var dat=document.getElementById("dat").value;
+	    	  $.ajax({
+                  url: 'getLogs',
+                  type: "GET",
+                  data: 'devId='+devId+'&usrId='+usrId+'&dat='+dat,
+                  success: function (data) {
+                   alert("Download has been started");
+               	   //$(".success").html(data);
+                      	
+                      },
+     		 error: function(e){
+     	     			        alert('Error: ' + e);
+     	      }
+
+                     
+                  });
+     	
+     
 	      }
 	    	 
 	             
@@ -163,7 +188,7 @@
 
 <body class="hold-transition skin-blue sidebar-mini">
 						<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
-						List<Mightylog> mightyLogs=(List<Mightylog>)request.getAttribute("mightyLogs");
+						Set<String> mightyLogs=(Set<String>)request.getAttribute("mightyLogs");
 						%>
 	
 <div class="wrapper">  
@@ -318,7 +343,7 @@
 						
 						
 						
-					    <form action="downloadMighylog" name="mightylogform" enctype="multipart/form-data"	 method="post">
+					    <form action="getLogs" name="mightylogform" enctype="multipart/form-data" method="post">
 								<div class="push-200 login-input-wrap">
 								
 									<div class="row">
@@ -327,8 +352,8 @@
 										 <select id="devId" name="devId" onchange="getDevId()">
 										 	<option value="0">---Select Mighty---</option>
 										 	<% if(mightyLogs!=null && !mightyLogs.isEmpty()){
-										 			for(Mightylog e : mightyLogs){%>	
-										 				<option value="<%=e.getDeviceId()%>"><%=e.getDeviceId() %></option>	
+										 			for(String e : mightyLogs){%>	
+										 				<option value="<%=e%>"><%=e %></option>	
 										 			<%}
 										 	}%>
 										 	
@@ -340,7 +365,7 @@
 									
 								</div><br/>
 								
-							<div class="row">
+							<div class="row" style="overflow-y: auto;">
 									
 									<div class="col-sm-12">
 										<div id="tableView">
@@ -348,11 +373,14 @@
 											    <thead>
 											      <tr>
 											      	<th>LogType</th>
+											      	<th>Ticket#</th>
 											        <th>Desc</th>
 											        <th>MightyDevice</th>
 											        <th>PhoneDevice</th>
+											        <th>PhoneDeviceOSVersion</th>
 											        <th>Username</th>
 											        <th>EmailID</th>
+											        <th>Is_Registered</th>
 											        <th>CreatedDt</th>
 											        <th>UpdatedDt</th>
 											        <th>Action</th>

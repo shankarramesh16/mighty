@@ -577,29 +577,37 @@ public class ConsumerInstrumentController {
 												lg.setFileName("MightyLogs");
 												lg.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
 												lg.setLogType(obj.get("log_type").toString());
+												lg.setTicket(obj.get("ticket").toString());
 												lg.setDescription(obj.get("desc").toString());
 												lg.setUsername(m.getMightyUserInfo().getUserName());
 												lg.setEmailId(m.getMightyUserInfo().getEmailId());
+												lg.setDevReg(m.getRegistrationStatus());
 												lg.setDeviceId(obj.get("deviceId").toString());
-												lg.setDeviceType(m.getPhoneDeviceType());
+												lg.setDeviceType(obj.get("DeviceType").toString());
+												lg.setPhoneDeviceOSVersion(obj.get("DeviceOSVersion").toString());
 												lg.setUpdatedDt(new Date(System.currentTimeMillis()));
 												consumerInstrumentServiceImpl.updateMightyLogs(lg);
 												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+												return responseEntity;
 										}else{
 											logger.debug("22222222");
 												log=new Mightylog();
 												log.setFileName("MightyLogs");
-												log.setFileContent(new javax.sql.rowset.serial.SerialBlob(obj.get("file_content").toString().getBytes()));
+												log.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
 												log.setLogType(obj.get("log_type").toString());
+												log.setTicket(obj.get("ticket").toString());
 												log.setDescription(obj.get("desc").toString());
 												log.setUsername(m.getMightyUserInfo().getUserName());
 												log.setEmailId(m.getMightyUserInfo().getEmailId());
+												log.setDevReg(m.getRegistrationStatus());
 												log.setDeviceId(obj.get("deviceId").toString());
-												log.setDeviceType(m.getPhoneDeviceType());
+												log.setDeviceType(obj.get("DeviceType").toString());
+												log.setPhoneDeviceOSVersion(obj.get("DeviceOSVersion").toString());
 												log.setCreatedDt(new Date(System.currentTimeMillis()));
 												log.setUpdatedDt(new Date(System.currentTimeMillis()));
 												consumerInstrumentServiceImpl.updateMightyLogs(log);
 												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+												return responseEntity;
 										}
 							}else{
 								responseEntity = new ResponseEntity<String>("DeviceId not associated with user or registerstatus is N ", HttpStatus.BAD_REQUEST);
@@ -621,6 +629,10 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 
 	}
+	
+	
+	
+	
 	
 	
 	

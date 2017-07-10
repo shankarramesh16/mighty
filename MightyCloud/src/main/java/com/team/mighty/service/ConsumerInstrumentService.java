@@ -1,6 +1,7 @@
 package com.team.mighty.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
@@ -77,7 +78,7 @@ public interface ConsumerInstrumentService {
 
 	public void updateMightyLogs(Mightylog logs)throws Exception;
 
-	public List<Mightylog> getMightyLogs()throws MightyAppException;
+	public Set<String> getMightyLogs()throws MightyAppException;
 
 	public List<Mightylog> getMightyLogsOndevId(String devId)throws MightyAppException;
 

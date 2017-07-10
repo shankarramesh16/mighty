@@ -16,10 +16,12 @@ import com.team.mighty.dao.MightyDeviceFirmwareDAO;
 import com.team.mighty.dao.MightyDeviceInfoDAO;
 import com.team.mighty.dao.MightyDeviceOrderDAO;
 import com.team.mighty.dao.MightyFeaturedPlaylistDAO;
+import com.team.mighty.dao.MightyOTADeviceDao;
 import com.team.mighty.domain.MightyDeviceFirmware;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceOrderInfo;
 import com.team.mighty.domain.MightyFeaturedPlaylist;
+import com.team.mighty.domain.Mightyotadevice;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
@@ -35,6 +37,9 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	
 	@Autowired
 	private MightyDeviceOrderDAO mightyDeviceOrderDAO;
+	
+	@Autowired
+	private MightyOTADeviceDao mightyOTADeviceDao;
 	
 	@Autowired
 	private MightyDeviceFirmwareDAO mightyDeviceFirmwareDAO;
@@ -282,37 +287,9 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	}
 
 	
-	/*public MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo){
-		MightyDeviceFirmware mightyDeviceFirmware=null;
-		try {
-			MightyDeviceInfo mightyDeviceInfo=null; 
-			List<MightyDeviceFirmware> mightyDeviceFirmwaresByAppComp=null;
-			mightyDeviceInfo=mightyDeviceInfoDAO.getDeviceInfo(HWSerialNo);
-			
-			if(mightyDeviceInfo!=null){
-						logger.debug("HwSerialNo",mightyDeviceInfo.getDeviceId());
-					String compatibleHw=mightyDeviceInfo.getDeviceId().substring(3, 4);
-						logger.debug("existingHwCode",compatibleHw);
-						mightyDeviceFirmwaresByAppComp=mightyDeviceFirmwareDAO.getFirmwareByAppComp(mightyDeviceInfo.getAppVersion(),"A");	
-						if(mightyDeviceFirmwaresByAppComp!=null){
-							for(MightyDeviceFirmware mdf : mightyDeviceFirmwaresByAppComp){
-								if(mdf.getCompatibleHW().contains(compatibleHw)){
-									mightyDeviceFirmware=mightyDeviceFirmwareDAO.getDeviceFirmwareById(deviceFirmwareId)
-								}
-							}
-						}
-				
-			}
-			
-			mightyDeviceFirmware = mightyDeviceFirmwareDAO.getDeviceFirmwareByStatus("A");
-			if(mightyDeviceFirmware!=null && !mightyDeviceFirmware.isEmpty()){
-				return mightyDeviceFirmware.get(0);
-			}
-		} catch (Exception e) {
-			throw new MightyAppException(e.getMessage(),HttpStatus.BAD_REQUEST);
-		}
-		return null;
-	}*/
+	public List<Mightyotadevice> getMightyForOTA(String deviceId) throws Exception {
+		return mightyOTADeviceDao.mightyOTADeviceDao(deviceId);
+	}
 
 	
 

@@ -5,6 +5,7 @@ import java.util.List;
 import com.team.mighty.domain.MightyDeviceFirmware;
 import com.team.mighty.domain.MightyDeviceOrderInfo;
 import com.team.mighty.domain.MightyFeaturedPlaylist;
+import com.team.mighty.domain.Mightyotadevice;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.exception.MightyAppException;
 
@@ -39,4 +40,6 @@ public interface AdminInstrumentService {
 	public MightyDeviceFirmware getMightyLstDeviceFirmware();
 
 	public List<MightyDeviceFirmware> getLatestOTA()throws Exception;
+
+	public List<Mightyotadevice> getMightyForOTA(String hWSerialNumber)throws Exception;
 }

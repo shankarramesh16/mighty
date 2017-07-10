@@ -1,5 +1,7 @@
 package com.team.mighty.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
@@ -8,7 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.domain.MightyDeviceFirmware;
 import com.team.mighty.domain.MightyDeviceOrderInfo;
+import com.team.mighty.domain.Mightyotadevice;
 import com.team.mighty.dto.DeviceFirmWareDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.exception.MightyAppException;
@@ -174,7 +177,7 @@ public class AdminInstrumentController {
 	}*/
 	
 	@RequestMapping(value = "/deviceFirmware", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getDeviceFirmWare(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
+	public ResponseEntity<String> getDeviceFirmWare(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) throws Exception {
 		ResponseEntity<String> responseEntity = null;
 		DeviceFirmWareDTO deviceFirmWareDTO = null;
 		MightyDeviceFirmware reqMightyDeviceFirmware=null;
@@ -201,28 +204,18 @@ public class AdminInstrumentController {
 					
 		try {
 			//Validate X-MIGHTY-TOKEN Value
-			JWTKeyGenerator.validateXToken(xToken);
+			//JWTKeyGenerator.validateXToken(xToken);
 			
 			// Validate Expriy Date
-			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			
 			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
 					.getRequestAttributes()).getRequest();
 			
 			if(HWSerialNumber!=null && SWVersion!=null && AppVersion!=null && AppBuild!=null && !HWSerialNumber.isEmpty() 
 					&& !SWVersion.isEmpty() && !AppVersion.isEmpty()  &&  !AppBuild.isEmpty()){
-				String str[]={"MPXC270132371","MPXCFFFFFFFFFF","MPXC270130201","MPXD171050147","MPXC265151379",
-									"MPXC270420672",
-									"MPXC270132107",
-									"MPXD171050024",
-									"MPXD171211926",
-									"MPXD171523134",
-									"MPXC270811505",
-									"MPXD171524756",
-									"MPXD171210520",
-									"MPXD171210546",
-									"MPXD171522334",
-									"MPXD171210575"};	
+				
+				
 				Double val=0.0;
 				try{
 					val=Double.parseDouble(SWVersion);
@@ -230,10 +223,12 @@ public class AdminInstrumentController {
 					;
 				}
 				
+				logger.debug("dddd",val);
 			if(val>=0.89){
-				for(String s : str){
-					logger.debug("111111111");
-					if(s.equalsIgnoreCase(HWSerialNumber)){
+				List<Mightyotadevice> ota=adminInstrumentServiceImpl.getMightyForOTA(HWSerialNumber);
+				logger.debug("ddddsize",ota);
+					if(ota!=null && !ota.isEmpty()){
+						logger.debug("234567");
 						reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);
 								
 						latestMightyDeviceFirmware=adminInstrumentServiceImpl.getMightyLstDeviceFirmware();
@@ -244,6 +239,7 @@ public class AdminInstrumentController {
 							deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
 							/*passing downloading API...*/
 							String URL = "https://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
+							//String URL = "http://192.168.1.100:8089/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
 							/*if(request.isSecure()) {
 								URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
 							} else {
@@ -305,7 +301,7 @@ public class AdminInstrumentController {
 						responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
 						return responseEntity;
 					}	
-				}	
+					
 				
 				deviceFirmWareDTO=new DeviceFirmWareDTO();
 				
@@ -328,6 +324,7 @@ public class AdminInstrumentController {
 					deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
 					/*passing downloading API...*/
 					String URL = "https://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
+					//String URL = "http://192.168.1.100:8089/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
 					/*if(request.isSecure()) {
 						URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
 					} else {
@@ -417,7 +414,7 @@ public class AdminInstrumentController {
 	}
 	
 		
-	@RequestMapping(value="/download/{deviceFirmwareId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+ @RequestMapping(value="/download/{deviceFirmwareId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> download(@PathVariable("deviceFirmwareId") String deviceFirmwareId,HttpServletResponse response) throws IOException, SQLException {
 		ResponseEntity<String> responseEntity = null;
 		MightyDeviceFirmware mightyDeviceFirmware=null;
@@ -426,7 +423,7 @@ public class AdminInstrumentController {
 			if(mightyDeviceFirmware!= null && mightyDeviceFirmware.getFile() != null){
 					//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
 				 String headerKey = "Content-Disposition";
-			        String headerValue = String.format("attachment; filename=\"%s\"",mightyDeviceFirmware.getFileName());
+			       String headerValue = String.format("attachment; filename=\"%s\"",mightyDeviceFirmware.getFileName());
 			        response.setHeader(headerKey, headerValue);
 						OutputStream out = response.getOutputStream();
 							response.setContentType("text/plain");
@@ -437,6 +434,44 @@ public class AdminInstrumentController {
 			}else{
 				responseEntity = new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 			}
+		}
+		catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+	}	
+	
+	
+	@RequestMapping(value="/download1/{deviceFirmwareId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> download1(@PathVariable("deviceFirmwareId") String deviceFirmwareId,HttpServletResponse response) throws IOException, SQLException {
+		ResponseEntity<String> responseEntity = null;
+		logger.debug("IN file downloading....");
+		try {
+			/*mightyDeviceFirmware=adminInstrumentServiceImpl.getDeviceFirmwareById(deviceFirmwareId);
+			if(mightyDeviceFirmware== null && mightyDeviceFirmware.getFile() == null){*/
+					//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+				 String headerKey = "Content-Disposition";
+				 //File file =new File("C:\\Users\\Dell\\Desktop\\mighty.txt");
+				 //File file =new File("C:\\Users\\Dell\\Desktop\\file\\mighty_ota_upgrade_v0.93_kavalan_build_2.zip");
+				 File file =new File("/mnt/data/vhosts/casite-733550.cloudaccess.net/testfile/mighty_ota_upgrade_v0.93_kavalan_build_2.zip");
+				 byte[] fileData = new byte[(int) file.length()];
+				 FileInputStream in = new FileInputStream(file);
+				 /* in.read(fileData);
+				 in.close();*/
+			       String headerValue = String.format("attachment; filename=\"%s\"",file.getName());
+			        response.setHeader(headerKey, headerValue);
+						OutputStream out = response.getOutputStream();
+							response.setContentType("text/plain");
+								IOUtils.copy(in, out);
+									out.flush();
+										out.close();
+											responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+			/*}else{
+				responseEntity = new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			}*/
 		}
 		catch(MightyAppException e) {
 			String errorMessage = e.getMessage();
