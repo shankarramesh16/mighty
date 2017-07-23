@@ -5,11 +5,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -30,13 +36,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.domain.MightyDeviceFirmware;
+import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceOrderInfo;
+import com.team.mighty.domain.MightyDeviceUserMapping;
+import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.domain.Mightyotadevice;
 import com.team.mighty.dto.DeviceFirmWareDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;
+import com.team.mighty.service.ConsumerInstrumentService;
 import com.team.mighty.service.MightyCommonService;
 import com.team.mighty.utils.JWTKeyGenerator;
 import com.team.mighty.utils.JsonUtil;
@@ -49,6 +59,9 @@ public class AdminInstrumentController {
 	
 	@Autowired
 	private AdminInstrumentService adminInstrumentServiceImpl;
+	
+	@Autowired
+	private ConsumerInstrumentService consumerInstrumentServiceImpl;
 	
 	@Autowired
 	private MightyCommonService mightyCommonServiceImpl;
@@ -407,6 +420,7 @@ public class AdminInstrumentController {
 	
 	@RequestMapping(value = "/deviceFirmware", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getDeviceFirmWare(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) throws Exception {
+		logger.error("In device Firmware,");
 		ResponseEntity<String> responseEntity = null;
 		DeviceFirmWareDTO deviceFirmWareDTO = null;
 		MightyDeviceFirmware reqMightyDeviceFirmware=null;
@@ -453,7 +467,7 @@ public class AdminInstrumentController {
 					
 					deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
 					/*passing downloading API...*/
-					String URL = "https://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
+					String URL = "https://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId()+"/devId/"+HWSerialNumber;
 					//String URL = "http://192.168.1.100:8089/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
 					/*if(request.isSecure()) {
 						URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
@@ -573,9 +587,10 @@ public class AdminInstrumentController {
 		return responseEntity;
 	}	*/
 		
- @RequestMapping(value="/download/{deviceFirmwareId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> download(@PathVariable("deviceFirmwareId") String deviceFirmwareId,HttpServletResponse response){
+ @RequestMapping(value="/download/{deviceFirmwareId}/devId/{deviceId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> download(@PathVariable("deviceFirmwareId") String deviceFirmwareId,@PathVariable("deviceId") String deviceId,HttpServletResponse response){
 	logger.debug("/In downloading firmware");	
+	logger.debug("/downloadingDeviceId",deviceId);
 	 ResponseEntity<String> responseEntity = null;
 		MightyDeviceFirmware mightyDeviceFirmware=null;
 		try {
@@ -585,11 +600,12 @@ public class AdminInstrumentController {
 				 String headerKey = "Content-Disposition";
 			       String headerValue = String.format("attachment; filename=\"%s\"",mightyDeviceFirmware.getFileName());
 			        response.setHeader(headerKey, headerValue);
+			        //response.setHeader("Content-Length", Long.toString(zipFile.length()));  
 						OutputStream out = response.getOutputStream();
 							  IOUtils.copy(mightyDeviceFirmware.getFile().getBinaryStream(), out);
 							  out.flush();
 							  out.close();
-							  responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+							  responseEntity = new ResponseEntity<String>(deviceId,HttpStatus.OK);
 			}else{
 				responseEntity = new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 			}
@@ -630,6 +646,125 @@ public class AdminInstrumentController {
 									out.flush();
 										out.close();
 										responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+			
+		}
+		catch (IOException ex){
+        	logger.error("Exceptions IO as/,",ex);
+        }
+		catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+	}
+	
+	@RequestMapping(value="/upload", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> upload(HttpServletRequest request,HttpServletResponse response)  {
+		logger.debug("IN file uploading");
+		
+		ResponseEntity<String> responseEntity = null;
+		List<Mightyotadevice> otaList=null;
+				new ArrayList<Mightyotadevice>();
+		try {
+			
+			otaList=new ArrayList<Mightyotadevice>();
+				 boolean flag = false;
+				// File file =new File("C:\\Users\\Dell\\Desktop\\upload\\mighty_ota_upgrade.xlsx");
+				 File file =new File("/mnt/data/vhosts/casite-733550.cloudaccess.net/uploadfiles/mighty_ota_upgrade.xlsx");
+				 //byte[] fileData = new byte[(int) file.length()];
+				 FileInputStream in = new FileInputStream(file);
+				 
+					
+					XSSFWorkbook workbook = new XSSFWorkbook(in);
+					XSSFSheet sheet = workbook.getSheetAt(0);
+										  
+					Iterator<Row> rowIterator = sheet.iterator();
+					  
+					rowIterator.next();
+					while (rowIterator.hasNext()) {
+						logger.debug("row ");
+						
+						if (flag)
+							break;
+
+						Row row = rowIterator.next();
+						// For each row, iterate through each columns
+
+						Iterator<Cell> cellIterator = row.cellIterator();
+						
+						//boolean isScheduleAlter = false;
+						while (cellIterator.hasNext()) {
+							Mightyotadevice ota=null;
+								ota=new Mightyotadevice();
+							Cell cell = cellIterator.next();
+											
+							logger.debug("col ", cell.getColumnIndex());
+							
+							if (cell.getColumnIndex() <1) {
+								cell.setCellType(Cell.CELL_TYPE_STRING);
+																
+							} else {
+								break;
+							}
+		 
+							if (cell.getColumnIndex() == 0) {
+									String value = cell.getStringCellValue();
+									logger.debug(" cell getColumnIndex==0 value=",value);
+								
+								if (value == null || value.equals("")) {
+									logger.debug("End of file");
+									flag = true;
+									break;
+								}
+								
+								ota.setUsername(cell.getStringCellValue().trim());
+							} 
+							
+							otaList.add(ota);	
+							
+							
+
+					}
+					
+				}	
+					logger.debug("Listsize",otaList.size());
+					if(otaList!=null && !otaList.isEmpty()){
+							adminInstrumentServiceImpl.deleteExistingEntryFromMightyOTADev();
+						for(Mightyotadevice ota : otaList){
+							List<MightyUserInfo> mightyUsers=consumerInstrumentServiceImpl.getUserByUserName(ota.getUsername());
+								if(mightyUsers!=null && !mightyUsers.isEmpty()){
+									MightyUserInfo user=mightyUsers.get(0);
+									List<MightyDeviceUserMapping> md=consumerInstrumentServiceImpl.getMightyUserDeviceMappingByUserId(user.getId());
+										if(md!=null & !md.isEmpty()){
+											logger.debug("hiiiii size",md.size());
+											for(MightyDeviceUserMapping m : md){
+												logger.debug("deviceMapping id",m.getMightyDeviceId());
+												MightyDeviceInfo dev=consumerInstrumentServiceImpl.getMightyDeviceInfoOnMappingDevice(m.getMightyDeviceId());
+												if(dev!=null){
+													Mightyotadevice ota1=null;
+															ota1=new Mightyotadevice();
+													 ota1.setDevices(dev.getDeviceId());
+													 ota1.setUsername(ota.getUsername());
+													 adminInstrumentServiceImpl.saveMightyOtaDevice(ota1);
+												 }else if(m.getMightyDeviceId()==0 && dev==null){
+													 Mightyotadevice ota1=null;
+													 		ota1=new Mightyotadevice();
+													 ota1.setDevices("0");
+													 ota1.setUsername(ota.getUsername());
+													 adminInstrumentServiceImpl.saveMightyOtaDevice(ota1);
+												 }
+											}
+										}
+								}
+							
+						}
+					}	
+					
+				 
+				 in.close();
+			     responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 			
 		}
 		catch (IOException ex){

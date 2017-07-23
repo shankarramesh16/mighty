@@ -131,8 +131,10 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			
 			//long ttlMillis = Long.parseLong(SpringPropertiesUtil.getProperty(MightyAppConstants.TTL_LOGIN_KEY));
 			
-			long ttlMillis=TimeUnit.HOURS.toMillis(2);
-			long ttlBaseMillis=TimeUnit.DAYS.toMillis(60);
+			/*long ttlMillis=TimeUnit.HOURS.toMillis(2);
+			long ttlBaseMillis=TimeUnit.DAYS.toMillis(60);*/
+			long ttlMillis=TimeUnit.DAYS.toMillis(60);
+			long ttlBaseMillis=TimeUnit.DAYS.toMillis(180);
 			
 			//long ttlMillis=TimeUnit.MINUTES.toMillis(1);
 			//long ttlBaseMillis=TimeUnit.MINUTES.toMillis(5);
@@ -429,10 +431,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException("Device not exist", HttpStatus.NOT_FOUND);
 		}
 		
-		/*if(mightDeviceInfo.getIsActive().equalsIgnoreCase(MightyAppConstants.IND_N)) {
-			throw new MightyAppException("Device is In Active, So cannot update", HttpStatus.PRECONDITION_FAILED);
-		}*/
-		
+			
 		MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.getDeviceInfo(mightDeviceInfo.getId());
 		
 		if(mightyDeviceUserMapping != null) {
@@ -475,24 +474,12 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	@Transactional
-	public void validateDevice(String deviceId) throws MightyAppException {
+	public void validateDevice(String deviceId) throws MightyAppException{
 		logger.info(" === ConsumerInstrumentServiceImpl, ValidateDevice, Device Id ", deviceId);
 		if(null == deviceId ||  "".equalsIgnoreCase(deviceId)) {
 			throw new MightyAppException(" Device ID or Input is empty", HttpStatus.BAD_REQUEST);
 		}
-		
-		/*checking for attaching device a order placed or not*/
-		/*MightyDeviceOrderInfo mightyDeviceOrder=null;
-		try{
-			mightyDeviceOrder=mightyDeviceOrderDAO.getDeviceOrderById(deviceId);
-		}catch(Exception e) {
-			throw new MightyAppException("System Error", HttpStatus.INTERNAL_SERVER_ERROR, e);
-		}
-		
-		if(mightyDeviceOrder==null){
-			throw new MightyAppException( "For this device Id, order is not place in system ", HttpStatus.GONE);
-		}*/
-		
+				
 						
 		MightyDeviceInfo mightyDeviceInfo = null;
 		try {
@@ -501,11 +488,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		} catch(Exception e) {
 			throw new MightyAppException("System Error", HttpStatus.INTERNAL_SERVER_ERROR, e);
 		}
-		
-		/*if(null == mightyDeviceInfo) {
-			throw new MightyAppException(" Device Details not found", HttpStatus.NOT_FOUND);
-		}*/
-		
+					
 				
 		if(mightyDeviceInfo!=null){
 			String isActive = mightyDeviceInfo.getIsActive();
@@ -522,6 +505,46 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		
 		
 	}
+	
+	
+	/*@Transactional
+	public String validateDevice(String deviceId) throws MightyAppException {
+		logger.info(" === ConsumerInstrumentServiceImpl, ValidateDevice, Device Id ", deviceId);
+		if(null == deviceId ||  "".equalsIgnoreCase(deviceId)) {
+			throw new MightyAppException(" Device ID or Input is empty", HttpStatus.BAD_REQUEST);
+		}
+		
+		
+						
+		MightyDeviceInfo mightyDeviceInfo = null;
+		try {
+			logger.debug("deviceId:",deviceId);
+			mightyDeviceInfo = mightyDeviceInfoDAO.getDeviceInfo(deviceId);
+		} catch(Exception e) {
+			throw new MightyAppException("System Error", HttpStatus.INTERNAL_SERVER_ERROR, e);
+		}
+		
+		if(null == mightyDeviceInfo) {
+			throw new MightyAppException(" Device Details not found", HttpStatus.NOT_FOUND);
+		}
+		
+				
+		if(mightyDeviceInfo!=null){
+			String isActive = mightyDeviceInfo.getIsActive();
+			String isRegistered = mightyDeviceInfo.getIsRegistered();
+			if(null == isActive || isActive.equalsIgnoreCase(MightyAppConstants.IND_N) ) {
+				throw new MightyAppException(" Device is not active or status is empty", HttpStatus.GONE);
+			}
+			
+					
+			if(null != isRegistered && isRegistered.equalsIgnoreCase(MightyAppConstants.IND_Y)) {
+				//throw new MightyAppException(" Deivce already registered ", HttpStatus.CONFLICT);
+				return "409";
+			}
+		}
+		
+		return "";
+	}*/
 
 	public MightyDeviceInfoDAO getMightyDeviceInfoDAO() {
 		return mightyDeviceInfoDAO;
@@ -556,6 +579,32 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		return mightyUserInfo;
 	}
 
+	/*@Transactional
+	public String registerMightyDevice(DeviceInfoDTO deviceInfoDTO) throws MightyAppException {
+		if(null == deviceInfoDTO) {
+			logger.debug("Register Device, Consumer Device DTO object is null");
+			throw new MightyAppException("Invalid request Object", HttpStatus.BAD_REQUEST);
+		}
+		
+		if((null == deviceInfoDTO.getUserId() || "".equalsIgnoreCase(deviceInfoDTO.getUserId()))
+				|| (null == deviceInfoDTO.getDeviceId() || "".equals(deviceInfoDTO.getDeviceId())))
+		{
+			logger.debug("Register Device, Anyone of the object is empty [UserId, DeviceId] ", deviceInfoDTO.getUserId(), 
+					",",deviceInfoDTO.getDeviceId());
+			throw new MightyAppException("Invalid request Parameters [UserId or Device Id ] ", HttpStatus.BAD_REQUEST);
+		}
+		
+		 String val= validateDevice(deviceInfoDTO.getDeviceId());
+		 if(val.equalsIgnoreCase("409")){
+			 logger.debug("Debugging val",val);
+			 return val;
+		 }
+		registerMightyWithUser(deviceInfoDTO);
+		
+		return "";
+				
+	}*/
+	
 	@Transactional
 	public void registerMightyDevice(DeviceInfoDTO deviceInfoDTO) throws MightyAppException {
 		if(null == deviceInfoDTO) {
@@ -571,8 +620,8 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException("Invalid request Parameters [UserId or Device Id ] ", HttpStatus.BAD_REQUEST);
 		}
 		
-		validateDevice(deviceInfoDTO.getDeviceId());
-		registerMightyWithUser(deviceInfoDTO);
+		 validateDevice(deviceInfoDTO.getDeviceId());
+		 registerMightyWithUser(deviceInfoDTO);
 		
 		
 				
@@ -584,8 +633,6 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 					   mightyUserInfo=getUserById(deviceInfoDTO.getUserId());
 		
 		if(mightyUserInfo!=null) {
-			// Check any de-activated account
-			//MightyDeviceUserMapping mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
 			List<MightyDeviceUserMapping> mightyDeviceUserMapping = mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(mightyUserInfo.getId());
 			if(mightyDeviceUserMapping!= null && !mightyDeviceUserMapping.isEmpty()){
 				int val=0;
@@ -772,8 +819,10 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			userLoginDTO.setStatusCode(HttpStatus.OK.toString());
 			
 			//long ttlMillis = Long.parseLong(SpringPropertiesUtil.getProperty(MightyAppConstants.TTL_LOGIN_KEY));
-			long ttlMillis=TimeUnit.HOURS.toMillis(2);
-			long ttlBaseMillis=TimeUnit.DAYS.toMillis(60);
+			/*long ttlMillis=TimeUnit.HOURS.toMillis(2);
+			long ttlBaseMillis=TimeUnit.DAYS.toMillis(60);*/
+			long ttlMillis=TimeUnit.DAYS.toMillis(60);
+			long ttlBaseMillis=TimeUnit.DAYS.toMillis(180);
 			//long ttlMillis=TimeUnit.MINUTES.toMillis(1);
 					
 			logger.debug("ttlMillisVal",ttlMillis);
@@ -901,8 +950,8 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	
-	public void updateMightyLogs(Mightylog logs) throws Exception {
-		mightylogDao.save(logs);	
+	public Mightylog updateMightyLogs(Mightylog logs) throws Exception {
+		return mightylogDao.save(logs);	
 	}
 
 
@@ -918,6 +967,36 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	public Mightylog getExistingMightylog(String deviceId, String username) throws MightyAppException {
 		return mightylogDao.getExistingMightylog(deviceId,username);
+	}
+
+	
+	public String getMightyLogsMsg(Mightylog logs) throws Exception {
+		String ticket="";
+		if(logs.getTicket()!=null && !logs.getTicket().isEmpty()){
+			ticket="<br/>Ticket Number:"+logs.getTicket();
+		}
+		return "Username:"+logs.getUsername()
+				+"<br/>Email:"+logs.getEmailId()
+				+"<br/>Mighty device:"+logs.getDeviceId()
+				+"<br/>Category:"+logs.getLogType()
+				+ticket
+				+"<br/>Description:"+logs.getDescription();
+				}
+
+	
+	public List<MightyUserInfo> getUserByUserName(String username) throws MightyAppException {
+		return mightyUserInfoDAO.getUserByUserName(username);
+	}
+
+	
+	public List<MightyDeviceUserMapping> getMightyUserDeviceMappingByUserId(long id) throws MightyAppException {
+		return mightyDeviceUserMapDAO.checkAnyDeActivatedAccount(id);
+	}
+
+	
+	public MightyDeviceInfo getMightyDeviceInfoOnMappingDevice(long mightyDeviceId) throws MightyAppException {
+		
+		return mightyDeviceInfoDAO.getMightyDeviceOnId(mightyDeviceId);
 	}
 
 

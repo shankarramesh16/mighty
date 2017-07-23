@@ -87,7 +87,7 @@ public class MightyUserInfo extends BaseEntityInfo {
 	@Column(name = "UPDATED_DT")
 	private Date updatedDt;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<MightyDeviceUserMapping> mightyDeviceUserMapping;
 	
 		

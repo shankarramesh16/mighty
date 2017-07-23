@@ -42,4 +42,8 @@ public interface AdminInstrumentService {
 	public List<MightyDeviceFirmware> getLatestOTA()throws Exception;
 
 	public List<Mightyotadevice> getMightyForOTA(String hWSerialNumber)throws Exception;
+
+	public void saveMightyOtaDevice(Mightyotadevice device)throws MightyAppException;
+
+	public void deleteExistingEntryFromMightyOTADev()throws MightyAppException;
 }

@@ -76,13 +76,21 @@ public interface ConsumerInstrumentService {
 
 	public MightyDeviceInfo getMightyOnHwId(String deviceId)throws MightyAppException;
 
-	public void updateMightyLogs(Mightylog logs)throws Exception;
+	public Mightylog updateMightyLogs(Mightylog logs)throws Exception;
 
 	public Set<String> getMightyLogs()throws MightyAppException;
 
-	public List<Mightylog> getMightyLogsOndevId(String devId)throws MightyAppException;
+	public List<Mightylog> getMightyLogsOndevId(String devId) throws MightyAppException;
 
 	public Mightylog getExistingMightylog(String string, String userName) throws MightyAppException;
+
+	public String getMightyLogsMsg(Mightylog logs)throws Exception;
+
+	public List<MightyUserInfo> getUserByUserName(String username)throws MightyAppException;
+
+	public List<MightyDeviceUserMapping> getMightyUserDeviceMappingByUserId(long id)throws MightyAppException;
+
+	public MightyDeviceInfo getMightyDeviceInfoOnMappingDevice(long mightyDeviceId)throws MightyAppException;
 
 	
 

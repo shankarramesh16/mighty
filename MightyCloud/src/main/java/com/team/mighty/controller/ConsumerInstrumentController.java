@@ -98,7 +98,7 @@ public class ConsumerInstrumentController {
 	}
 	
 	@RequestMapping(value = "/getRefreshToken", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getRefreshTokenHandler(@RequestHeader(value = MightyAppConstants.HTTP_HEADER_BASE_TOKEN_NAME) String refreshToken) {
+	public ResponseEntity<String> getRefreshTokenHandler(@RequestHeader(value = MightyAppConstants.HTTP_HEADER_BASE_TOKEN_NAME) String refreshToken){
 		logger.debug("IN POST Refresh Token");
 		ResponseEntity<String> responseEntity = null;
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -198,7 +198,7 @@ public class ConsumerInstrumentController {
 	}
 	
 		
-	/*@RequestMapping(value="/grafana",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/grafana",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> IoITesting(@RequestBody String received) {
 		logger.info(" /POST mightyAppLogin API");
 		logger.info("hiiii",received);
@@ -224,7 +224,7 @@ public class ConsumerInstrumentController {
 			logger.errorException(e, e.getMessage());
 		}
 		return responseEntity;
-	}*/
+	}
 	
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> doRegistration(@RequestBody String received){
@@ -276,13 +276,64 @@ public class ConsumerInstrumentController {
 		} catch(MightyAppException e) {
 			String errorMessage = e.getMessage();
 			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
-			logger.errorException(e, e.getMessage());
+			
 		}
 		return responseEntity;
 	}
 	
 	
 		
+	
+	
+	/*@RequestMapping(value="/mightyRegistration",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> doMightyRegistration(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken) {
+		logger.info(" /POST Consumer API");
+		
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+			
+		try{		
+				obj=new JSONObject();
+				obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+			logger.error("System Exception during parsing JSON ",e);
+		}
+				
+				
+		try {
+			
+			//Validate X-MIGHTY-TOKEN Value
+			JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			
+			DeviceInfoDTO deviceInfoDTO=new DeviceInfoDTO();
+			deviceInfoDTO.setUserId(obj.get("UserID").toString());
+			deviceInfoDTO.setDeviceId(obj.get("HWSerialNumber").toString());
+			deviceInfoDTO.setDeviceName(obj.get("DeviceName").toString());
+			deviceInfoDTO.setDeviceType(obj.get("DeviceType").toString());
+			deviceInfoDTO.setSwVersion(obj.get("SWVersion").toString());
+			deviceInfoDTO.setAppVersion(obj.get("AppVersion").toString());
+			deviceInfoDTO.setAppBuild(obj.get("AppBuild").toString());
+			logger.debug("Appbuild",obj.get("AppBuild").toString());
+			deviceInfoDTO.setIsActive(MightyAppConstants.IND_Y);
+			deviceInfoDTO.setIsRegistered(MightyAppConstants.IND_Y);
+			
+			String res=consumerInstrumentServiceImpl.registerMightyDevice(deviceInfoDTO);
+			if(res.equalsIgnoreCase("409")){
+				responseEntity = new ResponseEntity<String>(HttpStatus.CONFLICT);
+				return responseEntity;
+			}
+			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+		} catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
+			
+		}
+		return responseEntity;
+	}*/
+	
 	
 	
 	@RequestMapping(value="/mightyRegistration",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -319,7 +370,6 @@ public class ConsumerInstrumentController {
 			logger.debug("Appbuild",obj.get("AppBuild").toString());
 			deviceInfoDTO.setIsActive(MightyAppConstants.IND_Y);
 			deviceInfoDTO.setIsRegistered(MightyAppConstants.IND_Y);
-			
 			consumerInstrumentServiceImpl.registerMightyDevice(deviceInfoDTO);
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		} catch(MightyAppException e) {
@@ -365,7 +415,7 @@ public class ConsumerInstrumentController {
 			//Validate X-MIGHTY-TOKEN Value
 			JWTKeyGenerator.validateXToken(xToken);
 			
-			// Validate Expriy Date
+			//Validate Expriy Date
 			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			logger.debug("TestDev",obj.get("deviceID").toString().trim());
 			consumerInstrumentServiceImpl.deregisterDevice(obj.get("deviceID").toString().trim());
@@ -530,6 +580,159 @@ public class ConsumerInstrumentController {
 	}
 	
 	
+	/*@RequestMapping(value = "/getMightyLogs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getDebugHandler(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken ) throws Exception{
+		
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyDeviceInfo mightyDeviceInfo=null;
+		List<MightyDeviceUserMapping> md=null;
+		
+		
+		try{		
+						obj=new JSONObject();
+						obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+					responseEntity = new ResponseEntity<String>("Empty received body", HttpStatus.EXPECTATION_FAILED);
+		}
+
+		
+				
+		try {
+			//logger.debug("file_content",file_content);
+			logger.debug("file_content",Base64.decodeBase64(obj.get("file_content").toString()).length);
+			logger.debug("log_type",obj.get("log_type").toString());
+			logger.debug("desc",obj.get("desc").toString());
+			logger.debug("deviceId",obj.get("deviceId").toString());
+			logger.debug("userId",obj.get("userId").toString());
+			Mightylog log=null;
+			
+			//Validate X-MIGHTY-TOKEN Value
+			//JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			
+			mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
+			if(mightyDeviceInfo!=null){
+				md=consumerInstrumentServiceImpl.getMightyDeviceUserMappingOndevId(mightyDeviceInfo.getId());
+					if(md!=null && !md.isEmpty()){
+						for(MightyDeviceUserMapping m: md){
+							if(String.valueOf(m.getMightyUserInfo().getId()).equalsIgnoreCase(obj.get("userId").toString()) && 
+									m.getRegistrationStatus().equalsIgnoreCase("Y")){
+								logger.debug("Helloooo");
+									Mightylog lg=null;
+									lg=consumerInstrumentServiceImpl.getExistingMightylog(obj.get("deviceId").toString(),m.getMightyUserInfo().getUserName());
+										if(lg!=null){
+												lg.setFileName("MightyLogs");
+												lg.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
+												lg.setLogType(obj.get("log_type").toString());
+												lg.setTicket(obj.get("ticket").toString());
+												lg.setDescription(obj.get("desc").toString());
+												lg.setUsername(m.getMightyUserInfo().getUserName());
+												lg.setEmailId(m.getMightyUserInfo().getEmailId());
+												lg.setDevReg(m.getRegistrationStatus());
+												lg.setDeviceId(obj.get("deviceId").toString());
+												lg.setDeviceType(obj.get("DeviceType").toString());
+												lg.setPhoneDeviceOSVersion(obj.get("DeviceOSVersion").toString());
+												lg.setUpdatedDt(new Date(System.currentTimeMillis()));
+											Mightylog logs=consumerInstrumentServiceImpl.updateMightyLogs(lg);
+											try{	
+												if(logs!=null){
+														logger.debug("/inside MightyLogs send Mail");
+														String subject="";
+															if(logs.getTicket()!=null && !logs.getTicket().isEmpty()){
+																subject = "Log received from "+logs.getUsername()+""+"-"+""+"Ticket#"+logs.getTicket();
+															}else{
+																subject = "Log received from "+logs.getUsername();
+															}
+														String message = consumerInstrumentServiceImpl.getMightyLogsMsg(logs);
+																	
+															SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
+															String[] arr={"heyo@bemighty.com","mightynotification@gmail.com"};
+																									
+															for(String s :arr){
+																logger.debug("mailing dest",s);
+																mail.send(s, subject, message);
+															}
+												}
+										
+											}catch(Exception e){
+												logger.error("/Sending Mightylog notification",e);
+											}
+												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+												return responseEntity;
+										}else{
+											logger.debug("elseeeeeeeee");
+												log=new Mightylog();
+												log.setFileName("MightyLogs");
+												log.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
+												log.setLogType(obj.get("log_type").toString());
+												log.setTicket(obj.get("ticket").toString());
+												log.setDescription(obj.get("desc").toString());
+												log.setUsername(m.getMightyUserInfo().getUserName());
+												log.setEmailId(m.getMightyUserInfo().getEmailId());
+												log.setDevReg(m.getRegistrationStatus());
+												log.setDeviceId(obj.get("deviceId").toString());
+												log.setDeviceType(obj.get("DeviceType").toString());
+												log.setPhoneDeviceOSVersion(obj.get("DeviceOSVersion").toString());
+												log.setCreatedDt(new Date(System.currentTimeMillis()));
+												log.setUpdatedDt(new Date(System.currentTimeMillis()));
+											Mightylog logs=consumerInstrumentServiceImpl.updateMightyLogs(log);
+											
+												try{	
+													if(logs!=null){
+															logger.debug("/inside MightyLogs send Mail");
+															String subject="";
+																if(logs.getTicket()!=null && !logs.getTicket().isEmpty()){
+																	subject = "Log received from "+logs.getUsername()+""+"-"+""+"Ticket#"+logs.getTicket();
+																}else{
+																	subject = "Log received from "+logs.getUsername();
+																}
+															String message = consumerInstrumentServiceImpl.getMightyLogsMsg(logs);
+																		
+																SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
+																String[] arr={"heyo@bemighty.com","mightynotification@gmail.com"};
+																logger.debug("subject",subject);
+																for(String s :arr){
+																	logger.debug("mailing dest",s);
+																	mail.send(s, subject, message);
+																}
+																String dest[]={"vikky.softengi@gmail.com","mightynotification@gmail.com"};
+																String msg[]={message};
+																String[] cc = new String[0];
+																mail.send(dest, subject, msg,cc);
+													}
+											
+												}catch(Exception e){
+													logger.error("/Sending Mightylog notification",e);
+												}
+											
+												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+												return responseEntity;
+										}
+							}else{
+								responseEntity = new ResponseEntity<String>("DeviceId not associated with user or registerstatus is N ", HttpStatus.BAD_REQUEST);
+							}
+						}
+					}else{
+						responseEntity = new ResponseEntity<String>("DeviceId not mapped", HttpStatus.BAD_REQUEST);
+					}
+			}else{
+				responseEntity = new ResponseEntity<String>("Empty deviceId", HttpStatus.BAD_REQUEST);
+			}
+							
+		}catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+
+	}*/
+	
+	
 	@RequestMapping(value = "/getMightyLogs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getDebugHandler(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken ) throws Exception{
 		
@@ -566,31 +769,11 @@ public class ConsumerInstrumentController {
 			mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
 			if(mightyDeviceInfo!=null){
 				md=consumerInstrumentServiceImpl.getMightyDeviceUserMappingOndevId(mightyDeviceInfo.getId());
-					if(md!=null){
+					if(md!=null && !md.isEmpty()){
 						for(MightyDeviceUserMapping m: md){
 							if(String.valueOf(m.getMightyUserInfo().getId()).equalsIgnoreCase(obj.get("userId").toString()) && 
 									m.getRegistrationStatus().equalsIgnoreCase("Y")){
-									Mightylog lg=null;
-									lg=consumerInstrumentServiceImpl.getExistingMightylog(obj.get("deviceId").toString(),m.getMightyUserInfo().getUserName());
-										if(lg!=null){
-											logger.debug("11111111111");
-												lg.setFileName("MightyLogs");
-												lg.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
-												lg.setLogType(obj.get("log_type").toString());
-												lg.setTicket(obj.get("ticket").toString());
-												lg.setDescription(obj.get("desc").toString());
-												lg.setUsername(m.getMightyUserInfo().getUserName());
-												lg.setEmailId(m.getMightyUserInfo().getEmailId());
-												lg.setDevReg(m.getRegistrationStatus());
-												lg.setDeviceId(obj.get("deviceId").toString());
-												lg.setDeviceType(obj.get("DeviceType").toString());
-												lg.setPhoneDeviceOSVersion(obj.get("DeviceOSVersion").toString());
-												lg.setUpdatedDt(new Date(System.currentTimeMillis()));
-												consumerInstrumentServiceImpl.updateMightyLogs(lg);
-												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
-												return responseEntity;
-										}else{
-											logger.debug("22222222");
+								        logger.debug("Helloooo");
 												log=new Mightylog();
 												log.setFileName("MightyLogs");
 												log.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
@@ -605,10 +788,36 @@ public class ConsumerInstrumentController {
 												log.setPhoneDeviceOSVersion(obj.get("DeviceOSVersion").toString());
 												log.setCreatedDt(new Date(System.currentTimeMillis()));
 												log.setUpdatedDt(new Date(System.currentTimeMillis()));
-												consumerInstrumentServiceImpl.updateMightyLogs(log);
+											Mightylog logs=consumerInstrumentServiceImpl.updateMightyLogs(log);
+											
+												try{	
+													if(logs!=null){
+															logger.debug("/inside MightyLogs send Mail");
+															String subject="";
+																if(logs.getTicket()!=null && !logs.getTicket().isEmpty()){
+																	subject = "Log received from "+logs.getUsername()+""+"-"+""+"Ticket#"+logs.getTicket();
+																}else{
+																	subject = "Log received from "+logs.getUsername();
+																}
+															String message = consumerInstrumentServiceImpl.getMightyLogsMsg(logs);
+																		
+																SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
+																String[] arr={"heyo@bemighty.com","mightynotification@gmail.com"};
+																logger.debug("subject",subject);
+																for(String s :arr){
+																	logger.debug("mailing dest",s);
+																	mail.send(s, subject, message);
+																}
+															
+													}
+											
+												}catch(Exception e){
+													logger.error("/Sending Mightylog notification",e);
+												}
+											
 												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
 												return responseEntity;
-										}
+										
 							}else{
 								responseEntity = new ResponseEntity<String>("DeviceId not associated with user or registerstatus is N ", HttpStatus.BAD_REQUEST);
 							}

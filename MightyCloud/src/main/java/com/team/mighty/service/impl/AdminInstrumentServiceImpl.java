@@ -292,5 +292,17 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	}
 
 	
+	public void saveMightyOtaDevice(Mightyotadevice device) throws MightyAppException {
+		mightyOTADeviceDao.save(device);
+		
+	}
+
+	
+	public void deleteExistingEntryFromMightyOTADev() throws MightyAppException {
+		mightyOTADeviceDao.deleteAll();
+		
+	}
+
+	
 
 }
