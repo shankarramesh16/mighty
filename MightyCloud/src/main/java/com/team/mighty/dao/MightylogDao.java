@@ -19,6 +19,6 @@ public interface MightylogDao extends JpaRepository<Mightylog, Serializable> {
 	List<Mightylog> getMightyLogsOndevId(@Param("deviceId") String deviceId);
 	
 	@Query("SELECT l FROM Mightylog l WHERE l.deviceId = :deviceId and l.username=:username")
-	Mightylog getExistingMightylog(@Param("deviceId") String deviceId, @Param("username") String username);
+	List<Mightylog> getExistingMightylog(@Param("deviceId") String deviceId, @Param("username") String username);
 
 }

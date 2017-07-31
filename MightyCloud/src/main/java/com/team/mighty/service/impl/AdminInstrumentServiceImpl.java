@@ -179,10 +179,13 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 			MightyDeviceInfo mightyInfo=null; 
 			mightyInfo=mightyDeviceInfoDAO.getDeviceInfo(HWSerialNo);
 			if(mightyInfo!=null){
+				logger.debug("Serial# as",HWSerialNo);
+				logger.debug("SwVersion# as",SWVersion);
 				mightyInfo.setSwVersion(SWVersion);
 				mightyInfo.setAppVersion(Float.valueOf(AppVersion));
 				mightyInfo.setAppBuild(AppBuild);
 				MightyDeviceInfo mightyDeviceInfo=mightyDeviceInfoDAO.save(mightyInfo);
+				logger.debug("SwVersion# updated",mightyDeviceInfo.getSwVersion());
 				if(mightyDeviceInfo!=null){
 						logger.debug("HwSerialNo",mightyDeviceInfo.getDeviceId());
 					String compatibleHw=mightyDeviceInfo.getDeviceId().trim().substring(3, 4);

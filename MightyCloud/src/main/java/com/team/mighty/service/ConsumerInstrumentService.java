@@ -82,7 +82,7 @@ public interface ConsumerInstrumentService {
 
 	public List<Mightylog> getMightyLogsOndevId(String devId) throws MightyAppException;
 
-	public Mightylog getExistingMightylog(String string, String userName) throws MightyAppException;
+	public List<Mightylog> getExistingMightylog(String string, String userName) throws MightyAppException;
 
 	public String getMightyLogsMsg(Mightylog logs)throws Exception;
 

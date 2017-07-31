@@ -1,5 +1,7 @@
 package com.team.mighty.controller;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -197,6 +199,25 @@ public class ConsumerInstrumentController {
 		return responseEntity;
 	}
 	
+	/*@RequestMapping(value="/httpRequest",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	private void httpRequestChecking() throws MightyAppException{
+		try{
+			String url="http://agri-insurance.gov.in/cbs_integration.asmx?username=vikky&pwd=123456";
+			logger.debug("URLConn",url);
+			URL obj = new URL(url);
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+			con.setRequestMethod("GET");
+			int  hashcode= con.hashCode();
+			int responseCode=con.getResponseCode();
+			logger.debug("GET Response Code :: " + responseCode);
+			logger.debug("GET hashcode Code :: " + hashcode);
+			
+		
+		}catch(Exception e){
+			logger.debug("Error in response",e);
+		}
+		
+	}*/
 		
 	@RequestMapping(value="/grafana",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> IoITesting(@RequestBody String received) {

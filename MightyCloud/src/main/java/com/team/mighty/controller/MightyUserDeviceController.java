@@ -3,8 +3,11 @@ package com.team.mighty.controller;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -365,14 +368,19 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		String devId=request.getParameter("devId");
 		String username=request.getParameter("usrId");
 		String dat=request.getParameter("dat");
-		logger.debug("deviceId"+devId);
-		logger.debug("username"+username);
+		logger.debug("deviceIddd",devId);
+		logger.debug("usernameee",username);
+		logger.debug("updated_dateee",dat);
 	
 		  try {
 			  
-			  Mightylog mlog=consumerInstrumentServiceImpl.getExistingMightylog(devId, username);
-			  
-				//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+			  List<Mightylog> mlogList=consumerInstrumentServiceImpl.getExistingMightylog(devId, username);
+			  if(mlogList!=null && !mlogList.isEmpty()){
+				 logger.debug("entrysize",mlogList.size());
+				 if(mlogList.size()==1){ 
+					 logger.debug("IF size 1");
+				  Mightylog mlog=mlogList.get(0);
+				   //response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
 					 String headerKey = "Content-Disposition";
 				        String headerValue = String.format("attachment; filename=\"%s\"","Mightylogs "+" "+dat+" "+mlog.getDeviceId()+".gz");
 				        response.setHeader(headerKey, headerValue);
@@ -384,10 +392,37 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 									IOUtils.copy(mlog.getFileContent().getBinaryStream(), out);
 										out.flush();
 											out.close();
-												
+			      }else if(mlogList.size()>1){
+			    	  logger.debug("Else IF size >1");
+					  for(Mightylog mlog : mlogList){
+						  logger.debug("updated_sqldate_as",mlog.getUpdatedDt());
+											 
+						  Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						  String s = formatter.format(mlog.getUpdatedDt());
+						  	
+						  logger.debug("updated_date_request",s);
+						  logger.debug("updated_date_request_0_added",s+".0");
+						  
+						  if(dat.equalsIgnoreCase(s+".0")){
+							  logger.debug("inside loop updated_date_requestted");
+					//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+						 String headerKey = "Content-Disposition";
+					        String headerValue = String.format("attachment; filename=\"%s\"","Mightylogs "+" "+dat+" "+mlog.getDeviceId()+".gz");
+					        response.setHeader(headerKey, headerValue);
+								OutputStream out = response.getOutputStream();
+									response.setContentType("text/plain");
+									  logger.debug("Size of file content"+mlog.getFileContent().length());
+									  //logger.debug("Size of file content"+new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString())));
+									  //new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString()));
+										IOUtils.copy(mlog.getFileContent().getBinaryStream(), out);
+											out.flush();
+												out.close();
+						  	} 
+					  }  
+				    }
+			    }	//if main ended here							
 			
-			}
-		     catch (IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {
 				e.printStackTrace();

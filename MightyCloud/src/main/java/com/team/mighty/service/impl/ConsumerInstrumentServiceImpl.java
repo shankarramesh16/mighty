@@ -965,7 +965,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	}
 
 	
-	public Mightylog getExistingMightylog(String deviceId, String username) throws MightyAppException {
+	public List<Mightylog> getExistingMightylog(String deviceId, String username) throws MightyAppException {
 		return mightylogDao.getExistingMightylog(deviceId,username);
 	}
 

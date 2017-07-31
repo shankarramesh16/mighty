@@ -24,7 +24,7 @@
 
 		<properties>
 			<!-- <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" /> -->
-		<!-- 	<property name="hibernate.connection.url" value="jdbc:mysql://127.2.140.130:3306/mighty?autoReconnect=true" />
+		    <!-- <property name="hibernate.connection.url" value="jdbc:mysql://127.2.140.130:3306/mighty?autoReconnect=true" />
 			<property name="hibernate.connection.username" value="adminr26Gdqj" />
 			<property name="hibernate.connection.password" value="l-Qh7sDyWMCz"/> -->
 	 		 <!-- <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/mighty?autoReconnect=true" />

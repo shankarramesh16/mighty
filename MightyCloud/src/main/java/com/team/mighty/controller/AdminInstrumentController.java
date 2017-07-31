@@ -456,10 +456,22 @@ public class AdminInstrumentController {
 					.getRequestAttributes()).getRequest();
 			
 			if(HWSerialNumber!=null && SWVersion!=null && AppVersion!=null && AppBuild!=null && !HWSerialNumber.isEmpty() 
-					&& !SWVersion.isEmpty() && !AppVersion.isEmpty()  &&  !AppBuild.isEmpty()){				
-					
-				reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);
+					&& !SWVersion.isEmpty() && !AppVersion.isEmpty()  &&  !AppBuild.isEmpty()){	
 				
+				/*if(!SWVersion.equalsIgnoreCase("UPDATING")){	
+					reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);
+				}*/
+				
+				/*if(SWVersion.equalsIgnoreCase("UPDATING")){	
+					deviceFirmWareDTO.setLatestVersion("");
+					deviceFirmWareDTO.setLatestRequired((float) 0);
+					deviceFirmWareDTO.setCompatibleIOS((float) 0);
+					deviceFirmWareDTO.setCompatibleHW("");
+				}else{
+					reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);
+				}*/
+				reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);
+
 				latestMightyDeviceFirmware=adminInstrumentServiceImpl.getMightyLstDeviceFirmware();
 				
 				deviceFirmWareDTO=new DeviceFirmWareDTO();
@@ -467,7 +479,7 @@ public class AdminInstrumentController {
 					
 					deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
 					/*passing downloading API...*/
-					String URL = "https://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId()+"/devId/"+HWSerialNumber;
+					String URL = "http://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId()+"/devId/"+HWSerialNumber;
 					//String URL = "http://192.168.1.100:8089/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId();
 					/*if(request.isSecure()) {
 						URL = "https://" +request.getServerName() + ":" +request.getServerPort()+ request.getContextPath() +"/rest/admin/download/"+mightyDeviceFirmware.getId();
@@ -593,7 +605,7 @@ public class AdminInstrumentController {
 	logger.debug("/downloadingDeviceId",deviceId);
 	 ResponseEntity<String> responseEntity = null;
 		MightyDeviceFirmware mightyDeviceFirmware=null;
-		try {
+		try{
 			mightyDeviceFirmware=adminInstrumentServiceImpl.getDeviceFirmwareById(deviceFirmwareId);
 			if(mightyDeviceFirmware!= null && mightyDeviceFirmware.getFile() != null){
 					//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
