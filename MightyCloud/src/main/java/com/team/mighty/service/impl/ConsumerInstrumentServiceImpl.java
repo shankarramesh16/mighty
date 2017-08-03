@@ -22,13 +22,19 @@ import com.team.mighty.dao.MightyDeviceInfoDAO;
 import com.team.mighty.dao.MightyDeviceOrderDAO;
 import com.team.mighty.dao.MightyDeviceUserMapDAO;
 import com.team.mighty.dao.MightyKeyConfigDAO;
+import com.team.mighty.dao.MightyOTADeviceDao;
+import com.team.mighty.dao.MightyUploadDao;
 import com.team.mighty.dao.MightyUserInfoDao;
+import com.team.mighty.dao.MightydlauditlogDao;
 import com.team.mighty.dao.MightylogDao;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyKeyConfig;
+import com.team.mighty.domain.MightyUpload;
 import com.team.mighty.domain.MightyUserInfo;
+import com.team.mighty.domain.Mightydlauditlog;
 import com.team.mighty.domain.Mightylog;
+import com.team.mighty.domain.Mightyotadevice;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserDeviceRegistrationDTO;
@@ -57,6 +63,15 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	@Autowired
 	private MightyDeviceUserMapDAO mightyDeviceUserMapDAO;
+	
+	@Autowired
+	private MightyOTADeviceDao mightyOTADeviceDao;
+	
+	@Autowired
+	private MightyUploadDao mightyUploadDao;
+	
+	@Autowired
+	private MightydlauditlogDao mightydlauditlogDao;
 	
 	@Autowired
 	private MightyUserInfoDao mightyUserInfoDAO;
@@ -997,6 +1012,26 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	public MightyDeviceInfo getMightyDeviceInfoOnMappingDevice(long mightyDeviceId) throws MightyAppException {
 		
 		return mightyDeviceInfoDAO.getMightyDeviceOnId(mightyDeviceId);
+	}
+
+	
+	public MightyUpload updateMightyUpload(MightyUpload mu) throws MightyAppException {
+		return mightyUploadDao.save(mu);
+	}
+
+	
+	public Mightydlauditlog updateMightydlauditlog(Mightydlauditlog mlog) throws MightyAppException {
+		return mightydlauditlogDao.save(mlog);
+	}
+
+
+	public List<Mightydlauditlog> getMightyDlAuditLog() throws MightyAppException {
+		return mightydlauditlogDao.getMightyDlAuditLog();
+	}
+
+	
+	public List<Mightyotadevice> getExcelUploadMightyInfo() throws MightyAppException {
+			return mightyOTADeviceDao.getExcelUploadMightyInfo();
 	}
 
 

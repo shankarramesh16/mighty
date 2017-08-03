@@ -1,7 +1,5 @@
 package com.team.mighty.controller;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +23,9 @@ import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.constant.PasswordGenerator;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
+import com.team.mighty.domain.MightyUpload;
 import com.team.mighty.domain.MightyUserInfo;
+import com.team.mighty.domain.Mightydlauditlog;
 import com.team.mighty.domain.Mightylog;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
@@ -851,6 +851,132 @@ public class ConsumerInstrumentController {
 			}
 							
 		}catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+
+	}
+	
+	
+	@RequestMapping(value = "/mightyInfo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getMightyInfoFromMighty(@RequestBody String received) throws Exception{
+		
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyDeviceInfo mightyDeviceInfo=null;
+		List<MightyUpload> muList=null;
+		
+		
+		try{		
+						obj=new JSONObject();
+						obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+					responseEntity = new ResponseEntity<String>("Empty received body", HttpStatus.EXPECTATION_FAILED);
+		}
+
+		
+				
+		try {
+			
+			logger.debug("file_content for MightyUpload",Base64.decodeBase64(obj.get("file_content").toString()).length);
+			logger.debug("deviceId",obj.get("deviceId").toString());
+			
+									
+			mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
+					if(mightyDeviceInfo!=null){
+						logger.debug("INside /MightyUpload list");
+						MightyUpload mu=null;
+												mu=new MightyUpload();
+												mu.setFileName("MightyUploads");
+												mu.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
+												mu.setDeviceId(obj.get("deviceId").toString());
+												mu.setCreatedDt(new Date(System.currentTimeMillis()));
+												mu.setUpdatedDt(new Date(System.currentTimeMillis()));
+												MightyUpload m=consumerInstrumentServiceImpl.updateMightyUpload(mu);
+																	
+												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+												return responseEntity;
+										
+							
+					}else{
+						responseEntity = new ResponseEntity<String>("DeviceId not mapped", HttpStatus.BAD_REQUEST);
+					}
+			
+							
+		}catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+
+	}
+	
+	
+	@RequestMapping(value = "/mightyDlAudioLog", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> mightyDlAudioLogHandler(@RequestBody String received) throws Exception{
+		logger.debug("INside /mightyDlAudioLog controller");
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyDeviceInfo mightyDeviceInfo=null;
+				
+		
+		try{		
+						obj=new JSONObject();
+						obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+					responseEntity = new ResponseEntity<String>("Empty received body", HttpStatus.EXPECTATION_FAILED);
+		}
+
+		
+				
+		try {
+			
+			
+			logger.debug("app_OS:",obj.get("app_OS").toString());
+			logger.debug("app_ver:",obj.get("app_ver").toString());
+			logger.debug("wifi_status:",obj.get("wifi_status").toString());
+			logger.debug("ble_status:",obj.get("ble_status").toString());
+			logger.debug("internet_conn:",obj.get("internet_conn").toString());
+			logger.debug("error_code:",obj.get("error_code").toString());
+			logger.debug("download_perc:",obj.get("download_perc").toString());
+			logger.debug("download_curr_ver:",obj.get("download_curr_ver").toString());
+			logger.debug("deviceId:",obj.get("deviceId").toString());
+			
+									
+			mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
+					if(mightyDeviceInfo!=null){
+						logger.debug("INside /MightyUpload list");
+						Mightydlauditlog mlog=null;
+									mlog=new Mightydlauditlog();
+									mlog.setDeviceId(obj.get("deviceId").toString());
+									mlog.setApp_OS(obj.get("app_OS").toString());
+									mlog.setAppVer(obj.get("app_ver").toString());
+									mlog.setWifiStatus(obj.get("wifi_status").toString());
+									mlog.setBleStatus(obj.get("ble_status").toString());
+									mlog.setInternetConn(obj.get("internet_conn").toString());
+									mlog.setErrorCode(obj.get("error_code").toString());
+									mlog.setDownloadPerc(obj.get("download_perc").toString());
+									mlog.setDownloadCurrVer(obj.get("download_curr_ver").toString());
+									mlog.setCreateddt(new Date(System.currentTimeMillis()));
+									mlog.setUpdateddt(new Date(System.currentTimeMillis()));
+												
+									Mightydlauditlog mauditlog=consumerInstrumentServiceImpl.updateMightydlauditlog(mlog);
+																	
+										responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+										
+										
+							
+					}else{
+						responseEntity = new ResponseEntity<String>("DeviceId not mapped", HttpStatus.BAD_REQUEST);
+					}
+			
+							
+		}catch(MightyAppException e){
 			String errorMessage = e.getMessage();
 			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
 			logger.errorException(e, e.getMessage());

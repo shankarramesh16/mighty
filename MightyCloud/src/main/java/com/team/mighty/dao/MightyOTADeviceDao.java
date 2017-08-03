@@ -13,6 +13,9 @@ public interface MightyOTADeviceDao extends JpaRepository<Mightyotadevice, Seria
 
 	@Query("SELECT m FROM Mightyotadevice m WHERE m.devices=:devices ")
 	List<Mightyotadevice> mightyOTADeviceDao(@Param("devices") String devices);
+
+	@Query("FROM Mightyotadevice")
+	List<Mightyotadevice> getExcelUploadMightyInfo();
 	
 	/*@Query(value="truncate table mightyotadevices",nativeQuery = true)
 	void deleteExistingEntryFromMightyOTADev();*/

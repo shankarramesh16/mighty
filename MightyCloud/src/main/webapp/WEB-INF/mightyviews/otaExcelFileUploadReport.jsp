@@ -1,61 +1,66 @@
 <%--
     Document   : device_firmware
-    Created on : OCT 09, 2016, 03:51:01 PM
+    Created on : July 31, 2017, 03:51:01 PM
     Author     : Vikky
 --%>
 
-
+<%@page import="java.util.*"%>
 <%@page import="com.team.mighty.domain.*"%>
+<%@page import="com.team.mighty.dto.*"%>
+<%@page import="org.displaytag.decorator.TotalTableDecorator"%>
+<%@page import="org.displaytag.decorator.MultilevelTotalTableDecorator"%>
 <%@page import="com.itextpdf.text.log.SysoLogger"%>
-<%@page import="java.util.List"%>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <title>Mighty Admin Home</title>
-    
-	<script type="text/javascript" src="js/jquery-latest.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    
-	  <link href="css/bootstrap.min.css" rel="stylesheet">
-	  <link href="css/custom_siemens.css" rel="stylesheet">
-	   <link href="css/marquees.css" rel="stylesheet">
-	       
-    
-   
-	  <!-- Font Awesome -->
-	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-	  <!-- Ionicons -->
-	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-	  <link rel="stylesheet" href="css/AdminLTE.min.css">
-	  <link rel="stylesheet" href="css/AdminLTE.css">
-	  <link rel="stylesheet" href="css/skins/_all-skins.min.css">
+ <%@ page buffer = "900kb" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"   pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
-	<script src="js/app.min.js"></script>
-	<script src="js/demo.js"></script>
+<!DOCTYPE html >
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<title>MightyUser Excel Upload Report</title>
+
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/custom_siemens.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+<link rel="stylesheet" href="css/AdminLTE.min.css">
+<link rel="stylesheet" href="css/skins/_all-skins.min.css">
+<link rel="stylesheet" href="css/slider.css">
+
+
+<script type="text/javascript" src="js/jquery-latest.js"></script>
+<script  src="https://code.jquery.com/jquery-2.2.0.js"></script>
+<script type="text/javascript" src="js/jquery-latest.js"></script>
+<script type="text/javascript" src="js/jquery.validate.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script src="js/app.min.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/scroller.js"></script>
+
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+						<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
+											String fname1=("MightyUserExcelUpload :").concat(new Date().toString()).concat(".csv");
+											String fname2=("MightyUserExcelUpload :").concat(new Date().toString()).concat(".xls");
+											String fname3=("MightyUserExcelUpload :").concat(new Date().toString()).concat(".xml");
+					 	   List<Mightyotadevice> mightyotadeviceList=(List<Mightyotadevice>)request.getAttribute("mightyOTAList");
+						%>
 	
-<!-- Pie Charts... -->
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-    
-      
-  </head>
-  
-  <body class="hold-transition skin-blue sidebar-mini">
-  
-  			<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
-  			%>
-  			<% List<MightyUserInfo> mightyUserList=(List<MightyUserInfo>)request.getAttribute("mightyUserList"); %>
-  			<% List<MightyDeviceInfo> mightyDeviceList=(List<MightyDeviceInfo>)request.getAttribute("mightyDeviceList");%>
-  			<% List<MightyDeviceFirmware> latestOTA=(List<MightyDeviceFirmware>)request.getAttribute("latestOTA");%>
-							 
-  <div class="wrapper">  
+<div class="wrapper">  
   	<header class="main-header" >
    
-	    <a href="https://bemighty.com" class="logo affix">
+	    <a href="https://bemighty.com" class="logo affix" >
 			      
 			     <svg width="121px" height="50px" viewBox="445 13 150 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 			                      					<defs>
@@ -71,7 +76,7 @@
 	    </a>
 
 	    <!-- Header Navbar: style can be found in header.less -->
-	    <nav class="navbar navbar-static-top affix" >
+	    <nav class="navbar navbar-static-top affix">
 	      <!-- Sidebar toggle button-->
 	      <a href="#" class="sidebar-toggle" style="width:2.5em;" data-toggle="offcanvas" role="button">
 	      </a> 
@@ -80,14 +85,14 @@
    </header>
   
   
-  <aside class="main-sidebar" style="position:fixed;">
+  <aside class="main-sidebar affix" style="position:fixed;">
    
     <section class="sidebar">
         
       <!-- search form -->
-      <form action="#" method="get" class="sidebar-form">
+      <form action="searchDevice" method="POST" class="sidebar-form">
         <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Search...">
+          <input type="text" name="searchDev" class="form-control" placeholder="Search Hw/Sw SerialNo...">
               <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
@@ -99,11 +104,11 @@
       <ul class="sidebar-menu">
         <li class="header"><b>MAIN NAVIGATION</b></li>
         <li class="active treeview">
-          <a href="#">
+          <a href="adminHome">
             <i class="fa fa-dashboard"></i> <span><b>Dashboard</b></span>
           </a>
         </li>
-        <li class="treeview"> 
+        <li class="treeview">
           <a href="#">
             <i class="fa fa-files-o"></i>
             <span><b>Reports</b></span>
@@ -113,7 +118,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="deviceUserInfo"><i class="fa fa-circle-o"></i><b>Mighty User</b></a></li>
-            <li><a href="mightyDeviceInfo"><i class="fa fa-circle-o"></i><b>Mighty Device</b></a></li>
+            <li><a href="#"><i class="fa fa-circle-o"></i><b>Mighty Device</b></a></li>
             <li><a href="deviceFirmwareReport"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA </b></a></li>
              <li><a href="mightyDlAuditLog"><i class="fa fa-download"></i> <b>Mighty Downloading AuditLog </b></a></li>
              <li><a href="otaFileUploadedReport"><i class="fa fa-upload"></i> <b>MightyUser Excel Upload </b></a></li>
@@ -131,7 +136,8 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="uploadDeviceFirmware"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA</b></a></li>
-             <li><a href="otaFileUploading"><i class="fa fa-circle-o"></i><b>OTA Excel Upload</b></a></li>
+            <li><a href="otaFileUploading"><i class="fa fa-circle-o"></i><b>OTA Excel Upload</b></a></li>
+           
           </ul>
         </li>
         <li class="treeview">
@@ -161,7 +167,6 @@
            
           </ul>
         </li>
-        
         <li class="treeview">
           <a href="#">
             <i class="fa fa-shopping-cart"></i>
@@ -183,109 +188,98 @@
  
 	<div class="content-wrapper">
 		
-			<section class="content">
+			<section class="content ">
 		 		<div class="content-wrap box box-primary">
-		 		<% if (latestOTA!=null && !latestOTA.isEmpty()){ %>
-		 		<div class="row">
-		 			<div class="col-sm-12">
-				 		<div class=" example5">
-							<span class="ota"><b>Latest Mighty Device Firmware/OTA is <%=latestOTA.get(0).getVersion()%></b> </span>
-						</div>
-					</div>	
-				</div>
-				<% }%>
-					
-		 		<div class="row">
-							<div class="col-sm-12 text-right">
-								<img src="images/user_iocn_header.png" />&nbsp;<b>Welcome  <%=adminUser.getDisplayname()%></b>  &nbsp;&nbsp;&nbsp;<a href="logout"><img src="images/logout_icon_header.png" />&nbsp;<b>Log Out</b></a>
-							</div>
-					
-				</div>
-		 		
-		 		<div class="box-header with-border">
-  					  <h5 class="text-blue text-left "><span class="fa fa-dashboard"></span>&nbsp;&nbsp;<b>Dashboard</b></h5>
-       
-   					 <!-- <div class="box-tools pull-right">
-     					<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-						    Buttons, labels, and many other things can be placed here!
-						    Here is a label for example
-    
-    				</div> --><!-- /.box-tools -->
-   				</div><!-- /.box-header -->
-		 		
 		 		
 			 			
-		 		
-		 		
-		 		
-						<!-- <div class="row">
-							<div class="col-sm-12 page-heading ">
-								<h5 class="text-blue text-center "><span class="fa fa-dashboard"></span>&nbsp;&nbsp;<b>Dashboard</b></h5>
-							</div>
-													
-						</div> -->
-					
-					
-						
-						
-						
-						<%-- <div class="row">
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 text-lightgrey"><i class="fa fa-user"><b>&nbsp;First Name:</b></i></div>
-							<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getFirstname()%></b></div>
-							
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 col-md-offset-2 text-lightgrey"><i class="fa fa-user"><b>&nbsp;Last Name:</b></i></div>
-							<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getLastname()%></b></div>						
-						</div>
-						
-						
-						
-										
 						
 						<div class="row">
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 text-lightgrey"><i class="fa fa-envelope"><b>&nbsp;Email:</b></i></div>
-							<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15 text-break"><b><%=adminUser.getEmailaddress()%></b></div>
+							<div class="col-sm-12 text-right ">	
+							    <img src="images/user_iocn_header.png" />&nbsp;<b>Welcome  <%=adminUser.getDisplayname()%></b>  &nbsp;&nbsp;&nbsp;<a href="logout"><img src="images/logout_icon_header.png" />&nbsp;<b>Log Out</b></a>
+							</div>
+													
+						</div><br/>
+					
+					
+						<div class="row">
+								<div class="col-sm-8 page-heading mar-top-20">
+								
+								<h5 class="text-blue text-semi-bold"><i class="fa fa-upload"></i>&nbsp;&nbsp;<b>MightyUser Excel Upload</b></h5>
+								</div>
+													
+						</div><br/>
+						
+						
+						<div class="row" style="overflow-y: auto;">
+							<div class="col-sm-12">	
 							
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 col-md-offset-2 text-lightgrey"><i class="fa fa-phone"><b>&nbsp;Mobile No:</b></i></div>
-							<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getContactnumber()%></b></div>						
+							
+							<%-- <table class="table table-hover text-center">
+									    <thead>
+									      <tr class="text-blue text-semi-bold">
+									        <th>ID</th>
+									        <th>DeviceID/HwSerialNo.</th>
+									        <th>DeviceName</th>
+									        <th>DeviceType</th>
+									        <th>Sw_Version</th>
+									        <th>AppBuild</th>
+									        <th>AppVersion</th>
+									        <th>Is_Registered</th>
+									        <th>Is_Active</th>
+									      </tr>
+									    </thead>
+									    <tbody>
+									    <% if(mightDeviceList!=null && !mightDeviceList.isEmpty()){
+										    for(MightyDeviceInfo md :mightDeviceList){
+										    %>
+									      <tr>
+									        <td><%=md.getId()%></td>
+									        <td><%=md.getDeviceId()%></td>
+									        <td><%=md.getDeviceName()%></td>
+									        <td><%=md.getDeviceType()%></td>
+									        <td><%=md.getSwVersion()%></td>
+									        <td><%=md.getAppBuild()%></td>
+									        <td><%=md.getAppVersion()%></td>
+									        <td><%=md.getIsRegistered()%></td>
+									        <td><%=md.getIsActive()%></td>
+									        
+									        
+									       
+									      </tr>
+									      	<%}
+									    }%>
+									    </tbody>
+									  </table> --%>
+							<%if(mightyotadeviceList!=null && !mightyotadeviceList.isEmpty()){ %>		  
+						
+				        <display:table class="table table-hover text-center" name="<%=mightyotadeviceList%>" id="row"
+									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
+								<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />
+											
+								<display:column  property="devices" title="Device#"	sortable="true" headerClass="sortable" />
+								
+								<display:column  property="username" title="Username" sortable="true" headerClass="sortable"/>
+								
+								<display:column  property="createdDt" title="CreatedDt" sortable="true" headerClass="sortable"/>
+																
+				     		   
+							 	<display:setProperty name="export.csv.filename" value="<%=fname1%>" />
+								<display:setProperty name="export.excel.filename" value="<%=fname2%>" />
+								<display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
+						</display:table> 
+						
+						<% }else{%>
+						<p>No content found!</p>
+						<%} %>
+							</div>
 						</div>
-						 --%>
-						
-   						
-   						
-   						<div class="row">
-   							<div class="info-box col-sm-4 mar-top-15" >
-							  <!-- Apply any bg-* class to to the icon to color it -->
-							  	<span class="info-box-icon bg-blue"><i class="fa fa-user"></i></span>
-							  	<div class="info-box-content">
-								    <span class="info-box-text">Mighty Users</span>
-								    <span class="info-box-number"><b><%=mightyUserList.get(0)%></b></span>
-							 	</div><!-- /.info-box-content -->
-							 </div><!-- /.info-box -->
-						
-   							<div class="info-box col-sm-4 mar-top-15" >
-							  <!-- Apply any bg-* class to to the icon to color it -->
-							  <span class="info-box-icon bg-green"><i class="fa fa-music"></i></span>
-							  <div class="info-box-content">
-							    <span class="info-box-text">Mighty Device</span>
-							    <span class="info-box-number"><b><%=mightyDeviceList.get(0)%></b></span>
-							  </div><!-- /.info-box-content -->
-							</div><!-- /.info-box -->
-						
-   							<%-- <div class="info-box col-sm-4 mar-top-10" >
-							  <!-- Apply any bg-* class to to the icon to color it -->
-							  <span class="info-box-icon bg-red"><i class="fa fa-upload"></i></span>
-							  <div class="info-box-content">
-							    <span class="info-box-text"><em>Latest Device Firmware/OTA</em></span>
-							    <span class="info-box-number"><b><%=latestOTA.get(0).getVersion()%></b></span>
-							  </div><!-- /.info-box-content -->
-							</div><!-- /.info-box --> --%>
-						</div>
-										
-						</div>	
+						<a  id="goTop"><i class="fa fa-eject"></i></a>	
+				</div>			
 			</section>	
 			<%@include file="Footer.jsp"%>  		
 	</div>	
-	</div>
-			
-  </body>
+</div>
+		 
+		
+</body>
 </html>

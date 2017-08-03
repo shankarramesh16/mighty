@@ -5,8 +5,11 @@ import java.util.Set;
 
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
+import com.team.mighty.domain.MightyUpload;
 import com.team.mighty.domain.MightyUserInfo;
+import com.team.mighty.domain.Mightydlauditlog;
 import com.team.mighty.domain.Mightylog;
+import com.team.mighty.domain.Mightyotadevice;
 import com.team.mighty.dto.ConsumerDeviceDTO;
 import com.team.mighty.dto.DeviceInfoDTO;
 import com.team.mighty.dto.UserDeviceRegistrationDTO;
@@ -91,6 +94,14 @@ public interface ConsumerInstrumentService {
 	public List<MightyDeviceUserMapping> getMightyUserDeviceMappingByUserId(long id)throws MightyAppException;
 
 	public MightyDeviceInfo getMightyDeviceInfoOnMappingDevice(long mightyDeviceId)throws MightyAppException;
+
+	public MightyUpload updateMightyUpload(MightyUpload mu)throws MightyAppException;
+
+	public Mightydlauditlog updateMightydlauditlog(Mightydlauditlog mlog)throws MightyAppException;
+
+	public List<Mightydlauditlog> getMightyDlAuditLog()throws MightyAppException;
+
+	public List<Mightyotadevice> getExcelUploadMightyInfo()throws MightyAppException;
 
 	
 

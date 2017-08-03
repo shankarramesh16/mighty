@@ -62,52 +62,15 @@
 	 function confirmValidate() {
 		
 	    var input1 = document.getElementById("file1");
-	    var input2 = document.getElementById("file2");
-	    var fromDate = $("input[name=fromDate]").val();
-		var flag = true;
-		
-		
-		var validExts = new Array(".txt");
-	    var fileExt = input2.value;
-	    fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
-	   
-		var currentDate = new Date();
-		var currentDatevar = currentDate.getDate() + "/"
-				+ currentDate.getMonth() + "/" + currentDate.getFullYear();
-		
-		
-		if(fromDate=="")
-		{
-		 document.getElementById("errortag1").innerHTML = "Effective Date!";
-		 $('.validation-required').removeClass("validation-required").addClass("form-control");
-		 $('.san').show();
-		 document.getElementById("fromDate").focus();
-		  flag=false;
-		
+	   	var flag = true;
+						
+		if (!input1.files[0]){
+				document.getElementById("errortag2").innerHTML = "Please select username Excel file for OTA upgrade!";
+				$('.validation-required').removeClass("validation-required").addClass("form-control");
+				$('.san').show();
+				document.getElementById("file1").focus();
+				flag=false;
 		}		
-		else  if (!input1.files[0]) {
-			 document.getElementById("errortag1").innerHTML = "";
-		 document.getElementById("errortag2").innerHTML = "Please select a Binary file!";
-		 $('.validation-required').removeClass("validation-required").addClass("form-control");
-		 $('.san').show();
-		 document.getElementById("file1").focus();
-		   flag=false;
-		}else if (!input2.files[0]) {
-			document.getElementById("errortag2").innerHTML = "";
-			 document.getElementById("errortag3").innerHTML = "Please select a Version file!";
-			 $('.validation-required').removeClass("validation-required").addClass("form-control");
-			 $('.san').show();
-			 document.getElementById("file2").focus();
-			   flag=false;
-		} else  if (validExts.indexOf(fileExt) < 0) {
-			document.getElementById("errortag3").innerHTML = "";
-			document.getElementById("errortag").innerHTML = "Invalid file selected, valid files are of " +
-            validExts.toString() + " types.";
-			document.getElementById("file2").focus();
-			flag=false;
-		} 
-		    
-		
 			
 		return flag;
 
@@ -183,6 +146,8 @@
             <li><a href="deviceUserInfo"><i class="fa fa-circle-o"></i><b>Mighty User</b></a></li>
             <li><a href="mightyDeviceInfo"><i class="fa fa-circle-o"></i><b>Mighty Device</b></a></li>
             <li><a href="deviceFirmwareReport"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA </b></a></li>
+             <li><a href="mightyDlAuditLog"><i class="fa fa-download"></i> <b>Mighty Downloading AuditLog </b></a></li>
+             <li><a href="otaFileUploadedReport"><i class="fa fa-upload"></i> <b>MightyUser Excel Upload </b></a></li>
             <li><a href="#"><i class="fa fa-circle-o"></i> <b>Mighty Feature Playlist </b></a></li>
           </ul>
         </li>
@@ -196,7 +161,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA</b></a></li>
+            <li><a href="uploadDeviceFirmware"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA</b></a></li>
+            <li><a href="#"><i class="fa fa-circle-o"></i><b>OTA Excel Upload</b></a></li>
            
           </ul>
         </li>
@@ -264,7 +230,7 @@
 						<div class="row">
 								<div class="col-sm-8 page-heading mar-top-20">
 								
-								<h5 class="text-blue text-semi-bold " ><i class="fa fa-upload"></i>&nbsp;&nbsp;<b>Upload Device Firmware/OTA</b></h5>
+								<h5 class="text-blue text-semi-bold " ><i class="fa fa-upload"></i>&nbsp;&nbsp;<b>Excel upload for OTA control </b></h5>
 								</div>
 													
 						</div><br/>
@@ -280,37 +246,22 @@
 						<div class="row">
 							<div class="col-sm-12">	
 						
-					    <form action="deviceFirmwareSubmit" enctype="multipart/form-data" name="deviceFirmwareForm" 
+					    <form action="mightyOTAFileUploadSubmit" enctype="multipart/form-data" name="deviceFirmwareForm" 
 								style="border: 1px outset grey;border-left: 5px solid grey;text-align:center;max-width:350px;margin:0 auto ;"  
 									onsubmit="return confirmValidate();" method="post">
 								<div class="push-200 login-input-wrap">
-								
-									<div class="row">
-									
-									<div class="col-md-5 col-sm-5 col-xs-6 mar-top-15 " style="text-align: left;"><i class="fa fa-calendar"></i>&nbsp;<b>Effective Date</b>
-										 <input type="text" name="fromDate" id="fromDate"  placeholder="Select Date" class="form-control" /><span id="errortag1" class="text-bold text-red " ></span>
-									</div>
-														
-									</div>	
-												
+													
 								
 								
 									<div class="row">
 									
-									<div class="col-md-12  mar-top-15" style="text-align: left;"><i class="fa fa-file"></i>&nbsp;<b>Binary File:</b>
+									<div class="col-md-12  mar-top-15" style="text-align: left;"><i class="fa fa-file"></i>&nbsp;<b>Excel File:</b>
 									  <input type="file" name="file1" accept="text/plain" id="file1"  />  <span id="errortag2" class="text-bold text-red " ></span>
 										 
 									</div>
 									
 									</div>	
-					
-									<div class="row">
-									
-									<div class="col-md-12 mar-top-15  " style="text-align: left;"><i class="fa fa-file-text"></i>&nbsp;<b>Version File:</b>
-										 <input type="file" name="file2" id="file2" accept=".csv"/> <span id="errortag3" class="text-bold text-red " ></span> 
-									</div>
-									
-									</div>	
+														
 									
 									<div>	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									</div>			 
@@ -330,9 +281,7 @@
 						<a  id="goTop"><i class="fa fa-eject"></i></a>	
 				 </div>
 			</section>	
-			<div class="row text-center mar-btm-200">
-					<P><i class="fa fa-file-text"></i>&nbsp;<b>Note:</b>Version file contains text data with specific format of mighty-(version,hash value,hash type,requires,appbuild).</P>
-			</div>
+			
 			<%@include file="Footer.jsp"%>  		
 	</div>	
 </div>

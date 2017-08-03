@@ -1,13 +1,14 @@
 package com.team.mighty.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,18 +17,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyUserInfo;
+import com.team.mighty.domain.Mightydlauditlog;
 import com.team.mighty.domain.Mightylog;
+import com.team.mighty.domain.Mightyotadevice;
 import com.team.mighty.dto.ConsumerDeviceDTO;
+import com.team.mighty.exception.MightyAppException;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;
 import com.team.mighty.service.ConsumerInstrumentService;
@@ -119,6 +129,30 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		logger.debug("Mighty device List"+mightyDeviceList.size());
 		map.put("mightyDeviceList", mightyDeviceList);
 		return "mightyDeviceInfo";
+	}
+	
+	
+	@RequestMapping(value = "/otaFileUploading", method = RequestMethod.GET)
+	public String otaFileUploadingHandler() throws Exception {
+		logger.debug("Getting otaFileUploading ");
+			return "uploadfile";
+	}
+	
+	
+	@RequestMapping(value = "/otaFileUploadedReport", method = RequestMethod.GET)
+	public String otaFileUploadingReportHandler(Map<String,Object> map) throws Exception {
+		logger.debug("Getting otaFileUploadedReport ");
+		List<Mightyotadevice> mightyOTAList=consumerInstrumentServiceImpl.getExcelUploadMightyInfo();
+		map.put("mightyOTAList", mightyOTAList);
+			return "otaExcelFileUploadReport";
+	}
+	
+	@RequestMapping(value = "/mightyDlAuditLog", method = RequestMethod.GET)
+	public String mightyDlAuditLogHandler(Map<String,Object> map) throws Exception {
+		logger.debug("Getting mightyDlAuditLog inform");
+		List<Mightydlauditlog> mightydlauditlog=consumerInstrumentServiceImpl.getMightyDlAuditLog();		
+		map.put("mightydlauditlog", mightydlauditlog);
+		return "mightydlauditlog";
 	}
 	
 	
@@ -429,4 +463,124 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 			} 
 	
 	}
+	
+	@RequestMapping(value="/mightyOTAFileUploadSubmit", method = RequestMethod.POST)
+	public String mightyOTAFileUploadSubmitHandler(HttpServletRequest request,Map<String,Object> map,@RequestParam("file1") MultipartFile file1)  {
+		logger.debug("IN file uploading");
+		
+		List<Mightyotadevice> otaList=null;
+			
+		try {
+			
+			otaList=new ArrayList<Mightyotadevice>();
+				 boolean flag = false;
+				// File file =new File("C:\\Users\\Dell\\Desktop\\upload\\mighty_ota_upgrade.xlsx");
+				// File file =new File("/mnt/data/vhosts/casite-733550.cloudaccess.net/uploadfiles/mighty_ota_upgrade.xlsx");
+				 //byte[] fileData = new byte[(int) file.length()];
+				 //FileInputStream in = new FileInputStream(file1);
+				 InputStream in= file1.getInputStream();
+				 logger.debug("size uploading",file1.getBytes().length);
+				 
+					
+					XSSFWorkbook workbook = new XSSFWorkbook(in);
+					XSSFSheet sheet = workbook.getSheetAt(0);
+										  
+					Iterator<Row> rowIterator = sheet.iterator();
+					  
+					rowIterator.next();
+					while (rowIterator.hasNext()) {
+						logger.debug("row ");
+						
+						if (flag)
+							break;
+
+						Row row = rowIterator.next();
+						// For each row, iterate through each columns
+
+						Iterator<Cell> cellIterator = row.cellIterator();
+						
+						//boolean isScheduleAlter = false;
+						while (cellIterator.hasNext()) {
+							Mightyotadevice ota=null;
+								ota=new Mightyotadevice();
+							Cell cell = cellIterator.next();
+											
+							logger.debug("col ", cell.getColumnIndex());
+							
+							if (cell.getColumnIndex() <1) {
+								cell.setCellType(Cell.CELL_TYPE_STRING);
+																
+							} else {
+								break;
+							}
+		 
+							if (cell.getColumnIndex() == 0) {
+									String value = cell.getStringCellValue();
+									logger.debug(" cell getColumnIndex==0 value=",value);
+								
+								if (value == null || value.equals("")) {
+									logger.debug("End of file");
+									flag = true;
+									break;
+								}
+								
+								ota.setUsername(cell.getStringCellValue().trim());
+							} 
+							
+							otaList.add(ota);	
+							
+							
+
+					}
+					
+				}	
+					logger.debug("Listsize",otaList.size());
+					if(otaList!=null && !otaList.isEmpty()){
+							adminInstrumentServiceImpl.deleteExistingEntryFromMightyOTADev();
+						for(Mightyotadevice ota : otaList){
+							List<MightyUserInfo> mightyUsers=consumerInstrumentServiceImpl.getUserByUserName(ota.getUsername());
+								if(mightyUsers!=null && !mightyUsers.isEmpty()){
+									MightyUserInfo user=mightyUsers.get(0);
+									List<MightyDeviceUserMapping> md=consumerInstrumentServiceImpl.getMightyUserDeviceMappingByUserId(user.getId());
+										if(md!=null & !md.isEmpty()){
+											logger.debug("hiiiii size",md.size());
+											for(MightyDeviceUserMapping m : md){
+												logger.debug("deviceMapping id",m.getMightyDeviceId());
+												MightyDeviceInfo dev=consumerInstrumentServiceImpl.getMightyDeviceInfoOnMappingDevice(m.getMightyDeviceId());
+												if(dev!=null){
+													Mightyotadevice ota1=null;
+															ota1=new Mightyotadevice();
+													 ota1.setDevices(dev.getDeviceId());
+													 ota1.setUsername(ota.getUsername());
+													 ota1.setCreatedDt(new Date(System.currentTimeMillis()));
+													 adminInstrumentServiceImpl.saveMightyOtaDevice(ota1);
+												 }else if(m.getMightyDeviceId()==0 && dev==null){
+													 Mightyotadevice ota1=null;
+													 		ota1=new Mightyotadevice();
+													 ota1.setDevices("0");
+													 ota1.setUsername(ota.getUsername());
+													 ota1.setCreatedDt(new Date(System.currentTimeMillis()));
+													 adminInstrumentServiceImpl.saveMightyOtaDevice(ota1);
+												 }
+											}
+										}
+								}
+							
+						}
+					}	
+					
+				 
+				 in.close();
+			   
+			
+		}
+		catch (IOException ex){
+        	logger.error("Exceptions IO as/,",ex);
+        }
+		catch(MightyAppException e) {
+			logger.error("Exceptions MightyAppException as/", e);
+		}
+				
+		return "redirect:/otaFileUploadedReport";
+	}	
 }

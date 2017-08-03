@@ -1,6 +1,8 @@
 package com.team.mighty.domain;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.*;
 
 
@@ -20,6 +22,21 @@ public class Mightyotadevice implements Serializable {
 
 	public long getId() {
 		return id;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="created_dt")
+	private Date createdDt;
+
+
+	public Date getCreatedDt() {
+		return createdDt;
+	}
+
+
+
+	public void setCreatedDt(Date createdDt) {
+		this.createdDt = createdDt;
 	}
 
 

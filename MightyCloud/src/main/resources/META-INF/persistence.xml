@@ -20,6 +20,8 @@
 		<class>com.team.mighty.domain.Setting</class>
 		<class>com.team.mighty.domain.Mightylog</class>
 		<class>com.team.mighty.domain.Mightyotadevice</class>
+		<class>com.team.mighty.domain.MightyUpload</class>
+		<class>com.team.mighty.domain.Mightydlauditlog</class>
 	
 
 		<properties>
