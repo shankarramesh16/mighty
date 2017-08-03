@@ -2,7 +2,10 @@ package com.team.mighty.service.impl;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.Date;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -987,6 +990,12 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	public String getMightyLogsMsg(Mightylog logs) throws Exception {
 		String ticket="";
+		 Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		  String s = formatter.format(logs.getUpdatedDt())+".0";
+		
+		String link="https://mighty2.cloudaccess.host/test1/downloadMightyLogs/?devId="+logs.getDeviceId()+"&dat="+ URLEncoder.encode(s, "UTF-8")+"&usrId="+logs.getUsername();
+		//String link="http://192.168.1.107:8088/MightyCloud/getLogs/?devId="+logs.getDeviceId()+"&usrId="+logs.getUsername()+"&dat="+s;
+			logger.debug("link as",link);
 		if(logs.getTicket()!=null && !logs.getTicket().isEmpty()){
 			ticket="<br/>Ticket Number:"+logs.getTicket();
 		}
@@ -995,7 +1004,10 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 				+"<br/>Mighty device:"+logs.getDeviceId()
 				+"<br/>Category:"+logs.getLogType()
 				+ticket
-				+"<br/>Description:"+logs.getDescription();
+				+"<br/>Description:"+logs.getDescription()
+				+"<br/><a href="+link+">Download Mightylog</a>";
+				//+"<br/>Download Log URL:  "+link;
+				
 				}
 
 	

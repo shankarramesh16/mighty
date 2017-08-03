@@ -3,6 +3,7 @@ package com.team.mighty.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -88,6 +89,8 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 								consumerDeviceDTO.setCreatedDt(m.getCreatedDt());
 								consumerDeviceDTO.setUpdatedDt(m.getUpdatedDt());
 								consumerDeviceDTO.setUsrdevReg(md.getRegistrationStatus());
+								consumerDeviceDTO.setAppOS(md.getPhoneDeviceOSVersion());
+								consumerDeviceDTO.setAppType(md.getPhoneDeviceType());
 								if(mightyDeviceInfo!=null){
 										consumerDeviceDTO.setDeviceId(mightyDeviceInfo.getDeviceId());
 										
@@ -396,12 +399,81 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/getLogs",method=RequestMethod.POST)
+	@RequestMapping(value = "/getLogs",method={RequestMethod.POST,RequestMethod.GET})
 	public void downloadMighylogHandler(HttpServletRequest request,HttpServletResponse response,Map<String,Object> map,RedirectAttributes redirectAttributes) throws IOException, SQLException {
 		logger.debug("In submitting downloadMighylog ");
 		String devId=request.getParameter("devId");
 		String username=request.getParameter("usrId");
 		String dat=request.getParameter("dat");
+		logger.debug("deviceIddd",devId);
+		logger.debug("usernameee",username);
+		logger.debug("updated_dateee",dat);
+	
+		  try {
+			  
+			  List<Mightylog> mlogList=consumerInstrumentServiceImpl.getExistingMightylog(devId, username);
+			  if(mlogList!=null && !mlogList.isEmpty()){
+				 logger.debug("entrysize",mlogList.size());
+				 if(mlogList.size()==1){ 
+					 logger.debug("IF size 1");
+				  Mightylog mlog=mlogList.get(0);
+				   //response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+					 String headerKey = "Content-Disposition";
+				        String headerValue = String.format("attachment; filename=\"%s\"","Mightylogs "+" "+dat+" "+mlog.getDeviceId()+".gz");
+				        response.setHeader(headerKey, headerValue);
+							OutputStream out = response.getOutputStream();
+								response.setContentType("text/plain");
+								  logger.debug("Size of file content"+mlog.getFileContent().length());
+								  //logger.debug("Size of file content"+new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString())));
+								  //new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString()));
+									IOUtils.copy(mlog.getFileContent().getBinaryStream(), out);
+										out.flush();
+											out.close();
+			      }else if(mlogList.size()>1){
+			    	  logger.debug("Else IF size >1");
+					  for(Mightylog mlog : mlogList){
+						  logger.debug("updated_sqldate_as",mlog.getUpdatedDt());
+											 
+						  Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						  String s = formatter.format(mlog.getUpdatedDt());
+						  	
+						  logger.debug("updated_date_request",s);
+						  logger.debug("updated_date_request_0_added",s+".0");
+						  
+						  if(dat.equalsIgnoreCase(s+".0")){
+							  logger.debug("inside loop updated_date_requestted");
+					//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+						 String headerKey = "Content-Disposition";
+					        String headerValue = String.format("attachment; filename=\"%s\"","Mightylogs "+" "+dat+" "+mlog.getDeviceId()+".gz");
+					        response.setHeader(headerKey, headerValue);
+								OutputStream out = response.getOutputStream();
+									response.setContentType("text/plain");
+									  logger.debug("Size of file content"+mlog.getFileContent().length());
+									  //logger.debug("Size of file content"+new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString())));
+									  //new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString()));
+										IOUtils.copy(mlog.getFileContent().getBinaryStream(), out);
+											out.flush();
+												out.close();
+						  	} 
+					  }  
+				    }
+			    }	//if main ended here							
+			
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} 
+	
+	}
+	
+	
+	@RequestMapping(value = "/downloadMightyLogs",method=RequestMethod.GET)
+	public void downloadMightyLogsHandler(HttpServletRequest request,HttpServletResponse response,Map<String,Object> map,RedirectAttributes redirectAttributes) throws IOException, SQLException {
+		logger.debug("In submitting downloadMighylog ");
+		String devId=request.getParameter("devId");
+		String username=request.getParameter("usrId");
+		String dat=URLDecoder.decode(request.getParameter("dat"), "UTF-8" );
 		logger.debug("deviceIddd",devId);
 		logger.debug("usernameee",username);
 		logger.debug("updated_dateee",dat);

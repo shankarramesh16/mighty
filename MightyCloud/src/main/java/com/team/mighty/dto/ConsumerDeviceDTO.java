@@ -41,6 +41,25 @@ public class ConsumerDeviceDTO implements Serializable {
 	
 	private String lastName;
 	
+	private String appOS;
+	public String getAppOS() {
+		return appOS;
+	}
+
+	public void setAppOS(String appOS) {
+		this.appOS = appOS;
+	}
+
+	public String getAppType() {
+		return appType;
+	}
+
+	public void setAppType(String appType) {
+		this.appType = appType;
+	}
+
+	private String appType;
+	
 	private String deviceId;
 	public Date getPwdChangedDate() {
 		return pwdChangedDate;

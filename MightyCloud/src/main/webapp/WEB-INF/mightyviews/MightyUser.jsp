@@ -252,6 +252,8 @@
 							<display:column  property="userName" title="UserName" sortable="true"  />
 							<display:column  property="emailId" title="EmailID" sortable="true"  />
 							<display:column  property="deviceId" title="DeviceMapping" sortable="true"  />
+							<display:column  property="appOS" title="MobileOS" sortable="true"  />
+							<display:column  property="appType" title="MobileType" sortable="true"  />
 							<display:column  property="usrdevReg" title="User_Dev_Reg" sortable="true"  />
 							<display:column  property="userIndicator" title="UserIndicator" 	sortable="true"  />
 							<display:column  property="userStatus" title="Status" sortable="true"  />
