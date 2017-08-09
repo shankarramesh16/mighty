@@ -122,6 +122,7 @@
             <li><a href="deviceFirmwareReport"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA </b></a></li>
             <li><a href="#"><i class="fa fa-download"></i> <b>Mighty Downloading AuditLog </b></a></li>
             <li><a href="otaFileUploadedReport"><i class="fa fa-upload"></i> <b>MightyUser Excel Upload </b></a></li>
+            <li><a href="mightyToCloudLog"><i class="fa fa-download"></i> <b>Mighty to Cloud Log Download </b></a></li>
             <li><a href="#"><i class="fa fa-circle-o"></i> <b>Mighty Feature Playlist </b></a></li>
           </ul>
         </li>

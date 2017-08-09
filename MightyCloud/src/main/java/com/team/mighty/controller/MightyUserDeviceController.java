@@ -33,6 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
+import com.team.mighty.domain.MightyUpload;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.domain.Mightydlauditlog;
 import com.team.mighty.domain.Mightylog;
@@ -134,7 +135,15 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		return "mightyDeviceInfo";
 	}
 	
+
 	
+	@RequestMapping(value = "/mightyToCloudLog", method = RequestMethod.GET)
+	public String mightyToCloudLogHandler(Map<String,Object> map) throws Exception {
+		logger.debug("Getting /mightyToCloudLog ");
+		Set<String> mightyLogs=consumerInstrumentServiceImpl.getMightyToCloudLogs();
+		map.put("mightyLogs", mightyLogs);
+		  return "mightyToCloudLogsReport";
+	}
 	@RequestMapping(value = "/otaFileUploading", method = RequestMethod.GET)
 	public String otaFileUploadingHandler() throws Exception {
 		logger.debug("Getting otaFileUploading ");
@@ -172,57 +181,61 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 	public @ResponseBody String ajaxForGetUserByDevId(HttpServletRequest request,Map<String,Object> map) throws Exception {
 		logger.debug("Getting User as per mighty id ");	
 		String devId=request.getParameter("devId");
-		logger.debug("DevId as"+devId);
-		MightyDeviceInfo m=consumerInstrumentServiceImpl.getMightyDeviceOnId(Long.parseLong(devId));
-		List<MightyDeviceUserMapping> mdList=consumerInstrumentServiceImpl.getMightyDeviceUserMappingOndevId(Long.parseLong(devId));
 		String retVal="";
-		
-		for(MightyDeviceUserMapping md : mdList){
-			MightyUserInfo usr=md.getMightyUserInfo();
-			if(md.getRegistrationStatus().equalsIgnoreCase("Y")){
-				retVal=retVal+"<tr>"
-							+"<td>"
-							+usr.getUserName()
-							+"</td>"
-							+"<td>"
-							+ "<input type=\"hidden\" id=\"usrId\"  name=\"usrId\" value="+"\""+usr.getId()+"\""+"/>"
-							+ "<input type=\"text\" id=\"emailId\"  name=\"emailId\" value="+"\""+usr.getEmailId()+"\""+"/>"
-							+"</td>"
-							+"<td>"
-							+m.getDeviceId()
-							+"</td>"
-							+"<td>"
-							+usr.getUserIndicator()
-							+"</td>"
-							+"<td>"
-							+md.getRegistrationStatus()
-							+"</td>"
-							+"<td>"
-							+"<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"updateUserInfo() \" >Submit</button>"
-							+"</td>"
-							+"</tr>";
-			}	
+		logger.debug("DevId as"+devId);
+		//MightyDeviceInfo m=consumerInstrumentServiceImpl.getMightyDeviceOnId(Long.parseLong(devId));
+		MightyDeviceInfo m=consumerInstrumentServiceImpl.getDeviceOnDeviceId(devId);
+		if(m!=null){
+			List<MightyDeviceUserMapping> mdList=consumerInstrumentServiceImpl.getMightyDeviceUserMappingOndevId(m.getId());
 			
-			if(md.getRegistrationStatus().equalsIgnoreCase("N")){
-				retVal=retVal+"<tr>"
-							+"<td>"
-							+usr.getUserName()
-							+"</td>"
-							+"<td>"
-							+usr.getEmailId()
-							+"</td>"
-							+"<td>"
-							+m.getDeviceId()
-							+"</td>"
-							+"<td>"
-							+usr.getUserIndicator()
-							+"</td>"
-							+"<td>"
-							+md.getRegistrationStatus()
-							+"</td>"
-							+"</tr>";
-			}					
 			
+			for(MightyDeviceUserMapping md : mdList){
+				MightyUserInfo usr=md.getMightyUserInfo();
+				if(md.getRegistrationStatus().equalsIgnoreCase("Y")){
+					retVal=retVal+"<tr>"
+								+"<td>"
+								+usr.getUserName()
+								+"</td>"
+								+"<td>"
+								+ "<input type=\"hidden\" id=\"usrId\"  name=\"usrId\" value="+"\""+usr.getId()+"\""+"/>"
+								+ "<input type=\"text\" id=\"emailId\"  name=\"emailId\" value="+"\""+usr.getEmailId()+"\""+"/>"
+								+"</td>"
+								+"<td>"
+								+m.getDeviceId()
+								+"</td>"
+								+"<td>"
+								+usr.getUserIndicator()
+								+"</td>"
+								+"<td>"
+								+md.getRegistrationStatus()
+								+"</td>"
+								+"<td>"
+								+"<button type=\"button\" class=\"btn btn-primary btn-xs\" onclick=\"updateUserInfo() \" >Submit</button>"
+								+"</td>"
+								+"</tr>";
+				}	
+				
+				if(md.getRegistrationStatus().equalsIgnoreCase("N")){
+					retVal=retVal+"<tr>"
+								+"<td>"
+								+usr.getUserName()
+								+"</td>"
+								+"<td>"
+								+usr.getEmailId()
+								+"</td>"
+								+"<td>"
+								+m.getDeviceId()
+								+"</td>"
+								+"<td>"
+								+usr.getUserIndicator()
+								+"</td>"
+								+"<td>"
+								+md.getRegistrationStatus()
+								+"</td>"
+								+"</tr>";
+				}					
+				
+			}
 		}
 		return retVal;
 	}
@@ -350,6 +363,7 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		List<Mightylog> logList=consumerInstrumentServiceImpl.getMightyLogsOndevId(devId);
 		String retVal="";
 		if(logList!=null){
+			int i=1;
 			for(Mightylog log : logList){
 				retVal=retVal+"<tr>"
 								+"<td>"
@@ -387,20 +401,123 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 								+"</td>"
 								+"<td>"
 								//+"<input type=\"file\" id=\"file1\" name=\"file1\" value="+"\""+log.getFileContent()+"\""+"/>"
-								//+"<input type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"Download\">"
+								//+"<input type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"Download\" onclick=\"downloadMightyLog(this.form.dat"+i+".value)\";>"
 								+"<input type=\"hidden\" id=\"device\" name=\"device\" value="+"\""+log.getDeviceId()+"\""+"/>"
 								+"<input type=\"hidden\" id=\"usrId\" name=\"usrId\" value="+"\""+log.getUsername()+"\""+"/>"
+								+"<input type=\"hidden\" id=\"dat"+i+"\" value="+"\""+log.getUpdatedDt()+"\""+"/>"
+								+"<input type=\"button\" class=\"btn btn-primary btn-xs\" value=\"Download\" onclick=\"downloadMightyLog(this.form.dat"+i+".value)\";/>"
+								+"</td>"
+								+"</tr>";
+				i++;
+				}	
+		}
+		return retVal;
+	}
+	
+	@RequestMapping(value = "/getMightyToCloudLogByDevId", method = RequestMethod.GET)
+	public @ResponseBody String ajaxForGetMightyToCloudLogByDevId(HttpServletRequest request,Map<String,Object> map) throws Exception {
+		logger.debug("Getting Log /getMightyToCloudLogByDevId");	
+		String devId=request.getParameter("devId");
+		logger.debug("DevId ass"+devId);
+		List<MightyUpload> logList=consumerInstrumentServiceImpl.getMightyToCloudLogsOndevId(devId);
+		String retVal="";
+		if(logList!=null){
+			for(MightyUpload log : logList){
+				retVal=retVal+"<tr>"
+								+"<td>"
+								+log.getId()
+								+"</td>"
+								+"<td>"
+								+log.getDeviceId()
+								+"</td>"
+								+"<td>"
+								+log.getFileName()
+								+"</td>"
+								+"<td>"
+								+log.getCreatedDt()
+								+"</td>"
+								+"<td>"
+								+log.getUpdatedDt()
+								+"</td>"
+								+"<td>"
+								+"<input type=\"hidden\" id=\"device\" name=\"device\" value="+"\""+log.getDeviceId()+"\""+"/>"
 								+"<input type=\"hidden\" id=\"dat\" name=\"dat\" value="+"\""+log.getUpdatedDt()+"\""+"/>"
 								+"<input type=\"submit\" class=\"btn btn-primary btn-xs\" value=\"Download\" />"
+								//+"<input type=\"button\" class=\"btn btn-primary btn-xs\" value=\"Download\" onclick=\"downloadMighty()\" />"
 								+"</td>"
 								+"</tr>";
 				}	
 		}
 		return retVal;
 	}
+	@RequestMapping(value = "/getMightyToCloudLogs",method={RequestMethod.POST,RequestMethod.GET})
+	public void downloadMighyToCloudlogHandler(HttpServletRequest request,HttpServletResponse response,Map<String,Object> map,RedirectAttributes redirectAttributes) throws IOException, SQLException {
+		logger.debug("In submitting downloadMighylog ");
+		String devId=request.getParameter("devId");
+		String dat=request.getParameter("dat");
+		logger.debug("deviceIddd",devId);
+		logger.debug("updated_dateee",dat);
+	
+		  try {
+			  
+			  List<MightyUpload> mlogList=consumerInstrumentServiceImpl.getMightyToCloudLogsOndevId(devId);
+			  if(mlogList!=null && !mlogList.isEmpty()){
+				 logger.debug("entrysize",mlogList.size());
+				 if(mlogList.size()==1){ 
+					 logger.debug("IF size 1");
+					 MightyUpload mlog=mlogList.get(0);
+				   //response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+					 String headerKey = "Content-Disposition";
+				        String headerValue = String.format("attachment; filename=\"%s\"","MightyToCloudlogs "+" "+dat+" "+mlog.getDeviceId()+".gz");
+				        response.setHeader(headerKey, headerValue);
+							OutputStream out = response.getOutputStream();
+								response.setContentType("text/plain");
+								  logger.debug("Size of file content"+mlog.getFileContent().length());
+								  //logger.debug("Size of file content"+new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString())));
+								  //new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString()));
+									IOUtils.copy(mlog.getFileContent().getBinaryStream(), out);
+										out.flush();
+											out.close();
+			      }else if(mlogList.size()>1){
+			    	  logger.debug("Else IF size >1");
+					  for(MightyUpload mlog : mlogList){
+						  logger.debug("updated_sqldate_as",mlog.getUpdatedDt());
+											 
+						  Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						  String s = formatter.format(mlog.getUpdatedDt());
+						  	
+						  logger.debug("updated_date_request",s);
+						  logger.debug("updated_date_request_0_added",s+".0");
+						  
+						  if(dat.equalsIgnoreCase(s+".0")){
+							  logger.debug("inside loop updated_date_requestted");
+					//response.setHeader("Content-Disposition", "attachment;filename=Firmware_V_"+mightyDeviceFirmware.getVersion()+".zip");
+						 String headerKey = "Content-Disposition";
+					        String headerValue = String.format("attachment; filename=\"%s\"","Mightylogs "+" "+dat+" "+mlog.getDeviceId()+".gz");
+					        response.setHeader(headerKey, headerValue);
+								OutputStream out = response.getOutputStream();
+									response.setContentType("text/plain");
+									  logger.debug("Size of file content"+mlog.getFileContent().length());
+									  //logger.debug("Size of file content"+new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString())));
+									  //new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString()));
+										IOUtils.copy(mlog.getFileContent().getBinaryStream(), out);
+											out.flush();
+												out.close();
+						  	} 
+					  }  
+				    }
+			    }	//if main ended here							
+			
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} 
+	
+	}
 	
 	@RequestMapping(value = "/getLogs",method={RequestMethod.POST,RequestMethod.GET})
-	public void downloadMighylogHandler(HttpServletRequest request,HttpServletResponse response,Map<String,Object> map,RedirectAttributes redirectAttributes) throws IOException, SQLException {
+	public @ResponseBody void downloadMighylogHandler(HttpServletRequest request,HttpServletResponse response,Map<String,Object> map,RedirectAttributes redirectAttributes) throws IOException, SQLException {
 		logger.debug("In submitting downloadMighylog ");
 		String devId=request.getParameter("devId");
 		String username=request.getParameter("usrId");
@@ -408,7 +525,8 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		logger.debug("deviceIddd",devId);
 		logger.debug("usernameee",username);
 		logger.debug("updated_dateee",dat);
-	
+		
+		
 		  try {
 			  
 			  List<Mightylog> mlogList=consumerInstrumentServiceImpl.getExistingMightylog(devId, username);
@@ -447,7 +565,7 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 					        String headerValue = String.format("attachment; filename=\"%s\"","Mightylogs "+" "+dat+" "+mlog.getDeviceId()+".gz");
 					        response.setHeader(headerKey, headerValue);
 								OutputStream out = response.getOutputStream();
-									response.setContentType("text/plain");
+									//response.setContentType("text/plain");
 									  logger.debug("Size of file content"+mlog.getFileContent().length());
 									  //logger.debug("Size of file content"+new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString())));
 									  //new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(mlog.getFileContent().toString()));
@@ -457,14 +575,16 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 						  	} 
 					  }  
 				    }
-			    }	//if main ended here							
-			
+			    }	//if main ended here	
+						
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {
 				e.printStackTrace();
-			} 
-	
+			}catch(Exception e){
+				logger.debug("Error while downloading",e);
+			}
+
 	}
 	
 	

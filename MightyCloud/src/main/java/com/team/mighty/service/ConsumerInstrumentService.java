@@ -103,6 +103,17 @@ public interface ConsumerInstrumentService {
 
 	public List<Mightyotadevice> getExcelUploadMightyInfo()throws MightyAppException;
 
+	public Set<String> getMightyToCloudLogs()throws MightyAppException;
+
+	public List<MightyUpload> getMightyToCloudLogsOndevId(String devId)throws MightyAppException;
+
+	public MightyUpload getMightyUploadByDevId(String deviceId)throws MightyAppException;
+
+	public MightyDeviceInfo getDeviceOnDeviceId(String devId)throws MightyAppException;
+
+
+
+
 	
 
 

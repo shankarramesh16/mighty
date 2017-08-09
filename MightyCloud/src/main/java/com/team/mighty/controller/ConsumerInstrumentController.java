@@ -393,7 +393,7 @@ public class ConsumerInstrumentController {
 			deviceInfoDTO.setIsRegistered(MightyAppConstants.IND_Y);
 			consumerInstrumentServiceImpl.registerMightyDevice(deviceInfoDTO);
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
-		} catch(MightyAppException e) {
+		}catch(MightyAppException e){
 			String errorMessage = e.getMessage();
 			responseEntity = new ResponseEntity<String>(errorMessage,e.getHttpStatus());
 			
@@ -863,48 +863,64 @@ public class ConsumerInstrumentController {
 	
 	@RequestMapping(value = "/mightyInfo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getMightyInfoFromMighty(@RequestBody String received) throws Exception{
-		
+		logger.debug("INside /mightyInfo ");
 		JSONObject obj=null;
 		ResponseEntity<String> responseEntity = null;
-		MightyDeviceInfo mightyDeviceInfo=null;
-		List<MightyUpload> muList=null;
-		
+					
 		
 		try{		
 						obj=new JSONObject();
 						obj=(JSONObject)new JSONParser().parse(received);
 		}catch(Exception e){
-					responseEntity = new ResponseEntity<String>("Empty received body", HttpStatus.EXPECTATION_FAILED);
+					responseEntity = new ResponseEntity<String>("Empty received body /mightyInfo", HttpStatus.METHOD_NOT_ALLOWED);
 		}
 
 		
 				
-		try {
-			
-			logger.debug("file_content for MightyUpload",Base64.decodeBase64(obj.get("file_content").toString()).length);
-			logger.debug("deviceId",obj.get("deviceId").toString());
-			
-									
-			mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
-					if(mightyDeviceInfo!=null){
-						logger.debug("INside /MightyUpload list");
-						MightyUpload mu=null;
-												mu=new MightyUpload();
-												mu.setFileName("MightyUploads");
-												mu.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
-												mu.setDeviceId(obj.get("deviceId").toString());
-												mu.setCreatedDt(new Date(System.currentTimeMillis()));
-												mu.setUpdatedDt(new Date(System.currentTimeMillis()));
-												MightyUpload m=consumerInstrumentServiceImpl.updateMightyUpload(mu);
-																	
-												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
-												return responseEntity;
-										
-							
-					}else{
-						responseEntity = new ResponseEntity<String>("DeviceId not mapped", HttpStatus.BAD_REQUEST);
-					}
-			
+		try {		
+						
+			if(obj.get("deviceId").toString()!=null && !obj.get("deviceId").toString().isEmpty() && 
+					obj.get("file_content").toString()!=null && !obj.get("file_content").toString().isEmpty()){	
+				
+				logger.debug("file_content for MightyUpload",Base64.decodeBase64(obj.get("file_content").toString()).length);
+				logger.debug("deviceId",obj.get("deviceId").toString());
+				
+				MightyDeviceInfo mightyDeviceInfo=null;
+				mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
+						if(mightyDeviceInfo!=null){
+							logger.debug("INside /MightyUpload ");
+							MightyUpload mup=consumerInstrumentServiceImpl.getMightyUploadByDevId(mightyDeviceInfo.getDeviceId());
+							if(mup!=null){
+								mup.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
+								mup.setUpdatedDt(new Date(System.currentTimeMillis()));
+								MightyUpload m1=consumerInstrumentServiceImpl.updateMightyUpload(mup);
+								if(m1!=null){					
+									responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+								}else{
+									responseEntity = new ResponseEntity<String>("File persist failed in /mightyInfo",HttpStatus.INTERNAL_SERVER_ERROR);	
+								}
+							}else{
+										MightyUpload mu=null;
+													mu=new MightyUpload();
+													mu.setFileName("MightyUploads");
+													mu.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
+													mu.setDeviceId(obj.get("deviceId").toString());
+													mu.setCreatedDt(new Date(System.currentTimeMillis()));
+													mu.setUpdatedDt(new Date(System.currentTimeMillis()));
+													MightyUpload m=consumerInstrumentServiceImpl.updateMightyUpload(mu);
+													if(m!=null){					
+														responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+													}else{
+														responseEntity = new ResponseEntity<String>("File persist failed in /mightyInfo",HttpStatus.INTERNAL_SERVER_ERROR);	
+													}
+							     }		
+								
+						}else{
+								responseEntity = new ResponseEntity<String>("DeviceId not mapped", HttpStatus.BAD_REQUEST);
+						}
+			}else{
+				responseEntity = new ResponseEntity<String>("deviceId/file_content any or both null", HttpStatus.EXPECTATION_FAILED);
+			}
 							
 		}catch(MightyAppException e) {
 			String errorMessage = e.getMessage();

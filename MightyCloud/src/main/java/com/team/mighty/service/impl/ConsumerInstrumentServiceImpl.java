@@ -307,7 +307,12 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		MightyUserInfo mightyUserInfo = null;
 		
 		List<MightyUserInfo> mightyUsers = null;
-		mightyUsers=getUserByUserFBAndEmailWithIndicator(consumerDeviceDto.getFacebookID(),consumerDeviceDto.getEmailId(),consumerDeviceDto.getUserIndicator());
+		if(consumerDeviceDto.getEmailId().equalsIgnoreCase("NoEmail")){
+			mightyUsers=getUserByUserFBAndEmailAndUsrWithIndicator(consumerDeviceDto.getFacebookID(),consumerDeviceDto.getUserName(),consumerDeviceDto.getUserIndicator());
+		}else{
+			mightyUsers=getUserByUserFBAndEmailWithIndicator(consumerDeviceDto.getFacebookID(),consumerDeviceDto.getEmailId(),consumerDeviceDto.getUserIndicator());
+		}		
+		
 		if(mightyUsers!=null && !mightyUsers.isEmpty()) {
 			return mightyUsers.get(0);
 			// Check any de-activated account
@@ -378,6 +383,11 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		logger.info(" Mighty USer ID ",mightyUserInfo_1.getId());
 		
 		return mightyUserInfo_1;
+	}
+
+	private List<MightyUserInfo> getUserByUserFBAndEmailAndUsrWithIndicator(String facebookID, String userName, String userIndicator) {
+		
+		return mightyUserInfoDAO.getUserByUserFBAndEmailAndUsrWithIndicator(facebookID,userName,userIndicator);
 	}
 
 	private List<MightyUserInfo> getUserByUserFBAndEmailWithIndicator(String facebookID, String emailId, String userIndicator) {
@@ -1044,6 +1054,26 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	public List<Mightyotadevice> getExcelUploadMightyInfo() throws MightyAppException {
 			return mightyOTADeviceDao.getExcelUploadMightyInfo();
+	}
+
+
+	public Set<String> getMightyToCloudLogs() throws MightyAppException {
+			return mightyUploadDao.getMightyToCloudLogs();
+	}
+
+	
+	public List<MightyUpload> getMightyToCloudLogsOndevId(String devId) throws MightyAppException {
+		return mightyUploadDao.getMightyToCloudLogsOndevId(devId);
+	}
+
+	
+	public MightyUpload getMightyUploadByDevId(String deviceId) throws MightyAppException {
+		return mightyUploadDao.getMightyUploadByDevId(deviceId);
+	}
+
+	
+	public MightyDeviceInfo getDeviceOnDeviceId(String devId) throws MightyAppException {
+		return mightyDeviceInfoDAO.getDeviceInfo(devId);
 	}
 
 

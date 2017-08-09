@@ -1,19 +1,11 @@
 <%--
     Document   : device_firmware
-    Created on : July 31, 2017, 03:51:01 PM
+    Created on : OCT 09, 2016, 03:51:01 PM
     Author     : Vikky
 --%>
-
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page import="java.util.*"%>
 <%@page import="com.team.mighty.domain.*"%>
-<%@page import="com.team.mighty.dto.*"%>
-<%@page import="org.displaytag.decorator.TotalTableDecorator"%>
-<%@page import="org.displaytag.decorator.MultilevelTotalTableDecorator"%>
-<%@page import="com.itextpdf.text.log.SysoLogger"%>
- <%@ page buffer = "900kb" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"   pageEncoding="ISO-8859-1"%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 
 <!DOCTYPE html >
 <html lang="en">
@@ -24,7 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
-<title>MightyUser Excel Upload Report</title>
+<title>Mighty to Cloud log Report</title>
 
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/custom_siemens.css" rel="stylesheet">
@@ -35,6 +27,7 @@
 <link rel="stylesheet" href="css/AdminLTE.min.css">
 <link rel="stylesheet" href="css/skins/_all-skins.min.css">
 <link rel="stylesheet" href="css/slider.css">
+<link rel="stylesheet" href="css/jquery-ui.css">
 
 
 <script type="text/javascript" src="js/jquery-latest.js"></script>
@@ -46,21 +39,153 @@
 <script src="js/app.min.js"></script>
 <script src="js/demo.js"></script>
 <script src="js/scroller.js"></script>
+<script type="text/javascript" src="js/jquery.datepick.js"></script>
+<script src="js/dateValidation.js"></script>
+<script src="js/jquery-ui.js"></script>
+
+<style type="text/css">
+@import "css/jquery.datepick.css"; 
+</style>
+
+<script type="text/javascript">
+	
+
+	 function getDevId(){
+		var devId=document.getElementById("devId").value;
+		 if(devId=="0")
+	    	{                	
+			 
+	    	var user=document.getElementById("tableView");
+	    	user.innerHTML='<table class="table table-bordered text-center">'
+             	+'<thead>'
+			      +'<tr>'
+			        +'<th>ID</th>'
+			      	+'<th>Device#</th>'
+			        +'<th>FileName</th>'
+			        +'<th>CreatedDt</th>'
+			        +'<th>UpdatedDt</th>'
+			        +'<th>Action</th>'
+			        +'</tr>'
+			    +'</thead>'
+			    +'<tbody><tr></tr></tbody></table>';
+	    	return;
+	    	}
+	    else
+	    	{
+		 	 var url="getMightyToCloudLogByDevId?devId="+devId;                                    
+		     xmlHttp=GetXmlHttpObj()
+		     if (xmlHttp==null)
+		     {
+		         alert ("Browser does not support HTTP Request");
+		         return
+		     }                    
+		     xmlHttp.onreadystatechange=setLog;	
+		     xmlHttp.open("GET",url,true);                
+		     xmlHttp.send(null);
+		     
+		     	}
+             
+             
+	}
+	 
+	  
+	    function GetXmlHttpObject()
+	             {
+	                 var xmlHttp=null;
+	                 if (window.XMLHttpRequest) 
+	                 {
+	                     xmlHttp=new XMLHttpRequest();
+	                 }                
+	                 else if (window.ActiveXObject) 
+	                 { 
+	                     xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+	                 }
+
+	                 return xmlHttp;
+	             }
+	             
+	             
+	             function GetXmlHttpObj()
+	             {
+	                 var xmlHttp=null;
+	                 if (window.XMLHttpRequest) 
+	                 {
+	                     xmlHttp=new XMLHttpRequest();
+	                 }                
+	                 else if (window.ActiveXObject) 
+	                 { 
+	                     xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+	                 }
+	                 return xmlHttp;
+	              }
+	         
+	             function setLog() 
+	             {                      
+	                 if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
+	                 { 
+	                     var returnText=xmlHttp.responseText;
+	                     
+	                     var user=document.getElementById("tableView");
+	                     user.innerHTML='<table class="table table-bordered text-center">'
+	                     	+'<thead>'
+						      +'<tr>'
+						        +'<th>ID</th>'
+						      	+'<th>Device#</th>'
+						        +'<th>FileName</th>'
+						        +'<th>CreatedDt</th>'
+						        +'<th>UpdatedDt</th>'
+						        +'<th>Action</th>'
+						     + '</tr>'
+						    +'</thead>'
+						    +'<tbody>'+returnText+'</tbody></table>';
+	                   
+					}
+	             }
+	             
+	      function  downloadMighty(){
+	    	  //<button type="button" class="use-address" onclick="test(this);">Use</button>
+	    	  /* function test(el) {
+    			var id = $(el).closest("tr").find('td:eq(2)').text();
+ 				   alert(id);
+				} */
+				
+				
+	    	  var devId=document.getElementById("device").value;
+	    	  var dat=document.getElementById("dat").value;
+	    	  $.ajax({
+                  url: 'getLogs',
+                  type: "GET",
+                  data: 'devId='+devId+'&usrId='+usrId+'&dat='+dat,
+                  success: function (data) {
+                   alert("Download has been started");
+               	   //$(".success").html(data);
+                      	
+                      },
+     		 error: function(e){
+     	     			        alert('Error: ' + e);
+     	      }
+
+                     
+                  });
+     	
+     
+	      }
+	    	 
+	             
+</script>
+
 
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
 						<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
-											String fname1=("MightyUserExcelUpload :").concat(new Date().toString()).concat(".csv");
-											String fname2=("MightyUserExcelUpload :").concat(new Date().toString()).concat(".xls");
-											String fname3=("MightyUserExcelUpload :").concat(new Date().toString()).concat(".xml");
-					 	   List<Mightyotadevice> mightyotadeviceList=(List<Mightyotadevice>)request.getAttribute("mightyOTAList");
+						Set<String> mightyLogs=(Set<String>)request.getAttribute("mightyLogs");
 						%>
 	
 <div class="wrapper">  
   	<header class="main-header" >
    
-	    <a href="https://bemighty.com" class="logo affix" >
+	    <a href="https://bemighty.com" class="logo affix"  >
 			      
 			     <svg width="121px" height="50px" viewBox="445 13 150 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 			                      					<defs>
@@ -76,7 +201,7 @@
 	    </a>
 
 	    <!-- Header Navbar: style can be found in header.less -->
-	    <nav class="navbar navbar-static-top affix">
+	    <nav class="navbar navbar-static-top affix" >
 	      <!-- Sidebar toggle button-->
 	      <a href="#" class="sidebar-toggle" style="width:2.5em;" data-toggle="offcanvas" role="button">
 	      </a> 
@@ -85,14 +210,14 @@
    </header>
   
   
-  <aside class="main-sidebar affix" style="position:fixed;">
+  <aside class="main-sidebar affix " style="position:fixed;">
    
     <section class="sidebar">
         
       <!-- search form -->
-      <form action="searchDevice" method="POST" class="sidebar-form">
+      <form action="#" method="get" class="sidebar-form">
         <div class="input-group">
-          <input type="text" name="searchDev" class="form-control" placeholder="Search Hw/Sw SerialNo...">
+          <input type="text" name="q" class="form-control" placeholder="Search...">
               <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
@@ -118,12 +243,13 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="deviceUserInfo"><i class="fa fa-circle-o"></i><b>Mighty User</b></a></li>
-            <li><a href="#"><i class="fa fa-circle-o"></i><b>Mighty Device</b></a></li>
+            <li><a href="mightyDeviceInfo"><i class="fa fa-circle-o"></i><b>Mighty Device</b></a></li>
             <li><a href="deviceFirmwareReport"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA </b></a></li>
-             <li><a href="mightyDlAuditLog"><i class="fa fa-download"></i> <b>Mighty Downloading AuditLog </b></a></li>
+              <li><a href="mightyDlAuditLog"><i class="fa fa-download"></i> <b>Mighty Downloading AuditLog </b></a></li>
              <li><a href="otaFileUploadedReport"><i class="fa fa-upload"></i> <b>MightyUser Excel Upload </b></a></li>
-             <li><a href="mightyToCloudLog"><i class="fa fa-download"></i> <b>Mighty to Cloud Log Download </b></a></li>
+             <li><a href="#"><i class="fa fa-download"></i> <b>Mighty to cloud Log Download </b></a></li>
             <li><a href="#"><i class="fa fa-circle-o"></i> <b>Mighty Feature Playlist </b></a></li>
+            
           </ul>
         </li>
         
@@ -137,7 +263,6 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="uploadDeviceFirmware"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA</b></a></li>
-            <li><a href="otaFileUploading"><i class="fa fa-circle-o"></i><b>OTA Excel Upload</b></a></li>
            
           </ul>
         </li>
@@ -154,8 +279,7 @@
            
           </ul>
         </li>
-        
-        <li class="treeview">
+         <li class="treeview">
           <a href="#">
             <i class="fa fa-download"></i>
             <span><b>Log Handling</b></span>
@@ -168,6 +292,7 @@
            
           </ul>
         </li>
+        
         <li class="treeview">
           <a href="#">
             <i class="fa fa-shopping-cart"></i>
@@ -189,10 +314,10 @@
  
 	<div class="content-wrapper">
 		
-			<section class="content ">
+			<section class="content">
 		 		<div class="content-wrap box box-primary">
-		 		
-			 			
+		 			
+			 		
 						
 						<div class="row">
 							<div class="col-sm-12 text-right ">	
@@ -205,78 +330,79 @@
 						<div class="row">
 								<div class="col-sm-8 page-heading mar-top-20">
 								
-								<h5 class="text-blue text-semi-bold"><i class="fa fa-upload"></i>&nbsp;&nbsp;<b>MightyUser Excel Upload</b></h5>
+								<h5 class="text-blue text-semi-bold " ><i class="fa fa-download"></i>&nbsp;&nbsp;<b>Mighty to Cloud Log</b></h5>
 								</div>
 													
 						</div><br/>
 						
 						
-						<div class="row" style="overflow-y: auto;">
-							<div class="col-sm-12">	
-							
-							
-							<%-- <table class="table table-hover text-center">
-									    <thead>
-									      <tr class="text-blue text-semi-bold">
-									        <th>ID</th>
-									        <th>DeviceID/HwSerialNo.</th>
-									        <th>DeviceName</th>
-									        <th>DeviceType</th>
-									        <th>Sw_Version</th>
-									        <th>AppBuild</th>
-									        <th>AppVersion</th>
-									        <th>Is_Registered</th>
-									        <th>Is_Active</th>
-									      </tr>
-									    </thead>
-									    <tbody>
-									    <% if(mightDeviceList!=null && !mightDeviceList.isEmpty()){
-										    for(MightyDeviceInfo md :mightDeviceList){
-										    %>
-									      <tr>
-									        <td><%=md.getId()%></td>
-									        <td><%=md.getDeviceId()%></td>
-									        <td><%=md.getDeviceName()%></td>
-									        <td><%=md.getDeviceType()%></td>
-									        <td><%=md.getSwVersion()%></td>
-									        <td><%=md.getAppBuild()%></td>
-									        <td><%=md.getAppVersion()%></td>
-									        <td><%=md.getIsRegistered()%></td>
-									        <td><%=md.getIsActive()%></td>
-									        
-									        
-									       
-									      </tr>
-									      	<%}
-									    }%>
-									    </tbody>
-									  </table> --%>
-							<%if(mightyotadeviceList!=null && !mightyotadeviceList.isEmpty()){ %>		  
 						
-				        <display:table class="table table-hover text-center" name="<%=mightyotadeviceList%>" id="row"
-									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
-								<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />
-											
-								<display:column  property="devices" title="Device#"	sortable="true" headerClass="sortable" />
+						
+					    <form action="getMightyToCloudLogs" name="mightylogform" enctype="multipart/form-data" method="post">
+								<div class="push-200 login-input-wrap">
 								
-								<display:column  property="username" title="Username" sortable="true" headerClass="sortable"/>
-								
-								<display:column  property="createdDt" title="CreatedDt" sortable="true" headerClass="sortable"/>
+									<div class="row">
+									
+									<div class="col-sm-12"><i class="fa fa-music"></i>&nbsp;<b>Mighty Device</b>
+										<%--  <select id="devId" name="devId" onchange="getDevId()">
+										 	<option value="0">---Select Mighty---</option>
+										 	<% if(mightyLogs!=null && !mightyLogs.isEmpty()){
+										 			for(String e : mightyLogs){%>	
+										 				<option value="<%=e%>"><%=e %></option>	
+										 			<%}
+										 	}%>
+										 	
+										 </select>	  --%>
+										 
+										 <input type="text" id="devId" name="devId" list="mightylist" placeholder="Search By Mighty" onchange="getDevId()"/>
+											<datalist id="mightylist">
+											<!-- <option value="0">---Select Mighty---</option> -->
+											  <% if(mightyLogs!=null && !mightyLogs.isEmpty()){
+										 			for(String e : mightyLogs){%>	
+										 				<option value="<%=e%>"><%=e %></option>	
+										 			<%}
+										 	}%>
+											</datalist>
+									</div>
+														
+									</div>	
 																
-				     		   
-							 	<display:setProperty name="export.csv.filename" value="<%=fname1%>" />
-								<display:setProperty name="export.excel.filename" value="<%=fname2%>" />
-								<display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
-						</display:table> 
+									
+								</div><br/>
+								
+							<div class="row" style="overflow-y: auto;">
+									
+									<div class="col-sm-12">
+										<div id="tableView">
+									 <table class="table table-bordered text-center">
+											    <thead>
+											      <tr>
+											      	<th>ID</th>
+											      	<th>Device#</th>
+											        <th>FileName</th>
+											        <th>CreatedDt</th>
+											        <th>UpdatedDt</th>
+											        <th>Action</th>
+											      </tr>
+											    </thead>
+											    <tbody>
+											      <tr>
+											      </tr>
+											    </tbody>
+											  </table> 
+											  </div>
+									</div>
+									
+							</div>		
+							  </form>
+							  
+							  	
+							  
 						
-						<% }else{%>
-						<p>No content found!</p>
-						<%} %>
-							</div>
-						</div>
 						<a  id="goTop"><i class="fa fa-eject"></i></a>	
-				</div>			
+				 </div>
 			</section>	
+			
 			<%@include file="Footer.jsp"%>  		
 	</div>	
 </div>

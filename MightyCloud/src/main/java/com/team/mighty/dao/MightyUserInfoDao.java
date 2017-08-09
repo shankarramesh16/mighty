@@ -34,7 +34,7 @@ public interface MightyUserInfoDao extends JpaRepository<MightyUserInfo, Long> {
 	@Query("SELECT m FROM MightyUserInfo m WHERE  m.userName=:userName")
 	MightyUserInfo getUserByName(@Param("userName") String userName);
 	
-	@Query("SELECT m FROM MightyUserInfo m WHERE m.userFBId=:userFBId and m.emailId=:emailId and m.userIndicator=:userIndicator" )
+	@Query("SELECT m FROM MightyUserInfo m WHERE (m.userFBId=:userFBId or m.emailId=:emailId) and m.userIndicator=:userIndicator" )
 	List<MightyUserInfo> getUserByUserFBAndEmailWithIndicator(@Param("userFBId") String userFBId, @Param("emailId") String emailId,@Param("userIndicator") String userIndicator);
 
 	@Query("SELECT m FROM MightyUserInfo m WHERE ((m.userName like '%'||:userName||'%') or (m.emailId like '%'||:userName||'%')) ")
@@ -48,6 +48,9 @@ public interface MightyUserInfoDao extends JpaRepository<MightyUserInfo, Long> {
 
 	@Query("SELECT m FROM MightyUserInfo m WHERE m.userName=:userName")
 	List<MightyUserInfo> getUserByUserName(@Param("userName") String userName);
+
+	@Query("SELECT m FROM MightyUserInfo m WHERE (m.userFBId=:userFBId or m.userName=:userName) and m.userIndicator=:userIndicator" )
+	List<MightyUserInfo> getUserByUserFBAndEmailAndUsrWithIndicator(@Param("userFBId") String userFBId,@Param("userName") String userName,@Param("userIndicator") String userIndicator);
 	
 	
 	

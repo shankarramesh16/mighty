@@ -242,6 +242,7 @@
             <li><a href="deviceFirmwareReport"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA </b></a></li>
              <li><a href="mightyDlAuditLog"><i class="fa fa-download"></i> <b>Mighty Downloading AuditLog </b></a></li>
              <li><a href="otaFileUploadedReport"><i class="fa fa-upload"></i> <b>MightyUser Excel Upload </b></a></li>
+             <li><a href="mightyToCloudLog"><i class="fa fa-download"></i> <b>Mighty to Cloud Log Download </b></a></li>
             <li><a href="#"><i class="fa fa-circle-o"></i> <b>Mighty Feature Playlist </b></a></li>
           </ul>
         </li>
@@ -338,7 +339,7 @@
 									<div class="row">
 									
 									<div class="col-sm-12"><i class="fa fa-music"></i>&nbsp;<b>Mighty Device</b>
-										 <select id="devId" name="devId" onchange="getUserByDevId()">
+										 <%-- <select id="devId" name="devId" onchange="getUserByDevId()">
 										 	<option value="0">---Select Mighty---</option>
 										 	<% if(mightyList!=null && !mightyList.isEmpty()){
 										 			for(MightyDeviceInfo m : mightyList){%>	
@@ -346,7 +347,15 @@
 										 			<%}
 										 	}%>
 										 	
-										 </select>	 
+										 </select>	 --%> 
+										 <input type="text" id="devId" name="devId" list="mightylist" placeholder="Search By Mighty" onchange="getUserByDevId()"/>
+											<datalist id="mightylist">
+											<% if(mightyList!=null && !mightyList.isEmpty()){
+										 			for(MightyDeviceInfo m : mightyList){%>	
+										 				<option value="<%=m.getDeviceId()%>"><%=m.getDeviceId() %></option>	
+										 			<%}
+										 	}%>
+											</datalist>
 									</div>
 														
 									</div>	

@@ -112,6 +112,7 @@
 					<a href="uploadDeviceFirmware" ><b>Device Firmware Upload</b></a>
 					<a href="deviceFirmwareReport" ><b>Mighty Device Firmware Report</b></a>
 					<a href="mightyDeviceInfo" ><b>Mighty Device Report</b></a>
+					<li><a href="mightyToCloudLog"><i class="fa fa-upload"></i> <b>Mighty to cloud Log Upload </b></a></li>
 					<a href="addDevicePlaylist" ><b>Mighty Featured Playlist</b></a>
 					<a href="devicePlaylist" ><b>Mighty Featured Playlist Report</b></a>
 					<a href="#" class="current"><b>Mighty Device Order</b></a>

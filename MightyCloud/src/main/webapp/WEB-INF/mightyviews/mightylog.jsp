@@ -157,25 +157,28 @@
 					}
 	             }
 	             
-	      function  downloadMightyLog(){
+	      function  downloadMightyLog(dat){
 	    	  var devId=document.getElementById("device").value;
 	    	  var usrId=document.getElementById("usrId").value;
-	    	  var dat=document.getElementById("dat").value;
-	    	  $.ajax({
+	        	  
+	    	  window.location = 'getLogs/?'+'devId='+devId+'&usrId='+usrId+'&dat='+dat;
+	    	  
+	    	  /* $.ajax({
                   url: 'getLogs',
-                  type: "GET",
+                  type: "POST",
                   data: 'devId='+devId+'&usrId='+usrId+'&dat='+dat,
                   success: function (data) {
+                	
                    alert("Download has been started");
                	   //$(".success").html(data);
                       	
                       },
      		 error: function(e){
-     	     			        alert('Error: ' + e);
+     	     			        alert('Download has failed' + e);
      	      }
 
                      
-                  });
+                  }); */
      	
      
 	      }
@@ -254,6 +257,9 @@
             <li><a href="deviceUserInfo"><i class="fa fa-circle-o"></i><b>Mighty User</b></a></li>
             <li><a href="mightyDeviceInfo"><i class="fa fa-circle-o"></i><b>Mighty Device</b></a></li>
             <li><a href="deviceFirmwareReport"><i class="fa fa-circle-o"></i><b>Device Firmware/OTA </b></a></li>
+             <li><a href="mightyDlAuditLog"><i class="fa fa-download"></i> <b>Mighty Downloading AuditLog </b></a></li>
+             <li><a href="otaFileUploadedReport"><i class="fa fa-upload"></i> <b>MightyUser Excel Upload </b></a></li>
+             <li><a href="mightyToCloudLog"><i class="fa fa-download"></i> <b>Mighty to Cloud Log Download </b></a></li>
             <li><a href="#"><i class="fa fa-circle-o"></i> <b>Mighty Feature Playlist </b></a></li>
           </ul>
         </li>
@@ -349,7 +355,7 @@
 									<div class="row">
 									
 									<div class="col-sm-12"><i class="fa fa-music"></i>&nbsp;<b>Mighty Device</b>
-										 <select id="devId" name="devId" onchange="getDevId()">
+										<%--  <select id="devId" name="devId" onchange="getDevId()">
 										 	<option value="0">---Select Mighty---</option>
 										 	<% if(mightyLogs!=null && !mightyLogs.isEmpty()){
 										 			for(String e : mightyLogs){%>	
@@ -357,7 +363,17 @@
 										 			<%}
 										 	}%>
 										 	
-										 </select>	 
+										 </select>	  --%>
+										 
+										 <input type="text" id="devId" name="devId" list="mightylist" placeholder="Search By Mighty" onchange="getDevId()"/>
+											<datalist id="mightylist">
+											<!-- <option value="0">---Select Mighty---</option> -->
+											  <% if(mightyLogs!=null && !mightyLogs.isEmpty()){
+										 			for(String e : mightyLogs){%>	
+										 				<option value="<%=e%>"><%=e %></option>	
+										 			<%}
+										 	}%>
+											</datalist>
 									</div>
 														
 									</div>	
@@ -369,7 +385,7 @@
 									
 									<div class="col-sm-12">
 										<div id="tableView">
-									 <table class="table table-bordered text-center">
+									 <table id="log" class="table table-bordered text-center">
 											    <thead>
 											      <tr>
 											      	<th>LogType</th>
