@@ -48,12 +48,13 @@
 </style>
 
 <script type="text/javascript">
-	
-	 
-	 
-	 
-	 function getUserByDevId(){
-		 var devId=document.getElementById("devId").value;
+		 
+	 function getUserByDevId(devId,dev){
+		 if(dev=="dev2"){
+			 var dev=document.getElementById("devId");
+			 dev.innerHTML='<option value="0">---Select Mighty---</option>';
+		 }
+		 
 		 if(devId=="0")
 	    	{                	
 	    	var user=document.getElementById("tableView");
@@ -140,7 +141,7 @@
 						     + '</tr>'
 						    +'</thead>'
 						    +'<tbody>'+returnText+'</tbody></table>';
-	                    document.getElementById("emailId").focus();
+	                    //document.getElementById("emailId").focus();
 					}
 	             }
 	             
@@ -210,11 +211,12 @@
     <section class="sidebar">
         
       <!-- search form -->
-      <form action="#" method="get" class="sidebar-form">
+      <form  action="#" class="sidebar-form">
         <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Search...">
+          <input type="text" id="devId2" name="devId2" class="form-control" placeholder="Search...">
+          <input type="hidden" id="dev2" name="dev2" class="form-control" value="dev2">
               <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                <button type="button" name="search" id="search-btn" class="btn btn-flat" onclick="getUserByDevId(this.form.devId2.value,this.form.dev2.value)"><i class="fa fa-search"></i>
                 </button>
               </span>
         </div>
@@ -263,14 +265,14 @@
         </li>
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-music"></i>
-            <span><b>Device_UserMgmt</b></span>
+            <i class="fa fa-user"></i>
+            <span><b>User Management</b></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#"><i class="fa fa-circle-o"></i><b> User Management</b></a></li>
+            <li><a href="userMgmt"><i class="fa fa-circle-o"></i><b> User Mgmt</b></a></li>
            
           </ul>
         </li>
@@ -339,23 +341,24 @@
 									<div class="row">
 									
 									<div class="col-sm-12"><i class="fa fa-music"></i>&nbsp;<b>Mighty Device</b>
-										 <%-- <select id="devId" name="devId" onchange="getUserByDevId()">
+									<input type="hidden" id="dev3" name="dev3" class="form-control" value="dev3">
+										  <select id="devId" name="devId" onchange="getUserByDevId(this.form.devId.value,this.form.dev3.value)">
 										 	<option value="0">---Select Mighty---</option>
 										 	<% if(mightyList!=null && !mightyList.isEmpty()){
 										 			for(MightyDeviceInfo m : mightyList){%>	
-										 				<option value="<%=m.getId()%>"><%=m.getDeviceId() %></option>	
+										 				<option value="<%=m.getDeviceId() %>"><%=m.getDeviceId() %></option>	
 										 			<%}
 										 	}%>
 										 	
-										 </select>	 --%> 
-										 <input type="text" id="devId" name="devId" list="mightylist" placeholder="Search By Mighty" onchange="getUserByDevId()"/>
+										 </select>	
+										 <%-- <input type="text" id="devId" name="devId" list="mightylist" placeholder="Search By Mighty" onchange="getUserByDevId()"/>
 											<datalist id="mightylist">
 											<% if(mightyList!=null && !mightyList.isEmpty()){
 										 			for(MightyDeviceInfo m : mightyList){%>	
 										 				<option value="<%=m.getDeviceId()%>"><%=m.getDeviceId() %></option>	
 										 			<%}
 										 	}%>
-											</datalist>
+											</datalist> --%>
 									</div>
 														
 									</div>	

@@ -52,8 +52,9 @@
 	 
 	 
 	 
-	 function getDevId(){
-		 var devId=document.getElementById("devId").value;
+	 function getDevId(devId){
+		
+		 //var devId=document.getElementById("devId").value;
 		 if(devId=="0")
 	    	{                	
 			 
@@ -227,11 +228,11 @@
     <section class="sidebar">
         
       <!-- search form -->
-      <form action="#" method="get" class="sidebar-form">
+      <form action="#" class="sidebar-form">
         <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Search...">
+          <input type="text" name="devId2" id="devId2" class="form-control" placeholder="Search by mighty..">
               <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                <button type="button" name="search" id="search-btn" onclick="getDevId(this.form.devId2.value)" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
               </span>
         </div>
@@ -279,14 +280,14 @@
         </li>
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-music"></i>
-            <span><b>Device_UserMgmt</b></span>
+            <i class="fa fa-user"></i>
+            <span><b>User Management</b></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="userMgmt"><i class="fa fa-circle-o"></i><b> User Management</b></a></li>
+            <li><a href="userMgmt"><i class="fa fa-circle-o"></i><b> User Mgmt</b></a></li>
            
           </ul>
         </li>
@@ -355,7 +356,7 @@
 									<div class="row">
 									
 									<div class="col-sm-12"><i class="fa fa-music"></i>&nbsp;<b>Mighty Device</b>
-										<%--  <select id="devId" name="devId" onchange="getDevId()">
+										  <select id="devId" name="devId" onchange="getDevId(this.form.devId.value)">
 										 	<option value="0">---Select Mighty---</option>
 										 	<% if(mightyLogs!=null && !mightyLogs.isEmpty()){
 										 			for(String e : mightyLogs){%>	
@@ -363,9 +364,9 @@
 										 			<%}
 										 	}%>
 										 	
-										 </select>	  --%>
+										 </select>	 
 										 
-										 <input type="text" id="devId" name="devId" list="mightylist" placeholder="Search By Mighty" onchange="getDevId()"/>
+										 <%-- <input type="text" id="devId" name="devId" list="mightylist" placeholder="Search By Mighty" onchange="getDevId()"/>
 											<datalist id="mightylist">
 											<!-- <option value="0">---Select Mighty---</option> -->
 											  <% if(mightyLogs!=null && !mightyLogs.isEmpty()){
@@ -373,7 +374,7 @@
 										 				<option value="<%=e%>"><%=e %></option>	
 										 			<%}
 										 	}%>
-											</datalist>
+											</datalist> --%>
 									</div>
 														
 									</div>	

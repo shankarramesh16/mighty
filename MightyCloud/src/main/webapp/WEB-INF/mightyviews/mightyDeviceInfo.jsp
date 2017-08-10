@@ -92,7 +92,7 @@
       <!-- search form -->
       <form action="searchDevice" method="POST" class="sidebar-form">
         <div class="input-group">
-          <input type="text" name="searchDev" class="form-control" placeholder="Search Hw/Sw SerialNo...">
+          <input type="text" name="searchDev" class="form-control" placeholder="Search by mighty...">
               <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
@@ -143,14 +143,14 @@
         </li>
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-music"></i>
-            <span><b>Device_UserMgmt</b></span>
+            <i class="fa fa-user"></i>
+            <span><b>User Management</b></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="userMgmt"><i class="fa fa-circle-o"></i><b> User Management</b></a></li>
+            <li><a href="userMgmt"><i class="fa fa-circle-o"></i><b> User Mgmt</b></a></li>
            
           </ul>
         </li>
