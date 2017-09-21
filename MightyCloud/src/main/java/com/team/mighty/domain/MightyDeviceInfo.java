@@ -1,6 +1,7 @@
 package com.team.mighty.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -42,6 +45,30 @@ public class MightyDeviceInfo extends BaseEntityInfo implements Serializable {
 	@Column(name = "SW_VERSION")
 	private String swVersion;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="register_at")
+	private Date registerAt;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="upgrade_at")
+	private Date upgradeAt;
+	
+	public Date getRegisterAt() {
+		return registerAt;
+	}
+
+	public void setRegisterAt(Date registerAt) {
+		this.registerAt = registerAt;
+	}
+
+	public Date getUpgradeAt() {
+		return upgradeAt;
+	}
+
+	public void setUpgradeAt(Date upgradeAt) {
+		this.upgradeAt = upgradeAt;
+	}
+
 	@Column(name ="IS_REGISTERED")
 	private String isRegistered;
 	

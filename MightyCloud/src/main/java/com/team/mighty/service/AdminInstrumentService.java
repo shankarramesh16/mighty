@@ -3,6 +3,7 @@ package com.team.mighty.service;
 import java.util.List;
 
 import com.team.mighty.domain.MightyDeviceFirmware;
+import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceOrderInfo;
 import com.team.mighty.domain.MightyFeaturedPlaylist;
 import com.team.mighty.domain.Mightyotadevice;
@@ -46,4 +47,6 @@ public interface AdminInstrumentService {
 	public void saveMightyOtaDevice(Mightyotadevice device)throws MightyAppException;
 
 	public void deleteExistingEntryFromMightyOTADev()throws MightyAppException;
+
+	public List<MightyDeviceInfo> getLatestOTACount(String version)throws MightyAppException;
 }

@@ -184,6 +184,7 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 				mightyInfo.setSwVersion(SWVersion);
 				mightyInfo.setAppVersion(Float.valueOf(AppVersion));
 				mightyInfo.setAppBuild(AppBuild);
+				mightyInfo.setUpgradeAt(new Date(System.currentTimeMillis()));
 				MightyDeviceInfo mightyDeviceInfo=mightyDeviceInfoDAO.save(mightyInfo);
 				logger.debug("SwVersion# updated",mightyDeviceInfo.getSwVersion());
 				if(mightyDeviceInfo!=null){
@@ -304,6 +305,11 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	public void deleteExistingEntryFromMightyOTADev() throws MightyAppException {
 		mightyOTADeviceDao.deleteAll();
 		
+	}
+
+	
+	public List<MightyDeviceInfo> getLatestOTACount(String version) throws MightyAppException {
+		return mightyDeviceInfoDAO.getLatestOTACount(version);
 	}
 
 	

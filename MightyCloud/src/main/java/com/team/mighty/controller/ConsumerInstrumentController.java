@@ -391,6 +391,8 @@ public class ConsumerInstrumentController {
 			logger.debug("Appbuild",obj.get("AppBuild").toString());
 			deviceInfoDTO.setIsActive(MightyAppConstants.IND_Y);
 			deviceInfoDTO.setIsRegistered(MightyAppConstants.IND_Y);
+			deviceInfoDTO.setRegisterAt(new Date(System.currentTimeMillis()));
+			deviceInfoDTO.setUpgradedAt(new Date(System.currentTimeMillis()));
 			consumerInstrumentServiceImpl.registerMightyDevice(deviceInfoDTO);
 			responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		}catch(MightyAppException e){
@@ -950,8 +952,7 @@ public class ConsumerInstrumentController {
 
 		
 				
-		try {
-			
+		try {			
 			
 			logger.debug("app_OS:",obj.get("app_OS").toString());
 			logger.debug("app_ver:",obj.get("app_ver").toString());
@@ -1003,7 +1004,110 @@ public class ConsumerInstrumentController {
 	}
 	
 	
-	
+	/*@RequestMapping(value = "/mightySpotifyInfo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> mightySpotifyInfoHandler(@RequestBody String received) throws Exception{
+		logger.debug("In mightySpotifyInfo controller");
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyDeviceInfo mightyDeviceInfo=null;
+		List<MightyDeviceUserMapping> md=null;
+		
+		
+		try{		
+						obj=new JSONObject();
+						obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+					responseEntity = new ResponseEntity<String>("Empty received body", HttpStatus.EXPECTATION_FAILED);
+		}
+
+		
+				
+		try {
+			//logger.debug("file_content",file_content);
+			logger.debug("deviceId",obj.get("deviceId").toString());
+			logger.debug("desc",obj.get("desc").toString());
+			logger.debug("deviceId",obj.get("deviceId").toString());
+			logger.debug("userId",obj.get("userId").toString());
+			Mightylog log=null;
+			
+			//Validate X-MIGHTY-TOKEN Value
+			//JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			
+			mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
+			if(mightyDeviceInfo!=null){
+				md=consumerInstrumentServiceImpl.getMightyDeviceUserMappingOndevId(mightyDeviceInfo.getId());
+					if(md!=null && !md.isEmpty()){
+						for(MightyDeviceUserMapping m: md){
+							if(String.valueOf(m.getMightyUserInfo().getId()).equalsIgnoreCase(obj.get("userId").toString()) && 
+									m.getRegistrationStatus().equalsIgnoreCase("Y")){
+								        logger.debug("Helloooo");
+												log=new Mightylog();
+												log.setFileName("MightyLogs");
+												log.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
+												log.setLogType(obj.get("log_type").toString());
+												log.setTicket(obj.get("ticket").toString());
+												log.setDescription(obj.get("desc").toString());
+												log.setUsername(m.getMightyUserInfo().getUserName());
+												log.setEmailId(m.getMightyUserInfo().getEmailId());
+												log.setDevReg(m.getRegistrationStatus());
+												log.setDeviceId(obj.get("deviceId").toString());
+												log.setDeviceType(obj.get("DeviceType").toString());
+												log.setPhoneDeviceOSVersion(obj.get("DeviceOSVersion").toString());
+												log.setCreatedDt(new Date(System.currentTimeMillis()));
+												log.setUpdatedDt(new Date(System.currentTimeMillis()));
+											Mightylog logs=consumerInstrumentServiceImpl.updateMightyLogs(log);
+											
+												try{	
+													if(logs!=null){
+															logger.debug("/inside MightyLogs send Mail");
+															String subject="";
+																if(logs.getTicket()!=null && !logs.getTicket().isEmpty()){
+																	subject = "Log received from "+logs.getUsername()+""+"-"+""+"Ticket#"+logs.getTicket();
+																}else{
+																	subject = "Log received from "+logs.getUsername();
+																}
+															String message = consumerInstrumentServiceImpl.getMightyLogsMsg(logs);
+																		
+																SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
+																String[] arr={"heyo@bemighty.com","mightynotification@gmail.com"};
+																logger.debug("subject",subject);
+																for(String s :arr){
+																	logger.debug("mailing dest",s);
+																	mail.send(s, subject, message);
+																}
+															
+													}
+											
+												}catch(Exception e){
+													logger.error("/Sending Mightylog notification",e);
+												}
+											
+												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+												return responseEntity;
+										
+							}else{
+								responseEntity = new ResponseEntity<String>("DeviceId not associated with user or registerstatus is N ", HttpStatus.BAD_REQUEST);
+							}
+						}
+					}else{
+						responseEntity = new ResponseEntity<String>("DeviceId not mapped", HttpStatus.BAD_REQUEST);
+					}
+			}else{
+				responseEntity = new ResponseEntity<String>("Empty deviceId", HttpStatus.BAD_REQUEST);
+			}
+							
+		}catch(MightyAppException e) {
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+
+	}*/
 	
 	
 	

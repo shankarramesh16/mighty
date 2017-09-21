@@ -145,14 +145,23 @@ public class LoginController {
 		
 		 @RequestMapping(value= {"/adminHome"}, method=RequestMethod.GET)
 		 public String home(Map<String,Object> map) throws Exception{
+			 logger.debug("///adminHome");
 			 List<MightyUserInfo> mightyUserList=consumerInstrumentServiceImpl.getAllMightyUsers();
 			 List<MightyDeviceInfo> mightyDeviceList=consumerInstrumentServiceImpl.getAllMightyDev();
 			 List<MightyDeviceFirmware> latestOTA=adminInstrumentServiceImpl.getLatestOTA();
-			 /*final int users=Integer.parseInt(mightyUserList.get(0).toString());	
-			 logger.debug("///users",users);*/			 			 		    	
+			 List<MightyDeviceInfo> latestOTACount=null;
+			 if(latestOTA!=null && !latestOTA.isEmpty()){
+				 logger.debug("///latest ota VERSION",latestOTA.get(0).getVersion());
+				 latestOTACount=adminInstrumentServiceImpl.getLatestOTACount(latestOTA.get(0).getVersion().trim());
+			 }
+			 
+			 logger.debug("///latest ota",latestOTACount.size());	
+			 logger.debug("///latest ota count",latestOTACount.get(0));
+			 	 			 		    	
 			 map.put("mightyUserList",mightyUserList);
 			 map.put("mightyDeviceList",mightyDeviceList);
 			 map.put("latestOTA",latestOTA);
+			 map.put("latestOTACount",latestOTACount);
 			 return "AdminView";
 		    	
 		}

@@ -32,5 +32,8 @@ public interface MightyDeviceInfoDAO extends JpaRepository<MightyDeviceInfo, Lon
 	@Query("SELECT count(m.id) FROM MightyDeviceInfo m ")
 	List<MightyDeviceInfo> getAllMightyDev();
 
+	@Query("SELECT count(m.id) FROM MightyDeviceInfo m where m.swVersion=:swVersion")
+	List<MightyDeviceInfo> getLatestOTACount(@Param("swVersion") String swVersion);
+
 	
 }

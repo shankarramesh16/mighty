@@ -1,6 +1,7 @@
 package com.team.mighty.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class DeviceInfoDTO implements Serializable {
 
@@ -13,12 +14,33 @@ public class DeviceInfoDTO implements Serializable {
 	private String deviceName;
 	private String deviceType;
 	private String swVersion;
+	
+
 	private String userId;
 	private String isActive;
+	
 	private String isRegistered;
 	private String userName;
 	private String appVersion;
+	private Date registerAt;
+	private Date upgradedAt;
 	private String appBuild;
+
+	public Date getRegisterAt() {
+		return registerAt;
+	}
+
+	public void setRegisterAt(Date registerAt) {
+		this.registerAt = registerAt;
+	}
+
+	public Date getUpgradedAt() {
+		return upgradedAt;
+	}
+
+	public void setUpgradedAt(Date upgradedAt) {
+		this.upgradedAt = upgradedAt;
+	}
 
 	public String getAppVersion() {
 		return appVersion;

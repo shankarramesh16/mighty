@@ -303,7 +303,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	@Transactional
 	private MightyUserInfo registerFBUserAndDevice(ConsumerDeviceDTO consumerDeviceDto) throws MightyAppException{
 		/*Validating on FB Token*/
-		validateFacebookToken(consumerDeviceDto.getPassword());
+		//validateFacebookToken(consumerDeviceDto.getPassword());
 		MightyUserInfo mightyUserInfo = null;
 		
 		List<MightyUserInfo> mightyUsers = null;
@@ -763,6 +763,8 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 										mightyDeviceInfo1.setIsRegistered(deviceInfoDTO.getIsRegistered());
 										mightyDeviceInfo1.setAppVersion(Float.valueOf(deviceInfoDTO.getAppVersion()));
 										mightyDeviceInfo1.setAppBuild(deviceInfoDTO.getAppBuild());
+										mightyDeviceInfo1.setRegisterAt(deviceInfoDTO.getRegisterAt());
+										mightyDeviceInfo1.setUpgradeAt(deviceInfoDTO.getUpgradedAt());
 										//mightyDeviceInfo.setDeviceOrderInfo(mightyDeviceOrderInfo);
 										MightyDeviceInfo mightyDevice=null;
 									try{
@@ -1003,7 +1005,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		 Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		  String s = formatter.format(logs.getUpdatedDt())+".0";
 		
-		String link="https://mighty2.cloudaccess.host/test1/downloadMightyLogs/?devId="+logs.getDeviceId()+"&dat="+ URLEncoder.encode(s, "UTF-8")+"&usrId="+logs.getUsername();
+		String link="https://mighty2.cloudaccess.host/test1/downloadMightyLogs/?devId="+logs.getDeviceId()+"&dat="+URLEncoder.encode(s, "UTF-8")+"&usrId="+URLEncoder.encode(logs.getUsername(), "UTF-8");
 		//String link="http://192.168.1.107:8088/MightyCloud/getLogs/?devId="+logs.getDeviceId()+"&usrId="+logs.getUsername()+"&dat="+s;
 			logger.debug("link as",link);
 		if(logs.getTicket()!=null && !logs.getTicket().isEmpty()){

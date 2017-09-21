@@ -592,7 +592,8 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 	public void downloadMightyLogsHandler(HttpServletRequest request,HttpServletResponse response,Map<String,Object> map,RedirectAttributes redirectAttributes) throws IOException, SQLException {
 		logger.debug("In submitting downloadMighylog ");
 		String devId=request.getParameter("devId");
-		String username=request.getParameter("usrId");
+		//String username=request.getParameter("usrId");
+		String username=URLDecoder.decode(request.getParameter("usrId"), "UTF-8" );
 		String dat=URLDecoder.decode(request.getParameter("dat"), "UTF-8" );
 		logger.debug("deviceIddd",devId);
 		logger.debug("usernameee",username);

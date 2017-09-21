@@ -51,6 +51,7 @@
   			<% List<MightyUserInfo> mightyUserList=(List<MightyUserInfo>)request.getAttribute("mightyUserList"); %>
   			<% List<MightyDeviceInfo> mightyDeviceList=(List<MightyDeviceInfo>)request.getAttribute("mightyDeviceList");%>
   			<% List<MightyDeviceFirmware> latestOTA=(List<MightyDeviceFirmware>)request.getAttribute("latestOTA");%>
+			<% List<MightyDeviceInfo> latestOTACount=(List<MightyDeviceInfo>)request.getAttribute("latestOTACount");%>
 							 
   <div class="wrapper">  
   	<header class="main-header" >
@@ -281,6 +282,17 @@
 							  </div><!-- /.info-box-content -->
 							</div><!-- /.info-box --> --%>
 						</div>
+						
+						<div class="row">
+   							<div class="info-box col-sm-4 mar-top-15" >
+							  <!-- Apply any bg-* class to to the icon to color it -->
+							  	<span class="info-box-icon bg-yellow"><i class="fa fa-download"></i></span>
+							  	<div class="info-box-content">
+								    <span class="info-box-text">Latest OTA <b><%=latestOTA.get(0).getVersion()%></b></span>
+								    <span class="info-box-number"><b><%=latestOTACount.get(0)%></b></span>
+							 	</div><!-- /.info-box-content -->
+							 </div><!-- /.info-box -->
+						 </div>
 										
 						</div>	
 			</section>	
