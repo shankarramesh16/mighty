@@ -22,6 +22,7 @@
 		<class>com.team.mighty.domain.Mightyotadevice</class>
 		<class>com.team.mighty.domain.MightyUpload</class>
 		<class>com.team.mighty.domain.Mightydlauditlog</class>
+		<class>com.team.mighty.domain.MightySpotify</class>
 	
 
 		<properties>

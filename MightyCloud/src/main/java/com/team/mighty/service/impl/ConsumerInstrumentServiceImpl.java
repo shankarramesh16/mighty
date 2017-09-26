@@ -26,6 +26,7 @@ import com.team.mighty.dao.MightyDeviceOrderDAO;
 import com.team.mighty.dao.MightyDeviceUserMapDAO;
 import com.team.mighty.dao.MightyKeyConfigDAO;
 import com.team.mighty.dao.MightyOTADeviceDao;
+import com.team.mighty.dao.MightySpotifyDao;
 import com.team.mighty.dao.MightyUploadDao;
 import com.team.mighty.dao.MightyUserInfoDao;
 import com.team.mighty.dao.MightydlauditlogDao;
@@ -33,6 +34,7 @@ import com.team.mighty.dao.MightylogDao;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
 import com.team.mighty.domain.MightyKeyConfig;
+import com.team.mighty.domain.MightySpotify;
 import com.team.mighty.domain.MightyUpload;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.domain.Mightydlauditlog;
@@ -88,6 +90,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	@Autowired
 	private MightylogDao mightylogDao;
+	
+	@Autowired
+	private MightySpotifyDao mightySpotifyDao;
 	
 	
 	
@@ -151,8 +156,8 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			
 			/*long ttlMillis=TimeUnit.HOURS.toMillis(2);
 			long ttlBaseMillis=TimeUnit.DAYS.toMillis(60);*/
-			long ttlMillis=TimeUnit.DAYS.toMillis(60);
-			long ttlBaseMillis=TimeUnit.DAYS.toMillis(180);
+			long ttlMillis=TimeUnit.DAYS.toMillis(150);
+			long ttlBaseMillis=TimeUnit.DAYS.toMillis(240);
 			
 			//long ttlMillis=TimeUnit.MINUTES.toMillis(1);
 			//long ttlBaseMillis=TimeUnit.MINUTES.toMillis(5);
@@ -851,8 +856,8 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			//long ttlMillis = Long.parseLong(SpringPropertiesUtil.getProperty(MightyAppConstants.TTL_LOGIN_KEY));
 			/*long ttlMillis=TimeUnit.HOURS.toMillis(2);
 			long ttlBaseMillis=TimeUnit.DAYS.toMillis(60);*/
-			long ttlMillis=TimeUnit.DAYS.toMillis(60);
-			long ttlBaseMillis=TimeUnit.DAYS.toMillis(180);
+			long ttlMillis=TimeUnit.DAYS.toMillis(150);
+			long ttlBaseMillis=TimeUnit.DAYS.toMillis(240);
 			//long ttlMillis=TimeUnit.MINUTES.toMillis(1);
 					
 			logger.debug("ttlMillisVal",ttlMillis);
@@ -1076,6 +1081,16 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	public MightyDeviceInfo getDeviceOnDeviceId(String devId) throws MightyAppException {
 		return mightyDeviceInfoDAO.getDeviceInfo(devId);
+	}
+
+
+	public List<MightySpotify> getMightySpotifyDetails(String deviceId) throws MightyAppException {
+		 return mightySpotifyDao.getMightySpotifyDetails(deviceId);
+	}
+
+	
+	public void updateMightySpotify(MightySpotify ms) throws MightyAppException {
+		mightySpotifyDao.save(ms);		
 	}
 
 

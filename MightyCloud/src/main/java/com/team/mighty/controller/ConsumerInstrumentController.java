@@ -23,6 +23,7 @@ import com.team.mighty.constant.MightyAppConstants;
 import com.team.mighty.constant.PasswordGenerator;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
+import com.team.mighty.domain.MightySpotify;
 import com.team.mighty.domain.MightyUpload;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.domain.Mightydlauditlog;
@@ -1004,13 +1005,13 @@ public class ConsumerInstrumentController {
 	}
 	
 	
-	/*@RequestMapping(value = "/mightySpotifyInfo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/mightySpotifyInfo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> mightySpotifyInfoHandler(@RequestBody String received) throws Exception{
 		logger.debug("In mightySpotifyInfo controller");
 		JSONObject obj=null;
 		ResponseEntity<String> responseEntity = null;
 		MightyDeviceInfo mightyDeviceInfo=null;
-		List<MightyDeviceUserMapping> md=null;
+		List<MightySpotify> md=null;
 		
 		
 		try{		
@@ -1023,80 +1024,53 @@ public class ConsumerInstrumentController {
 		
 				
 		try {
-			//logger.debug("file_content",file_content);
-			logger.debug("deviceId",obj.get("deviceId").toString());
-			logger.debug("desc",obj.get("desc").toString());
-			logger.debug("deviceId",obj.get("deviceId").toString());
-			logger.debug("userId",obj.get("userId").toString());
-			Mightylog log=null;
 			
-			//Validate X-MIGHTY-TOKEN Value
-			//JWTKeyGenerator.validateXToken(xToken);
-			
-			// Validate Expriy Date
-			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
-			
-			mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
-			if(mightyDeviceInfo!=null){
-				md=consumerInstrumentServiceImpl.getMightyDeviceUserMappingOndevId(mightyDeviceInfo.getId());
-					if(md!=null && !md.isEmpty()){
-						for(MightyDeviceUserMapping m: md){
-							if(String.valueOf(m.getMightyUserInfo().getId()).equalsIgnoreCase(obj.get("userId").toString()) && 
-									m.getRegistrationStatus().equalsIgnoreCase("Y")){
-								        logger.debug("Helloooo");
-												log=new Mightylog();
-												log.setFileName("MightyLogs");
-												log.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
-												log.setLogType(obj.get("log_type").toString());
-												log.setTicket(obj.get("ticket").toString());
-												log.setDescription(obj.get("desc").toString());
-												log.setUsername(m.getMightyUserInfo().getUserName());
-												log.setEmailId(m.getMightyUserInfo().getEmailId());
-												log.setDevReg(m.getRegistrationStatus());
-												log.setDeviceId(obj.get("deviceId").toString());
-												log.setDeviceType(obj.get("DeviceType").toString());
-												log.setPhoneDeviceOSVersion(obj.get("DeviceOSVersion").toString());
-												log.setCreatedDt(new Date(System.currentTimeMillis()));
-												log.setUpdatedDt(new Date(System.currentTimeMillis()));
-											Mightylog logs=consumerInstrumentServiceImpl.updateMightyLogs(log);
-											
-												try{	
-													if(logs!=null){
-															logger.debug("/inside MightyLogs send Mail");
-															String subject="";
-																if(logs.getTicket()!=null && !logs.getTicket().isEmpty()){
-																	subject = "Log received from "+logs.getUsername()+""+"-"+""+"Ticket#"+logs.getTicket();
-																}else{
-																	subject = "Log received from "+logs.getUsername();
-																}
-															String message = consumerInstrumentServiceImpl.getMightyLogsMsg(logs);
-																		
-																SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
-																String[] arr={"heyo@bemighty.com","mightynotification@gmail.com"};
-																logger.debug("subject",subject);
-																for(String s :arr){
-																	logger.debug("mailing dest",s);
-																	mail.send(s, subject, message);
-																}
-															
-													}
-											
-												}catch(Exception e){
-													logger.error("/Sending Mightylog notification",e);
-												}
-											
-												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
-												return responseEntity;
-										
-							}else{
-								responseEntity = new ResponseEntity<String>("DeviceId not associated with user or registerstatus is N ", HttpStatus.BAD_REQUEST);
-							}
+			if(obj.get("deviceId").toString()!=null && !obj.get("deviceId").toString().isEmpty() && 
+					obj.get("m_username").toString()!=null && !obj.get("m_username").toString().isEmpty() &&
+						obj.get("sp_username").toString()!=null && !obj.get("sp_username").toString().isEmpty() && 
+							obj.get("sw_version").toString()!=null && !obj.get("sw_version").toString().isEmpty() && 
+								obj.get("status").toString()!=null && !obj.get("status").toString().isEmpty()){
+							
+						
+						
+						logger.debug("deviceId",obj.get("deviceId").toString());
+						logger.debug("m_username",obj.get("m_username").toString());
+						logger.debug("sp_username",obj.get("sp_username").toString());
+						logger.debug("status",obj.get("status").toString());
+						logger.debug("sw_version",obj.get("sw_version").toString());
+						
+						mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
+						if(mightyDeviceInfo!=null){
+							md=consumerInstrumentServiceImpl.getMightySpotifyDetails(mightyDeviceInfo.getDeviceId());
+									if(md!=null && !md.isEmpty()){
+										MightySpotify ms=md.get(0);
+										ms.setMUsername(obj.get("m_username").toString());
+										ms.setSpUsername(obj.get("sp_username").toString());
+										ms.setStatus(obj.get("status").toString());
+										ms.setSwVersion(obj.get("sw_version").toString());
+										ms.setUpdateddt(new Date(System.currentTimeMillis()));
+											consumerInstrumentServiceImpl.updateMightySpotify(ms);
+											responseEntity = new ResponseEntity<String>("succefully added/updated info", HttpStatus.OK);
+													
+									}else{
+										MightySpotify m=null;
+											m=new MightySpotify();
+											m.setDeviceId(obj.get("deviceId").toString());
+											m.setMUsername(obj.get("m_username").toString());
+											m.setSpUsername(obj.get("sp_username").toString());
+											m.setStatus(obj.get("status").toString());
+											m.setSwVersion(obj.get("sw_version").toString());
+											m.setCreateddt(new Date(System.currentTimeMillis()));
+											m.setUpdateddt(new Date(System.currentTimeMillis()));
+												consumerInstrumentServiceImpl.updateMightySpotify(m);
+												responseEntity = new ResponseEntity<String>("succefully added/updated info", HttpStatus.OK);
+									}
+						
+						}else{
+							responseEntity = new ResponseEntity<String>("deviceId not found", HttpStatus.NOT_FOUND);
 						}
-					}else{
-						responseEntity = new ResponseEntity<String>("DeviceId not mapped", HttpStatus.BAD_REQUEST);
-					}
 			}else{
-				responseEntity = new ResponseEntity<String>("Empty deviceId", HttpStatus.BAD_REQUEST);
+				responseEntity = new ResponseEntity<String>("mobile info null Expectation failed", HttpStatus.EXPECTATION_FAILED);
 			}
 							
 		}catch(MightyAppException e) {
@@ -1107,7 +1081,7 @@ public class ConsumerInstrumentController {
 				
 		return responseEntity;
 
-	}*/
+	}
 	
 	
 	

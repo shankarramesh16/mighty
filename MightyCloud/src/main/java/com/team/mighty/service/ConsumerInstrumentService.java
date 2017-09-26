@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyDeviceUserMapping;
+import com.team.mighty.domain.MightySpotify;
 import com.team.mighty.domain.MightyUpload;
 import com.team.mighty.domain.MightyUserInfo;
 import com.team.mighty.domain.Mightydlauditlog;
@@ -110,6 +111,10 @@ public interface ConsumerInstrumentService {
 	public MightyUpload getMightyUploadByDevId(String deviceId)throws MightyAppException;
 
 	public MightyDeviceInfo getDeviceOnDeviceId(String devId)throws MightyAppException;
+
+	public List<MightySpotify> getMightySpotifyDetails(String deviceId)throws MightyAppException;
+
+	public void updateMightySpotify(MightySpotify ms)throws MightyAppException;
 
 
 
