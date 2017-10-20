@@ -52,7 +52,7 @@ import com.team.mighty.utils.SpringPropertiesUtil;
 
 /**
  * 
- * @author Shankara
+ * @author Vikky
  *
  */
 @Service("consumerInstrumentServiceImpl")
@@ -96,10 +96,10 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	
 	
-
+	@Transactional
 	public UserLoginDTO userLogin(UserLoginDTO userLoginDTO) {
 		if(userLoginDTO == null) {
-			throw new MightyAppException("Invalid Request, User Login Request is empty", HttpStatus.BAD_REQUEST);
+			throw new MightyAppException("Invalid Request, User Login Request is empty", HttpStatus.NO_CONTENT);
 		}
 		
 		if(userLoginDTO.getUserId() <=0 ){
@@ -210,7 +210,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	private MightyUserInfo registerUserAndDevice(ConsumerDeviceDTO consumerDeviceDto) throws MightyAppException {
 		MightyUserInfo mightyUserInfo=null;
 		List<MightyUserInfo> mightyUsers = null;
-		mightyUsers=getUserByNameAndEmailWithIndicator(consumerDeviceDto.getUserName(),consumerDeviceDto.getEmailId(),consumerDeviceDto.getUserIndicator());
+			mightyUsers=getUserByNameAndEmailWithIndicator(consumerDeviceDto.getUserName(),consumerDeviceDto.getEmailId(),consumerDeviceDto.getUserIndicator());
 		
 		if(mightyUsers!=null && !mightyUsers.isEmpty()){
 				mightyUserInfo=mightyUsers.get(0);
@@ -451,13 +451,9 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		
 	}
 
+	@Transactional
 	public void deregisterDevice(String deviceId) {
-		if(null == deviceId || "".equalsIgnoreCase(deviceId)) {
-			logger.debug("DeRegister Device, Consumer DeviceId is null");
-			throw new MightyAppException("DeRegister Device value is null or empty", HttpStatus.BAD_REQUEST);
-		}
 		
-			
 		MightyDeviceInfo mightDeviceInfo = getDeviceDetails(deviceId);
 		
 		if(mightDeviceInfo == null ) {
@@ -645,15 +641,10 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			throw new MightyAppException("Invalid request Object", HttpStatus.BAD_REQUEST);
 		}
 		
-		if((null == deviceInfoDTO.getUserId() || "".equalsIgnoreCase(deviceInfoDTO.getUserId()))
-				|| (null == deviceInfoDTO.getDeviceId() || "".equals(deviceInfoDTO.getDeviceId())))
-		{
-			logger.debug("Register Device, Anyone of the object is empty [UserId, DeviceId] ", deviceInfoDTO.getUserId(), 
-					",",deviceInfoDTO.getDeviceId());
-			throw new MightyAppException("Invalid request Parameters [UserId or Device Id ] ", HttpStatus.BAD_REQUEST);
-		}
-		
+		 /*Validation on Mighty Device*/
 		 validateDevice(deviceInfoDTO.getDeviceId());
+		 
+		 /*Registration process*/
 		 registerMightyWithUser(deviceInfoDTO);
 		
 		

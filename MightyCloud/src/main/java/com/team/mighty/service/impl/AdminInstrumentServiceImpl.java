@@ -172,8 +172,7 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	
 	@Transactional
 	public synchronized MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo,String SWVersion,String AppVersion, String AppBuild) throws MightyAppException{
-		MightyDeviceFirmware mightyDeviceFirmware=null;
-		
+			
 		List<MightyDeviceFirmware> compatibleWithExistRequires=null;
 		try {
 			MightyDeviceInfo mightyInfo=null; 
@@ -188,12 +187,9 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 				MightyDeviceInfo mightyDeviceInfo=mightyDeviceInfoDAO.save(mightyInfo);
 				logger.debug("SwVersion# updated",mightyDeviceInfo.getSwVersion());
 				if(mightyDeviceInfo!=null){
-						logger.debug("HwSerialNo",mightyDeviceInfo.getDeviceId());
-					String compatibleHw=mightyDeviceInfo.getDeviceId().trim().substring(3, 4);
-						logger.debug("existingHwCode",compatibleHw);
-						logger.debug("appversion",mightyDeviceInfo.getAppVersion());
-						logger.debug("swVersion",Float.valueOf(mightyDeviceInfo.getSwVersion()));
-					
+						
+					//String compatibleHw=mightyDeviceInfo.getDeviceId().trim().substring(3, 4);
+										
 					List<MightyDeviceFirmware>  mightyLastestDeviceFirmwares= mightyDeviceFirmwareDAO.getDeviceFirmwareByStatusAsc("A");
 					mightyLstDeviceFirmware=new  MightyDeviceFirmware();
 					if(mightyLastestDeviceFirmwares!=null && !mightyLastestDeviceFirmwares.isEmpty()){
@@ -270,7 +266,6 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 					  }
 					   
 					
-					logger.debug("objectttt",mightyLstDeviceFirmware);
 				}	   
 			}else{
 				  throw new MightyAppException("HwSerialNo mighty be not exist or not in correct format",HttpStatus.EXPECTATION_FAILED);
@@ -278,8 +273,9 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 			
 			
 		} catch (Exception e) {
+			logger.error("/Exception in 'device firmware method' ",e);
 			throw new MightyAppException(e.getMessage(),HttpStatus.BAD_REQUEST);
-			//throw new MightyAppException(e.getMessage(),HttpStatus.BAD_REQUEST);
+			
 		}
 		return null;
 	}

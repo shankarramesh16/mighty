@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.team.mighty.domain.AdminUser;
-import com.team.mighty.domain.MightyDeviceFirmware;
 import com.team.mighty.domain.MightyDeviceOrderInfo;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.service.AdminInstrumentService;

@@ -39,7 +39,9 @@ public class SpotifyAccessController {
 	
 	@RequestMapping(value = "/spotifyToken", method = RequestMethod.POST)
 	public ResponseEntity<String> spotifyTokenOnCodeHandler(@RequestBody String received) throws Exception {
-		logger.debug("POST/ In SpotifyToken");
+		logger.info(" /POST /spotifyToken");
+		logger.debug("/spotifyToken Received",received);
+		
 		JSONObject json=null;
 		ResponseEntity<String> responseEntity = null;
 		HttpHeaders httpHeaders = new HttpHeaders();

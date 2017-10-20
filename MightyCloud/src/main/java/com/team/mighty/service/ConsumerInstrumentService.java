@@ -19,7 +19,7 @@ import com.team.mighty.exception.MightyAppException;
 
 /**
  * 
- * @author Shankara
+ * @author Vikky
  *
  */
 public interface ConsumerInstrumentService {
