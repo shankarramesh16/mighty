@@ -437,7 +437,7 @@ public class ConsumerInstrumentController {
 			
 					DeviceInfoDTO deviceInfoDTO=new DeviceInfoDTO();
 					deviceInfoDTO.setUserId(obj.get("UserID").toString());
-					deviceInfoDTO.setDeviceId(obj.get("HWSerialNumber").toString());
+					deviceInfoDTO.setDeviceId(obj.get("HWSerialNumber").toString().replaceAll("\\s+",""));
 					deviceInfoDTO.setDeviceName(obj.get("DeviceName").toString());
 					deviceInfoDTO.setDeviceType(obj.get("DeviceType").toString());
 					deviceInfoDTO.setSwVersion(obj.get("SWVersion").toString());
@@ -485,6 +485,8 @@ public class ConsumerInstrumentController {
 		logger.debug("/mightyDeReg Received",received);
 		logger.debug("/mightyDeReg token",xToken);
 		
+		String mighty="";
+		
 		JSONObject obj=null;
 		ResponseEntity<String> responseEntity = null;
 		try{		
@@ -505,6 +507,7 @@ public class ConsumerInstrumentController {
 			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			
 			if(obj.get("deviceID").toString()!=null && !obj.get("deviceID").toString().isEmpty()){
+				mighty=obj.get("deviceID").toString();
 				consumerInstrumentServiceImpl.deregisterDevice(obj.get("deviceID").toString().trim());
 			}else{
 				responseEntity = new ResponseEntity<String>("Null/Empty value passing '/mightyDeReg'", HttpStatus.NOT_ACCEPTABLE);
@@ -512,6 +515,7 @@ public class ConsumerInstrumentController {
 				responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		} catch(MightyAppException e) {
 			logger.error("/Exception in '/mightyDeReg' ",e);
+			logger.error("/Mighty DeReg in '/mightyDeReg' ",mighty);
 			String errorMessage = e.getMessage();
 			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
 			

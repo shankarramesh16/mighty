@@ -6,8 +6,12 @@
 
 
 <%@page import="com.team.mighty.domain.*"%>
+<%@page import="java.util.*"%>
+<%@page import="com.team.mighty.dto.*"%>
+<%@page import="org.displaytag.decorator.TotalTableDecorator"%>
+<%@page import="org.displaytag.decorator.MultilevelTotalTableDecorator"%>
 <%@page import="com.itextpdf.text.log.SysoLogger"%>
-<%@page import="java.util.List"%>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -47,11 +51,17 @@
   <body class="hold-transition skin-blue sidebar-mini">
   
   			<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
-  			%>
+  			
+  			String fname1=("MightyCountByOTA :").concat(new Date().toString()).concat(".csv");
+			String fname2=("MightyCountByOTA :").concat(new Date().toString()).concat(".xls");
+			String fname3=("MightyCountByOTA :").concat(new Date().toString()).concat(".xml");
+			%>
+			
   			<% List<MightyUserInfo> mightyUserList=(List<MightyUserInfo>)request.getAttribute("mightyUserList"); %>
   			<% List<MightyDeviceInfo> mightyDeviceList=(List<MightyDeviceInfo>)request.getAttribute("mightyDeviceList");%>
   			<% List<MightyDeviceFirmware> latestOTA=(List<MightyDeviceFirmware>)request.getAttribute("latestOTA");%>
 			<% List<MightyDeviceInfo> latestOTACount=(List<MightyDeviceInfo>)request.getAttribute("latestOTACount");%>
+			<% List<MightyDeviceInfo> mightySwVerCounts=(List<MightyDeviceInfo>)request.getAttribute("mightySwVerCounts");%>
 							 
   <div class="wrapper">  
   	<header class="main-header" >
@@ -183,7 +193,7 @@
   
   </aside>
  
-	<div class="content-wrapper">
+	<div class="content-wrapper ">
 		
 			<section class="content">
 		 		<div class="content-wrap box box-primary">
@@ -215,76 +225,30 @@
     				</div> --><!-- /.box-tools -->
    				</div><!-- /.box-header -->
 		 		
-		 		
-			 			
-		 		
-		 		
-		 		
-						<!-- <div class="row">
-							<div class="col-sm-12 page-heading ">
-								<h5 class="text-blue text-center "><span class="fa fa-dashboard"></span>&nbsp;&nbsp;<b>Dashboard</b></h5>
-							</div>
-													
-						</div> -->
-					
-					
-						
-						
-						
-						<%-- <div class="row">
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 text-lightgrey"><i class="fa fa-user"><b>&nbsp;First Name:</b></i></div>
-							<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getFirstname()%></b></div>
-							
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 col-md-offset-2 text-lightgrey"><i class="fa fa-user"><b>&nbsp;Last Name:</b></i></div>
-							<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getLastname()%></b></div>						
-						</div>
-						
-						
-						
+		 						
+   						<div class="row mar-top-15">
+   									  
+						  <div class="col-sm-6 " >
+						    											
+						        <display:table class="table table-bordered text-center" name="<%=mightySwVerCounts%>" id="row"
+											export="false" requestURI="" defaultsort="1" defaultorder="descending" pagesize="50">
+									
+										<display:column  property="version" title="Mighty Firmware"	sortable="true" headerClass="sortable" />
 										
-						
-						<div class="row">
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 text-lightgrey"><i class="fa fa-envelope"><b>&nbsp;Email:</b></i></div>
-							<div class="col-md-3 col-sm-7 col-xs-6 mar-top-15 text-break"><b><%=adminUser.getEmailaddress()%></b></div>
+										<display:column  property="userCount" title="Upgraded" sortable="true" headerClass="sortable"/>
+										
+																     		   
+									 	<display:setProperty name="export.csv.filename" value="<%=fname1%>" />
+										<display:setProperty name="export.excel.filename" value="<%=fname2%>" />
+										<display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
+								</display:table> 
 							
-							<div class="col-md-2 col-sm-5 col-xs-6 mar-top-15 col-md-offset-2 text-lightgrey"><i class="fa fa-phone"><b>&nbsp;Mobile No:</b></i></div>
-							<div class="col-md-2 col-sm-7 col-xs-6 mar-top-15"><b><%=adminUser.getContactnumber()%></b></div>						
-						</div>
-						 --%>
-						
-   						
-   						
-   						<div class="row">
-   							<div class="info-box col-sm-4 mar-top-15" >
-							  <!-- Apply any bg-* class to to the icon to color it -->
-							  	<span class="info-box-icon bg-blue"><i class="fa fa-user"></i></span>
-							  	<div class="info-box-content">
-								    <span class="info-box-text">Mighty Users</span>
-								    <span class="info-box-number"><b><%=mightyUserList.get(0)%></b></span>
-							 	</div><!-- /.info-box-content -->
-							 </div><!-- /.info-box -->
-						
-   							<div class="info-box col-sm-4 mar-top-15" >
-							  <!-- Apply any bg-* class to to the icon to color it -->
-							  <span class="info-box-icon bg-green"><i class="fa fa-music"></i></span>
-							  <div class="info-box-content">
-							    <span class="info-box-text">Mighty Device</span>
-							    <span class="info-box-number"><b><%=mightyDeviceList.get(0)%></b></span>
-							  </div><!-- /.info-box-content -->
-							</div><!-- /.info-box -->
-						
-   							<%-- <div class="info-box col-sm-4 mar-top-10" >
-							  <!-- Apply any bg-* class to to the icon to color it -->
-							  <span class="info-box-icon bg-red"><i class="fa fa-upload"></i></span>
-							  <div class="info-box-content">
-							    <span class="info-box-text"><em>Latest Device Firmware/OTA</em></span>
-							    <span class="info-box-number"><b><%=latestOTA.get(0).getVersion()%></b></span>
-							  </div><!-- /.info-box-content -->
-							</div><!-- /.info-box --> --%>
-						</div>
-						
-						<div class="row">
-   							<div class="info-box col-sm-4 mar-top-15" >
+						   </div>
+					  
+					     
+					    
+						   <div class="info-box col-sm-2 mar-top-25" >
+							<div class="info-box" >
 							  <!-- Apply any bg-* class to to the icon to color it -->
 							  	<span class="info-box-icon bg-yellow"><i class="fa fa-download"></i></span>
 							  	<div class="info-box-content">
@@ -293,7 +257,40 @@
 							 	</div><!-- /.info-box-content -->
 							 </div><!-- /.info-box -->
 						 </div>
-										
+							
+						
+   						
+	   						<div class="info-box col-sm-2" >
+	   							<div class="info-box mar-top-15" >
+								  <!-- Apply any bg-* class to to the icon to color it -->
+								  	<span class="info-box-icon bg-blue"><i class="fa fa-user"></i></span>
+								  	<div class="info-box-content">
+									    <span class="info-box-text">Mighty Users</span>
+									    <span class="info-box-number"><b><%=mightyUserList.get(0)%></b></span>
+								 	</div><!-- /.info-box-content -->
+								 </div><!-- /.info-box -->
+							</div>	 
+								
+							<div class="info-box col-sm-2" >
+							
+								 <div class="info-box mar-top-15" >
+								  <!-- Apply any bg-* class to to the icon to color it -->
+								  <span class="info-box-icon bg-green"><i class="fa fa-music"></i></span>
+								  <div class="info-box-content">
+								    <span class="info-box-text">Mighty Device</span>
+								    <span class="info-box-number"><b><%=mightyDeviceList.get(0)%></b></span>
+								  </div><!-- /.info-box-content -->
+								</div><!-- /.info-box -->
+							</div>	
+						</div>		
+					</div>	
+					
+						
+							 
+							 
+						
+						
+									
 						</div>	
 			</section>	
 			<%@include file="Footer.jsp"%>  		

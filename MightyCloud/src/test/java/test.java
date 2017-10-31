@@ -1,10 +1,9 @@
 public class test {
 public static void main(String args[]){
-	test t=new test();
-	String str = "vicky";
-	int hashcode=t.hashCode();
-	byte[] arr=str.getBytes();
-	System.out.println("Hashcode"+((Object)arr[4]).hashCode());
+	String str = " vicky";
+	System.out.println("val"+str);
+	System.out.println("val3"+str.trim());
+	System.out.println("value"+str.replaceAll("\\s+",""));
 	
 }
 }

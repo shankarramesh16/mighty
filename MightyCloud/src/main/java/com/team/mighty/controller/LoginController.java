@@ -1,6 +1,7 @@
 package com.team.mighty.controller;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import com.team.mighty.domain.AdminUser;
 import com.team.mighty.domain.MightyDeviceFirmware;
 import com.team.mighty.domain.MightyDeviceInfo;
 import com.team.mighty.domain.MightyUserInfo;
+import com.team.mighty.dto.MightyUsersByVersionDto;
 import com.team.mighty.logger.MightyLogger;
 import com.team.mighty.notification.SendMail;
 import com.team.mighty.service.AdminInstrumentService;
@@ -149,10 +151,35 @@ public class LoginController {
 			 List<MightyUserInfo> mightyUserList=consumerInstrumentServiceImpl.getAllMightyUsers();
 			 List<MightyDeviceInfo> mightyDeviceList=consumerInstrumentServiceImpl.getAllMightyDev();
 			 List<MightyDeviceFirmware> latestOTA=adminInstrumentServiceImpl.getLatestOTA();
+			 List<Object[]> mightySwVerCount=adminInstrumentServiceImpl.mightySwVerCount();
+			 List<MightyUsersByVersionDto>  mightySwVerCounts=null;
+			 				mightySwVerCounts=new ArrayList<MightyUsersByVersionDto>();
+			 
 			 List<MightyDeviceInfo> latestOTACount=null;
 			 if(latestOTA!=null && !latestOTA.isEmpty()){
 				 logger.debug("///latest ota VERSION",latestOTA.get(0).getVersion());
 				 latestOTACount=adminInstrumentServiceImpl.getLatestOTACount(latestOTA.get(0).getVersion().trim());
+			 }
+			 
+			 if(mightySwVerCount!=null && !mightySwVerCount.isEmpty()){
+				for(Object[] m: mightySwVerCount){
+					MightyUsersByVersionDto dto=null;
+						dto=new MightyUsersByVersionDto();
+					logger.debug("inside for loop /adminHome");
+					Double val=0.0;
+					try{
+						val=Double.parseDouble(m[0].toString());
+					}catch(Exception e){
+						;
+					}
+					if(val>0.5){
+						dto.setVersion(m[0].toString());
+						dto.setUserCount(m[1].toString());
+						mightySwVerCounts.add(dto);
+					}
+					
+					
+				}
 			 }
 			 
 			 logger.debug("///latest ota",latestOTACount.size());	
@@ -162,6 +189,7 @@ public class LoginController {
 			 map.put("mightyDeviceList",mightyDeviceList);
 			 map.put("latestOTA",latestOTA);
 			 map.put("latestOTACount",latestOTACount);
+			 map.put("mightySwVerCounts",mightySwVerCounts);
 			 return "AdminView";
 		    	
 		}

@@ -11,7 +11,7 @@ import com.team.mighty.domain.MightyUserInfo;
 
 public interface MightyDeviceInfoDAO extends JpaRepository<MightyDeviceInfo, Long> {
 
-	@Query("SELECT m FROM MightyDeviceInfo m WHERE m.deviceId = :deviceId ")
+	@Query("SELECT m FROM MightyDeviceInfo m WHERE m.deviceId=:deviceId ")
 	MightyDeviceInfo getDeviceInfo(@Param("deviceId") String deviceId);
 	
 	@Query("SELECT m FROM MightyDeviceInfo m WHERE m.deviceId = :deviceId and m.isRegistered='Y' ")
@@ -34,6 +34,9 @@ public interface MightyDeviceInfoDAO extends JpaRepository<MightyDeviceInfo, Lon
 
 	@Query("SELECT count(m.id) FROM MightyDeviceInfo m where m.swVersion=:swVersion")
 	List<MightyDeviceInfo> getLatestOTACount(@Param("swVersion") String swVersion);
+	
+	@Query(value="select m.sw_version,count(m.sw_version) as upgraded FROM TBL_MIGHTY_DEVICE_INFO m GROUP BY m.sw_version HAVING COUNT(m.sw_version )>1",nativeQuery = true)
+	List<Object[]> mightySwVerCount();
 
 	
 }

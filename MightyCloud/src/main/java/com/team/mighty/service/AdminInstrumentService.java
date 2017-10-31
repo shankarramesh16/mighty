@@ -36,7 +36,7 @@ public interface AdminInstrumentService {
 
 	public void saveMightyDeviceOrder(MightyDeviceOrderInfo mightyDeviceOrder)throws Exception;
 
-	public MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo, String SWVersion, String AppVersion, String AppBuild)throws MightyAppException; 
+	public MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo, String SWVersion, String AppVersion, String AppBuild) throws MightyAppException; 
 	
 	public MightyDeviceFirmware getMightyLstDeviceFirmware();
 
@@ -49,4 +49,8 @@ public interface AdminInstrumentService {
 	public void deleteExistingEntryFromMightyOTADev()throws MightyAppException;
 
 	public List<MightyDeviceInfo> getLatestOTACount(String version)throws MightyAppException;
+
+	public List<Object[]> mightySwVerCount()throws MightyAppException;
+
+	public MightyDeviceFirmware getMightyDeviceFirmware1(String HWSerialNo, String SWVersion, String AppVersion, String AppBuild) throws MightyAppException;
 }

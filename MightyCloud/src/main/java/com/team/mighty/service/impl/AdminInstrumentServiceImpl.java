@@ -171,12 +171,18 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	}
 	
 	@Transactional
-	public synchronized MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo,String SWVersion,String AppVersion, String AppBuild) throws MightyAppException{
+	public MightyDeviceFirmware getMightyDeviceFirmware(String HWSerialNo,String SWVersion,String AppVersion, String AppBuild) throws MightyAppException{
 			
 		List<MightyDeviceFirmware> compatibleWithExistRequires=null;
 		try {
 			MightyDeviceInfo mightyInfo=null; 
-			mightyInfo=mightyDeviceInfoDAO.getDeviceInfo(HWSerialNo);
+			logger.debug("Before before");
+			logger.debug("Before before1",HWSerialNo);
+			logger.debug("Before before",HWSerialNo.trim());
+			  mightyInfo=mightyDeviceInfoDAO.getDeviceInfo(HWSerialNo.trim());
+			
+			logger.debug("After After");
+			
 			if(mightyInfo!=null){
 				logger.debug("Serial# as",HWSerialNo);
 				logger.debug("SwVersion# as",SWVersion);
@@ -268,7 +274,123 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 					
 				}	   
 			}else{
-				  throw new MightyAppException("HwSerialNo mighty be not exist or not in correct format",HttpStatus.EXPECTATION_FAILED);
+				  throw new MightyAppException("HwSerialNo mighty be not exist",HttpStatus.EXPECTATION_FAILED);
+				  }
+			
+			
+		} catch (Exception e) {
+			logger.error("/Exception in 'device firmware method' ",e);
+			throw new MightyAppException(e.getMessage(),HttpStatus.BAD_REQUEST);
+			
+		}
+		return null;
+	}
+	
+	@Transactional
+	public MightyDeviceFirmware getMightyDeviceFirmware1(String HWSerialNo,String SWVersion,String AppVersion, String AppBuild) throws MightyAppException{
+			
+		List<MightyDeviceFirmware> compatibleWithExistRequires=null;
+		try {
+			MightyDeviceInfo mightyInfo=null; 
+			logger.debug("Before before");
+			logger.debug("Before before1",HWSerialNo);
+			logger.debug("Before before",HWSerialNo.trim());
+			  mightyInfo=mightyDeviceInfoDAO.getDeviceInfo(HWSerialNo.trim());
+			
+			logger.debug("After After");
+			
+			if(mightyInfo!=null){
+				logger.debug("Serial# as",HWSerialNo);
+				logger.debug("SwVersion# as",SWVersion);
+				mightyInfo.setSwVersion(SWVersion);
+				mightyInfo.setAppVersion(Float.valueOf(AppVersion));
+				mightyInfo.setAppBuild(AppBuild);
+				mightyInfo.setUpgradeAt(new Date(System.currentTimeMillis()));
+				MightyDeviceInfo mightyDeviceInfo=mightyDeviceInfoDAO.save(mightyInfo);
+				logger.debug("SwVersion# updated",mightyDeviceInfo.getSwVersion());
+				if(mightyDeviceInfo!=null){
+						
+					//String compatibleHw=mightyDeviceInfo.getDeviceId().trim().substring(3, 4);
+										
+					List<MightyDeviceFirmware>  mightyLastestDeviceFirmwares= mightyDeviceFirmwareDAO.getDeviceFirmwareByStatusAsc("A");
+					mightyLstDeviceFirmware=new  MightyDeviceFirmware();
+					if(mightyLastestDeviceFirmwares!=null && !mightyLastestDeviceFirmwares.isEmpty()){
+						   for(MightyDeviceFirmware mdf : mightyLastestDeviceFirmwares){
+							      mightyLstDeviceFirmware=mdf;   
+							   
+							  /* if(mdf.getCompatibleHW().contains(compatibleHw)){
+								   mightyLstDeviceFirmware=mdf;   
+							   }*/
+						   }
+					   }
+					
+					
+					
+					compatibleWithExistRequires=mightyDeviceFirmwareDAO.getFirmwareByCompatible(mightyDeviceInfo.getAppVersion(),Float.valueOf(mightyDeviceInfo.getSwVersion()),"A");
+					
+					   if(compatibleWithExistRequires!=null && !compatibleWithExistRequires.isEmpty()){
+							logger.debug("Size if",compatibleWithExistRequires.size());
+								return compatibleWithExistRequires.get(compatibleWithExistRequires.size()-1);
+						/*if(compatibleWithExistRequires.get(0).getCompatibleHW().contains(compatibleHw)){
+								
+						}*/
+					   }else {
+						   logger.debug("vikkky",mightyDeviceInfo.getAppVersion());
+							List<MightyDeviceFirmware> compatibleWithVersion= mightyDeviceFirmwareDAO.getFirmwareByReqVersion1(mightyDeviceInfo.getAppVersion(),"A");
+							
+							if(compatibleWithVersion!=null && !compatibleWithVersion.isEmpty()){
+								logger.debug("Size else",compatibleWithVersion.size());
+								
+								for(MightyDeviceFirmware mdf : compatibleWithVersion){
+									
+										float firmwareVer=0;
+										float requestedVer=0;
+										float requiredLatest=0;
+												try{
+													firmwareVer=Float.parseFloat(mdf.getVersion().trim());
+													requestedVer=Float.parseFloat(mightyDeviceInfo.getSwVersion().trim());
+													requiredLatest=mdf.getRequires();
+												}catch(NullPointerException npe){
+													logger.error("Line 193",npe);
+												}
+									logger.debug("swVersin",firmwareVer);
+									logger.debug("latestRequired",requestedVer);
+										if(firmwareVer > requestedVer){
+											if(requestedVer>=requiredLatest ){
+											return mdf;
+											}	
+										}
+									
+									
+									/*if(mdf.getCompatibleHW().contains(compatibleHw)){
+										float firmwareVer=0;
+										float requestedVer=0;
+										float requiredLatest=0;
+												try{
+													firmwareVer=Float.parseFloat(mdf.getVersion().trim());
+													requestedVer=Float.parseFloat(mightyDeviceInfo.getSwVersion().trim());
+													requiredLatest=mdf.getRequires();
+												}catch(NullPointerException npe){
+													logger.error("Line 193",npe);
+												}
+									logger.debug("swVersin",firmwareVer);
+									logger.debug("latestRequired",requestedVer);
+										if(firmwareVer > requestedVer){
+											if(requestedVer>=requiredLatest ){
+											return mdf;
+											}	
+										}
+									}*/
+																
+							   }		
+						   
+					     }	
+					  }
+					   
+					
+				}	   
+			}else{
+				  throw new MightyAppException("HwSerialNo mighty be not exist",HttpStatus.EXPECTATION_FAILED);
 				  }
 			
 			
@@ -306,6 +428,11 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	
 	public List<MightyDeviceInfo> getLatestOTACount(String version) throws MightyAppException {
 		return mightyDeviceInfoDAO.getLatestOTACount(version);
+	}
+
+	
+	public List<Object[]> mightySwVerCount() throws MightyAppException {
+		return mightyDeviceInfoDAO.mightySwVerCount();
 	}
 
 	
