@@ -115,13 +115,6 @@ public interface ConsumerInstrumentService {
 	public List<MightySpotify> getMightySpotifyDetails(String deviceId)throws MightyAppException;
 
 	public void updateMightySpotify(MightySpotify ms)throws MightyAppException;
-
-
-
-
-	
-
-
 	
 	
 }

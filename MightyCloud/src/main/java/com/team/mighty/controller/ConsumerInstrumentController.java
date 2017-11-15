@@ -412,10 +412,10 @@ public class ConsumerInstrumentController {
 		try {
 			
 			//Validate X-MIGHTY-TOKEN Value
-			JWTKeyGenerator.validateXToken(xToken);
+			//JWTKeyGenerator.validateXToken(xToken);
 			
 			// Validate Expriy Date
-			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			
 			if(obj.get("UserID").toString()!=null && !obj.get("UserID").toString().isEmpty() && 
 					obj.get("HWSerialNumber").toString()!=null && !obj.get("HWSerialNumber").toString().isEmpty() &&
@@ -501,10 +501,10 @@ public class ConsumerInstrumentController {
 		try {
 			
 			//Validate X-MIGHTY-TOKEN Value
-			JWTKeyGenerator.validateXToken(xToken);
+			//JWTKeyGenerator.validateXToken(xToken);
 			
 			//Validate Expriy Date
-			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			
 			if(obj.get("deviceID").toString()!=null && !obj.get("deviceID").toString().isEmpty()){
 				mighty=obj.get("deviceID").toString();
