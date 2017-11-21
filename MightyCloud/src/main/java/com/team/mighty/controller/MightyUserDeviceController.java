@@ -171,8 +171,8 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 	@RequestMapping(value = "/userMgmt", method = RequestMethod.GET)
 	public String userMgmtHandler(Map<String,Object> map) throws Exception {
 		logger.debug("Getting mighty's as per mighty ");	
-		List<MightyDeviceInfo> mightyList=consumerInstrumentServiceImpl.getMightyDeviceInfo();
-			map.put("mightyList", mightyList);
+		/*List<MightyDeviceInfo> mightyList=consumerInstrumentServiceImpl.getMightyDeviceInfo();
+			map.put("mightyList", mightyList);*/
 		return "viewMighty";
 	}
 	
@@ -180,7 +180,7 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 	@RequestMapping(value = "/getUserByDevId", method = RequestMethod.GET)
 	public @ResponseBody String ajaxForGetUserByDevId(HttpServletRequest request,Map<String,Object> map) throws Exception {
 		logger.debug("Getting User as per mighty id ");	
-		String devId=request.getParameter("devId");
+		String devId=request.getParameter("devId").trim();
 		String retVal="";
 		logger.debug("DevId as"+devId);
 		//MightyDeviceInfo m=consumerInstrumentServiceImpl.getMightyDeviceOnId(Long.parseLong(devId));
@@ -204,7 +204,16 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 								+m.getDeviceId()
 								+"</td>"
 								+"<td>"
+								+m.getSwVersion()
+								+"</td>"
+								+"<td>"
 								+usr.getUserIndicator()
+								+"</td>"
+								+"<td>"
+								+md.getPhoneDeviceOSVersion()
+								+"</td>"
+								+"<td>"
+								+md.getPhoneDeviceType()
 								+"</td>"
 								+"<td>"
 								+md.getRegistrationStatus()
@@ -227,7 +236,16 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 								+m.getDeviceId()
 								+"</td>"
 								+"<td>"
+								+m.getSwVersion()
+								+"</td>"
+								+"<td>"
 								+usr.getUserIndicator()
+								+"</td>"
+								+"<td>"
+								+md.getPhoneDeviceOSVersion()
+								+"</td>"
+								+"<td>"
+								+md.getPhoneDeviceType()
 								+"</td>"
 								+"<td>"
 								+md.getRegistrationStatus()

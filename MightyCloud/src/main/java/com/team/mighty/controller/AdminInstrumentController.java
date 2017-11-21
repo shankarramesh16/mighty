@@ -469,7 +469,7 @@ public class AdminInstrumentController {
 						}
 				
 				   // OTA for limited release condition checker
-					if(val>=0.89){
+					if(val>=0.64){
 						List<Mightyotadevice> ota=adminInstrumentServiceImpl.getMightyForOTA(HWSerialNumber);
 						
 							if(ota!=null && !ota.isEmpty()){

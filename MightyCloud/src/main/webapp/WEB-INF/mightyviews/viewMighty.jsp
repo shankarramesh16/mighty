@@ -52,11 +52,12 @@
 	 function getUserByDevId(devId,dev){
 		 if(dev=="dev2"){
 			 var dev=document.getElementById("devId");
-			 dev.innerHTML='<option value="0">---Select Mighty---</option>';
+			 //dev.innerHTML='<option value="0">---Select Mighty---</option>';
 		 }
-		 
-		 if(devId=="0")
-	    	{                	
+		
+		 if(devId=="")
+	    	{   
+			 alert("please select the Mighty serialno !");
 	    	var user=document.getElementById("tableView");
 	    	user.innerHTML='<table class="table table-bordered text-center">'
              	+'<thead>'
@@ -64,7 +65,10 @@
 			        +'<th>UserName</th>'
 			        +'<th>EmailID</th>'
 			        +'<th>MightyDevice</th>'
+			        +'<th>SoftwareVersion</th>'
 			        +'<th>UserIndicator</th>'
+			        +'<th>PhoneDeviceOS</th>'
+			        +'<th>PhoneDeviceType</th>'
 			        +'<th>Is_registered</th>'
 			        +'<th>Action</th>'
 			     + '</tr>'
@@ -127,7 +131,7 @@
 	                 if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
 	                 { 
 	                     var returnText=xmlHttp.responseText;
-	                     
+	                     if(returnText!=""){
 	                     var user=document.getElementById("tableView");
 	                     user.innerHTML='<table class="table table-bordered text-center">'
 	                     	+'<thead>'
@@ -135,13 +139,35 @@
 						        +'<th>UserName</th>'
 						        +'<th>EmailID</th>'
 						        +'<th>MightyDevice</th>'
+						        +'<th>SoftwareVersion</th>'
 						        +'<th>UserIndicator</th>'
+						        +'<th>PhoneDeviceOS</th>'
+						        +'<th>PhoneDeviceType</th>'
 						        +'<th>Is_registered</th>'
 						        +'<th>Action</th>'
 						     + '</tr>'
 						    +'</thead>'
 						    +'<tbody>'+returnText+'</tbody></table>';
 	                    //document.getElementById("emailId").focus();
+	                     }else{
+	                    	 alert("Incorrect Mighty Serial#");
+	                    	 var user=document.getElementById("tableView");
+		                     user.innerHTML='<table class="table table-bordered text-center">'
+		                     	+'<thead>'
+							      +'<tr>'
+							        +'<th>UserName</th>'
+							        +'<th>EmailID</th>'
+							        +'<th>MightyDevice</th>'
+							        +'<th>SoftwareVersion</th>'
+							        +'<th>UserIndicator</th>'
+							        +'<th>PhoneDeviceOS</th>'
+							        +'<th>PhoneDeviceType</th>'
+							        +'<th>Is_registered</th>'
+							        +'<th>Action</th>'
+							     + '</tr>'
+							    +'</thead>'
+							    +'<tbody></tbody></table>';
+	                     }
 					}
 	             }
 	             
@@ -175,7 +201,7 @@
 
 <body class="hold-transition skin-blue sidebar-mini">
 						<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
-						List<MightyDeviceInfo> mightyList=(List<MightyDeviceInfo>)request.getAttribute("mightyList");
+						/* List<MightyDeviceInfo> mightyList=(List<MightyDeviceInfo>)request.getAttribute("mightyList"); */
 						%>
 	
 <div class="wrapper">  
@@ -211,7 +237,7 @@
     <section class="sidebar">
         
       <!-- search form -->
-      <form  action="#" class="sidebar-form">
+     <!--  <form  action="#" class="sidebar-form">
         <div class="input-group">
           <input type="text" id="devId2" name="devId2" class="form-control" placeholder="Search...">
           <input type="hidden" id="dev2" name="dev2" class="form-control" value="dev2">
@@ -220,7 +246,7 @@
                 </button>
               </span>
         </div>
-      </form>
+      </form> -->
      
       
       <ul class="sidebar-menu">
@@ -341,7 +367,15 @@
 									<div class="row">
 									
 									<div class="col-sm-12"><i class="fa fa-music"></i>&nbsp;<b>Mighty Device</b>
-									<input type="hidden" id="dev3" name="dev3" class="form-control" value="dev3">
+									
+										<input type="text" id="devId2" name="devId2" class="form-control" placeholder="Search...">
+          								<input type="hidden" id="dev2" name="dev2" class="form-control" value="dev2">
+          								
+							              <span class="input-group-btn">
+							                <button type="button" name="search" id="search-btn" class="btn btn-primary" onclick="getUserByDevId(this.form.devId2.value,this.form.dev2.value)"><i class="fa fa-search"></i>
+							                </button>
+							              </span>
+										<%-- <input type="hidden" id="dev3" name="dev3" class="form-control" value="dev3">
 										  <select id="devId" name="devId" onchange="getUserByDevId(this.form.devId.value,this.form.dev3.value)">
 										 	<option value="0">---Select Mighty---</option>
 										 	<% if(mightyList!=null && !mightyList.isEmpty()){
@@ -350,16 +384,9 @@
 										 			<%}
 										 	}%>
 										 	
-										 </select>	
-										 <%-- <input type="text" id="devId" name="devId" list="mightylist" placeholder="Search By Mighty" onchange="getUserByDevId()"/>
-											<datalist id="mightylist">
-											<% if(mightyList!=null && !mightyList.isEmpty()){
-										 			for(MightyDeviceInfo m : mightyList){%>	
-										 				<option value="<%=m.getDeviceId()%>"><%=m.getDeviceId() %></option>	
-										 			<%}
-										 	}%>
-											</datalist> --%>
-									</div>
+										 </select>	--%>
+										
+									</div> 
 														
 									</div>	
 																
@@ -376,7 +403,10 @@
 											        <th>UserName</th>
 											        <th>EmailID</th>
 											        <th>MightyDevice</th>
+											        <th>SoftwareVersion</th>
 											        <th>UserIndicator</th>
+											        <th>PhoneDeviceOS</th>
+											        <th>PhoneDeviceType</th>
 											        <th>Is_registered</th>
 											        <th>Action</th>
 											      </tr>
