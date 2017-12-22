@@ -502,29 +502,38 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		
 	}
 
-	@Transactional
-	public void validateDevice(String deviceId) throws MightyAppException{
+	
+	public void validateDevice(String deviceId, String swVersion) throws MightyAppException{
 		logger.info(" === ConsumerInstrumentServiceImpl, ValidateDevice, Device Id ", deviceId);
-		if(null == deviceId ||  "".equalsIgnoreCase(deviceId)) {
+		if(null == deviceId ||  "".equalsIgnoreCase(deviceId)){
 			throw new MightyAppException(" Device ID or Input is empty", HttpStatus.BAD_REQUEST);
 		}
 				
 						
 		MightyDeviceInfo mightyDeviceInfo = null;
-		try {
+		try{
 			logger.debug("deviceId:",deviceId);
 			mightyDeviceInfo = mightyDeviceInfoDAO.getDeviceInfo(deviceId);
-		} catch(Exception e) {
+		}catch(Exception e){
 			throw new MightyAppException("System Error", HttpStatus.INTERNAL_SERVER_ERROR, e);
 		}
 					
-				
+				logger.debug("78678611",swVersion);
 		if(mightyDeviceInfo!=null){
 			String isActive = mightyDeviceInfo.getIsActive();
 			String isRegistered = mightyDeviceInfo.getIsRegistered();
+				if(!mightyDeviceInfo.getSwVersion().equalsIgnoreCase(swVersion) && !swVersion.contains("UPDATING")){
+					mightyDeviceInfo.setSwVersion(swVersion.trim());
+					mightyDeviceInfoDAO.save(mightyDeviceInfo);
+				}	
+			
+			
+			
 			if(null == isActive || isActive.equalsIgnoreCase(MightyAppConstants.IND_N) ) {
 				throw new MightyAppException(" Device is not active or status is empty", HttpStatus.GONE);
 			}
+			
+			
 			
 					
 			if(null != isRegistered && isRegistered.equalsIgnoreCase(MightyAppConstants.IND_Y)) {
@@ -634,7 +643,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 				
 	}*/
 	
-	@Transactional
+	
 	public void registerMightyDevice(DeviceInfoDTO deviceInfoDTO) throws MightyAppException {
 		if(null == deviceInfoDTO) {
 			logger.debug("Register Device, Consumer Device DTO object is null");
@@ -642,7 +651,7 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 		}
 		
 		 /*Validation on Mighty Device*/
-		 validateDevice(deviceInfoDTO.getDeviceId());
+		 validateDevice(deviceInfoDTO.getDeviceId(),deviceInfoDTO.getSwVersion());
 		 
 		 /*Registration process*/
 		 registerMightyWithUser(deviceInfoDTO);
@@ -1082,6 +1091,11 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	
 	public void updateMightySpotify(MightySpotify ms) throws MightyAppException {
 		mightySpotifyDao.save(ms);		
+	}
+
+	
+	public void validateDevice(String deviceId) throws MightyAppException {
+				
 	}
 
 

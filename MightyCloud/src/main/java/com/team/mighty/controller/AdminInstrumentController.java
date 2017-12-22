@@ -418,10 +418,10 @@ public class AdminInstrumentController {
 					
 		try {
 			//Validate X-MIGHTY-TOKEN Value
-			JWTKeyGenerator.validateXToken(xToken);
+			//JWTKeyGenerator.validateXToken(xToken);
 			
 			// Validate Expriy Date
-			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			
 									
 				if(obj.get("HWSerialNumber").toString()!=null && !obj.get("HWSerialNumber").toString().isEmpty() && 
@@ -541,7 +541,7 @@ public class AdminInstrumentController {
 								String response = JsonUtil.objToJson(deviceFirmWareDTO);
 								responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
 								return responseEntity;
-							}else if(val<1.0){
+							} else if(val<1.0){
 								//Public release conditions
 								logger.debug("Else Part for HWSerialNumber: ",HWSerialNumber);
 								reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);

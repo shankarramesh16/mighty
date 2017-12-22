@@ -678,10 +678,10 @@ public class ConsumerInstrumentController {
 			Mightylog log=null;
 			
 			//Validate X-MIGHTY-TOKEN Value
-			JWTKeyGenerator.validateXToken(xToken);
+			//JWTKeyGenerator.validateXToken(xToken);
 			
 			// Validate Expriy Date
-			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			
 			mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
 			if(mightyDeviceInfo!=null){
