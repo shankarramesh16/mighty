@@ -1098,6 +1098,11 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 				
 	}
 
+	
+	public List<Object[]> getMightyUserDetails() throws MightyAppException {
+			return mightyUserInfoDAO.getMightyUserDetails();
+	}
+
 
 	
 

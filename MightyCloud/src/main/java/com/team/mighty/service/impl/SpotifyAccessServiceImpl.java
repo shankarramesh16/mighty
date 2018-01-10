@@ -102,7 +102,7 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 		    arguments.put("grant_type", "authorization_code");
 		    arguments.put("client_id", "8cda18d9034947759f0b09e68e17c7c1");
 		    arguments.put("client_secret", "5d38b745cb0445f793b950b36eec95aa");
-		    arguments.put("redirect_uri", "https://mighty2.cloudaccess.host/test1/spotifyaccess/RedirectedSpotifyAccess");
+		    arguments.put("redirect_uri", "https://mighty2.cloudaccess.host/test4/spotifyaccess/RedirectedSpotifyAccess");
 		    //arguments.put("redirect_uri", "http://192.168.0.11:8080/MightyCloud/spotifyaccess/RedirectedSpotifyAccess");
 		    StringBuilder sj = new StringBuilder();
 		    for(Map.Entry<String,String> entry : arguments.entrySet()) {

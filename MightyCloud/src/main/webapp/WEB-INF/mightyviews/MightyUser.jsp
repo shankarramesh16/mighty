@@ -49,11 +49,23 @@
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
+				 	<%
+				        String exportToExcel = request.getParameter("exportToExcel");
+				        if (exportToExcel != null
+				                && exportToExcel.toString().equalsIgnoreCase("YES")) {
+				        	System.out.println("INsie export excel");
+				            response.setContentType("application/vnd.ms-excel");
+				            response.setHeader("Content-Disposition", "inline; filename="
+				                    + "MightyUserDeviceInfo.xls");
+				 
+				        }
+				    %>
+
 						<% AdminUser adminUser=(AdminUser)request.getSession().getAttribute("adminUser");
 						String fname1=("MightyUserList :").concat(new Date().toString()).concat(".csv");
 						String fname2=("MightyUserList :").concat(new Date().toString()).concat(".xls");
 						String fname3=("MightyUserList :").concat(new Date().toString()).concat(".xml");
-						List<ConsumerDeviceDTO> mightyUserList=(List<ConsumerDeviceDTO>)request.getAttribute("mightydeviceuserlist");
+						List<Object[]> mightyUserList=(List<Object[]>)request.getAttribute("mightydeviceuserlist");
 						%>
 	
 <div class="wrapper">  
@@ -211,43 +223,62 @@
 						
 						<div class="row" style="overflow-y: auto;">
 							<div class="col-sm-12 ">	
-							
-								<%-- <table class="table table-hover text-center">
+										<%
+									        if (exportToExcel == null) {
+									    %>
+									    <a href="deviceUserInfo?exportToExcel=YES">Export to Excel</a>
+									    <%
+									        }
+									    %>
+								 <table class="table table-hover text-center">
 									    <thead>
 									      <tr class="text-blue text-semi-bold">
-									        <th>ID</th>
-									        <th>UserName</th>
-									        <th>EmailID</th>
-									        <th>DeviceMapping</th>
-									        <th>User_Dev_Reg</th>
-									        <th>UserIndicator</th>
-									        <th>UserStatus</th>
-									        <th>CreatedDate</th>
-									        <th>UpdatedDate</th>
+									        <th>User_Id</th>
+									        <th>User_Name</th>
+									        <th>User_Email_Id</th>
+									        <th>User_Indicator</th>
+									        <th>User_Created_At</th>
+									        <th>Mighty_SerialNo.</th>
+									        <th>Mighty_Is_registered</th>
+									        <th>Mighty_Sw_Version</th>
+									        <th>Mighty_AppBuild</th>
+									        <th>Mighty_AppVersion</th>
+									        <th>Mighty_Registerd_At</th>
+									        <th>Mighty_Upgraded_At</th>
+									        <th>Phone_Register_To_Mighty</th>
+									        <th>Phone_Device_OS_Version</th>
+									        <th>Phone_Device_Type</th>
+									      
 									      </tr>
 									    </thead>
 									    <tbody>
-									    <% if(mightyUserList!=null && !mightyUserList.isEmpty()){
-										    for(ConsumerDeviceDTO dto :mightyUserList){
-										    %>
+									    <% for(Object[] m : mightyUserList){  %>
 									      <tr>
-									        <td><%=dto.getId()%></td>
-									        <td><%=dto.getUserName()%></td>
-									        <td><%=dto.getEmailId()%></td>
-									        <td><%=dto.getDeviceId()%></td>
-									        <td><%=dto.getUsrdevReg()%></td>
-									        <td><%=dto.getUserIndicator()%></td>
-									        <td><%=dto.getUserStatus()%></td>
-									        <td><%=dto.getCreatedDt()%></td>
-									        <td><%=dto.getUpdatedDt()%></td>
+									        <td><%=m[0]%></td>
+									        <td><%=m[1]%></td>
+									        <td><%=m[2]%></td>
+									        <td><%=m[3]%></td>
+									        <td><%=m[4]%></td>
+									        <td><%=m[5]%></td>
+									        <td><%=m[6]%></td>
+									        <td><%=m[7]%></td>
+									        <td><%=m[8]%></td>
+									        <td><%=m[9]%></td>
+									        <td><%=m[10]%></td>
+									        <td><%=m[11]%></td>
+									        <td><%=m[12]%></td>
+									        <td><%=m[13]%></td>
+									        <td><%=m[14]%></td>
+									       
 									       
 									      </tr>
-									      	<%}
-									    }%>
+									      	<% }%>
 									    </tbody>
-									  </table> --%>
+									  </table> 
+									  
+									   
 						
-					     	<display:table  class="table table-hover  text-center"  name="<%=mightyUserList%>" id="row"
+					     	<%-- <display:table  class="table table-hover  text-center"  name="<%=mightyUserList%>" id="row"
 									export="true" requestURI="" defaultsort="1" defaultorder="descending" pagesize="100">
 							<display:column  property="id" title="ID" sortable="true" headerClass="sortable" />
 							<display:column  property="userName" title="UserName" sortable="true"  />
@@ -265,7 +296,7 @@
 						 	<display:setProperty name="export.csv.filename" value="<%=fname1%>" />
 							<display:setProperty name="export.excel.filename" value="<%=fname2%>" />
 							<display:setProperty name="export.xml.filename" value="<%=fname3%>" /> 
-						</display:table> 
+						</display:table>  --%>
 							</div>
 						</div>
 						<a  id="goTop"><i class="fa fa-eject"></i></a>	

@@ -54,7 +54,7 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 	@Autowired
 	private AdminInstrumentService adminInstrumentServiceImpl;
 	
-	@RequestMapping(value = "/deviceUserInfo", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/deviceUserInfo", method = RequestMethod.GET)
 	public String getAllMightyDevicesUserInfoHandler(Map<String,Object> map) throws Exception {
 		logger.debug("Getting mighty device User inform");
 		
@@ -123,6 +123,51 @@ private static final MightyLogger logger = MightyLogger.getLogger(MightyUserDevi
 		}
 		map.put("mightydeviceuserlist", consumerDeviceDTOList);
 		logger.debug("mightydeviceuserlist",consumerDeviceDTOList.size());
+		return "MightyUser";
+	}*/
+	
+	
+	@RequestMapping(value = "/deviceUserInfo", method = RequestMethod.GET)
+	public String getAllMightyDevicesUserInfoHandler(Map<String,Object> map) throws Exception {
+		logger.debug("Getting mighty device User inform");
+		
+		List<ConsumerDeviceDTO> consumerDeviceDTOList=null;
+		consumerDeviceDTOList=new ArrayList<ConsumerDeviceDTO>();
+		
+		List<Object[]> mightUserList=null;
+		
+				
+		try{
+			
+			mightUserList=consumerInstrumentServiceImpl.getMightyUserDetails();
+				/*for(Object[] mu : mightUserList){
+					ConsumerDeviceDTO consumerDeviceDTO=null;
+							consumerDeviceDTO= new ConsumerDeviceDTO();
+									consumerDeviceDTO.setId(m.getId());
+									consumerDeviceDTO.setUserName(m.getUserName());
+									consumerDeviceDTO.setEmailId(m.getEmailId());
+									consumerDeviceDTO.setUserIndicator(m.getUserIndicator());
+									consumerDeviceDTO.setUserStatus(m.getUserStatus());
+									consumerDeviceDTO.setCreatedDt(m.getCreatedDt());
+									consumerDeviceDTO.setUpdatedDt(m.getUpdatedDt());
+									consumerDeviceDTO.setUsrdevReg(md.getRegistrationStatus());
+									consumerDeviceDTO.setAppOS(md.getPhoneDeviceOSVersion());
+									consumerDeviceDTO.setAppType(md.getPhoneDeviceType());
+									consumerDeviceDTO.setDeviceId(mightyDeviceInfo.getDeviceId());
+									consumerDeviceDTOList.add(consumerDeviceDTO);		
+						
+				}*/
+				
+					
+			
+					
+		}catch(Exception  e){
+			logger.error("Exception in /deviceUserInfo,",e);
+			e.printStackTrace();
+		}
+		
+		map.put("mightydeviceuserlist", mightUserList);
+		
 		return "MightyUser";
 	}
 	

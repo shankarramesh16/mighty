@@ -51,6 +51,9 @@ public interface MightyUserInfoDao extends JpaRepository<MightyUserInfo, Long> {
 
 	@Query("SELECT m FROM MightyUserInfo m WHERE (m.userFBId=:userFBId or m.userName=:userName) and m.userIndicator=:userIndicator" )
 	List<MightyUserInfo> getUserByUserFBAndEmailAndUsrWithIndicator(@Param("userFBId") String userFBId,@Param("userName") String userName,@Param("userIndicator") String userIndicator);
+
+	@Query(value="SELECT u.user_id,u.user_name,u.email_id,u.user_indicator,u.created_dt,m.device_id,m.is_registered,m.sw_version,m.appbuild,m.appversion,m.register_at,m.upgrade_at,um.status,um.phone_device_os_version,um.phone_device_type FROM TBL_MIGHTY_USER_INFO u join TBL_MIGHTY_USR_DEV_MAP um on u.user_id=um.user_id join TBL_MIGHTY_DEVICE_INFO m on um.mighty_device_id=m.id",nativeQuery = true)
+	List<Object[]> getMightyUserDetails();
 	
 	
 	
