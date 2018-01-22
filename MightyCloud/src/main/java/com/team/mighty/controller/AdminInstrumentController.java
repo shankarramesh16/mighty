@@ -474,6 +474,8 @@ public class AdminInstrumentController {
 						
 							if(ota!=null && !ota.isEmpty()){
 								logger.debug("OTA LIST SIZE",ota.size());
+													
+								
 								reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware1(HWSerialNumber,SWVersion,AppVersion,AppBuild);
 										
 								latestMightyDeviceFirmware=adminInstrumentServiceImpl.getMightyLstDeviceFirmware();
@@ -481,35 +483,74 @@ public class AdminInstrumentController {
 								deviceFirmWareDTO=new DeviceFirmWareDTO();
 								
 								if(reqMightyDeviceFirmware!=null){
-																		
-									String URL = "http://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId()+"/devId/"+HWSerialNumber;						
+																	
+									if(reqMightyDeviceFirmware.getVersion().trim().equals(ota.get(0).getVersion().trim())){
+										logger.debug("Inside If no need to execute else");											
+										String URL="http://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId()+"/devId/"+HWSerialNumber;
+										deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
+										deviceFirmWareDTO.setFileDownloadUrl(URL);
+										deviceFirmWareDTO.setReqHashValue(reqMightyDeviceFirmware.getHashValue().trim());
+										deviceFirmWareDTO.setReqHT(String.valueOf(reqMightyDeviceFirmware.getHashType()));
+										deviceFirmWareDTO.setReqCompatibleIOS(reqMightyDeviceFirmware.getCompatibleIOS());
+										deviceFirmWareDTO.setReqCompatibleLatestAND(reqMightyDeviceFirmware.getCompatibleAND());
+										deviceFirmWareDTO.setReqCompatibleLatestHW(reqMightyDeviceFirmware.getCompatibleHW().trim());
+										deviceFirmWareDTO.setRequires(reqMightyDeviceFirmware.getRequires());
+										
+											try{
+												deviceFirmWareDTO.setFileSize(String.valueOf(reqMightyDeviceFirmware.getFile().length()));
+												logger.debug("size",deviceFirmWareDTO.getFileSize());
+											}catch(SQLException e){
+													logger.error(e);
+											}
+										
+										
+										logger.debug("/ReqhashValue",reqMightyDeviceFirmware.getHashValue().trim());
+										logger.debug("/ReqHT",reqMightyDeviceFirmware.getHashType());
+										logger.debug("/Reqversion",reqMightyDeviceFirmware.getVersion());
+										logger.debug("/Reqid",reqMightyDeviceFirmware.getId());
+										logger.debug("/ReqIOS",reqMightyDeviceFirmware.getCompatibleIOS());
+										logger.debug("/ReqAND",reqMightyDeviceFirmware.getCompatibleAND());
+										logger.debug("/ReqHW",reqMightyDeviceFirmware.getCompatibleHW());
+										logger.debug("/Requires",reqMightyDeviceFirmware.getRequires());
+										logger.debug("/downloadingUrl",deviceFirmWareDTO.getFileDownloadUrl());
+											
+									}else{
+										
+										logger.debug("Inside Else need to execute firmware query");
+										MightyDeviceFirmware otaReq=adminInstrumentServiceImpl.getMDFIdByVersion(ota.get(0).getVersion().trim());
+										   if(otaReq!=null){
+											String URL="http://mighty2.cloudaccess.host/test1/rest/admin/download/"+otaReq.getId()+"/devId/"+HWSerialNumber;
+											deviceFirmWareDTO.setReqLatestVersion(otaReq.getVersion().trim());
+											deviceFirmWareDTO.setFileDownloadUrl(URL);
+											deviceFirmWareDTO.setReqHashValue(otaReq.getHashValue().trim());
+											deviceFirmWareDTO.setReqHT(String.valueOf(otaReq.getHashType()));
+											deviceFirmWareDTO.setReqCompatibleIOS(otaReq.getCompatibleIOS());
+											deviceFirmWareDTO.setReqCompatibleLatestAND(otaReq.getCompatibleAND());
+											deviceFirmWareDTO.setReqCompatibleLatestHW(otaReq.getCompatibleHW().trim());
+											deviceFirmWareDTO.setRequires(otaReq.getRequires());
+											
+												try{
+													deviceFirmWareDTO.setFileSize(String.valueOf(otaReq.getFile().length()));
+													logger.debug("size otaReq",deviceFirmWareDTO.getFileSize());
+												}catch(SQLException e){
+														logger.error(e);
+												}
+											
+											
+											logger.debug("/ReqhashValue otaReq",otaReq.getHashValue().trim());
+											logger.debug("/ReqHT otaReq",otaReq.getHashType());
+											logger.debug("/Reqversion otaReq",otaReq.getVersion());
+											logger.debug("/Reqid otaReq",otaReq.getId());
+											logger.debug("/ReqIOS otaReq",otaReq.getCompatibleIOS());
+											logger.debug("/ReqAND otaReq",otaReq.getCompatibleAND());
+											logger.debug("/ReqHW otaReq",otaReq.getCompatibleHW());
+											logger.debug("/Requires otaReq",otaReq.getRequires());
+											logger.debug("/downloadingUrl otaReq",deviceFirmWareDTO.getFileDownloadUrl());
+										  }
+											
+									}
+																	
 									
-									deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());									
-									deviceFirmWareDTO.setFileDownloadUrl(URL);
-									deviceFirmWareDTO.setReqHashValue(reqMightyDeviceFirmware.getHashValue().trim());
-									deviceFirmWareDTO.setReqHT(String.valueOf(reqMightyDeviceFirmware.getHashType()));
-									deviceFirmWareDTO.setReqCompatibleIOS(reqMightyDeviceFirmware.getCompatibleIOS());
-									deviceFirmWareDTO.setReqCompatibleLatestAND(reqMightyDeviceFirmware.getCompatibleAND());
-									deviceFirmWareDTO.setReqCompatibleLatestHW(reqMightyDeviceFirmware.getCompatibleHW().trim());
-									deviceFirmWareDTO.setRequires(reqMightyDeviceFirmware.getRequires());
-									
-										try{
-											deviceFirmWareDTO.setFileSize(String.valueOf(reqMightyDeviceFirmware.getFile().length()));
-											logger.debug("size",deviceFirmWareDTO.getFileSize());
-										}catch(SQLException e){
-												logger.error(e);
-										}
-									
-									
-									logger.debug("/ReqhashValue",reqMightyDeviceFirmware.getHashValue().trim());
-									logger.debug("/ReqHT",reqMightyDeviceFirmware.getHashType());
-									logger.debug("/Reqversion",reqMightyDeviceFirmware.getVersion());
-									logger.debug("/Reqid",reqMightyDeviceFirmware.getId());
-									logger.debug("/ReqIOS",reqMightyDeviceFirmware.getCompatibleIOS());
-									logger.debug("/ReqAND",reqMightyDeviceFirmware.getCompatibleAND());
-									logger.debug("/ReqHW",reqMightyDeviceFirmware.getCompatibleHW());
-									logger.debug("/Requires",reqMightyDeviceFirmware.getRequires());
-									logger.debug("/downloadingUrl",deviceFirmWareDTO.getFileDownloadUrl());
 									
 									
 									

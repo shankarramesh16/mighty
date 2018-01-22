@@ -47,6 +47,21 @@ public class Mightyotadevice implements Serializable {
 
 	private String devices;
 	
+	@Column(name="version")
+	private String version;
+	
+	public String getVersion() {
+		return version;
+	}
+
+
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+
+
 	public String getUsername() {
 		return username;
 	}

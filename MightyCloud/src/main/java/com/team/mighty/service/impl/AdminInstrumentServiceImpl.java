@@ -436,5 +436,10 @@ public class AdminInstrumentServiceImpl implements AdminInstrumentService {
 	}
 
 	
+	public MightyDeviceFirmware getMDFIdByVersion(String version) throws MightyAppException {
+		return mightyDeviceFirmwareDAO.getMDFIdByVersion(version);
+	}
+
+	
 
 }

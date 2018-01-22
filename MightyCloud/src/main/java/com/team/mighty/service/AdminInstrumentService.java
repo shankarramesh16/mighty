@@ -53,4 +53,6 @@ public interface AdminInstrumentService {
 	public List<Object[]> mightySwVerCount()throws MightyAppException;
 
 	public MightyDeviceFirmware getMightyDeviceFirmware1(String HWSerialNo, String SWVersion, String AppVersion, String AppBuild) throws MightyAppException;
+
+	public MightyDeviceFirmware getMDFIdByVersion(String version)throws MightyAppException;
 }
