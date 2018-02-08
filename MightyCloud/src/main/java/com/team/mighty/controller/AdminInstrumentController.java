@@ -514,7 +514,7 @@ public class AdminInstrumentController {
 										logger.debug("/Requires",reqMightyDeviceFirmware.getRequires());
 										logger.debug("/downloadingUrl",deviceFirmWareDTO.getFileDownloadUrl());
 											
-									}else{
+									}else if(!obj.get("SWVersion").toString().equalsIgnoreCase(ota.get(0).getVersion().trim())){
 										
 										logger.debug("Inside Else need to execute firmware query");
 										MightyDeviceFirmware otaReq=adminInstrumentServiceImpl.getMDFIdByVersion(ota.get(0).getVersion().trim());
