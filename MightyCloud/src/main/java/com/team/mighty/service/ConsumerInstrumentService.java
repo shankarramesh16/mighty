@@ -117,6 +117,8 @@ public interface ConsumerInstrumentService {
 	public void updateMightySpotify(MightySpotify ms)throws MightyAppException;
 
 	public List<Object[]> getMightyUserDetails()throws MightyAppException;
+
+	public MightyUserInfo getMightyUserByUser(long userId) throws MightyAppException;
 	
 	
 }

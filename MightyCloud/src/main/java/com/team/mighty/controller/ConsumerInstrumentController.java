@@ -645,8 +645,8 @@ public class ConsumerInstrumentController {
 	}
 	
 	/*Mighty Logs*/
-	
-	@RequestMapping(value = "/getMightyLogs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	//commented on 20th April
+	/*@RequestMapping(value = "/getMightyLogs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getDebugHandler(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken ) throws Exception{
 		logger.info(" /POST /getMightyLogs");
 		logger.debug("/getMightyLogs Received",received);
@@ -742,6 +742,120 @@ public class ConsumerInstrumentController {
 					}else{
 						responseEntity = new ResponseEntity<String>("DeviceId not mapped", HttpStatus.BAD_REQUEST);
 					}
+			}else{
+				responseEntity = new ResponseEntity<String>("Empty deviceId", HttpStatus.BAD_REQUEST);
+			}
+							
+		}catch(MightyAppException e) {
+			logger.error("/Exception in '/getMightyLogs' ",e);
+			String errorMessage = e.getMessage();
+			responseEntity = new ResponseEntity<String>(errorMessage, e.getHttpStatus());
+			logger.errorException(e, e.getMessage());
+		}
+				
+		return responseEntity;
+
+	}
+	*/
+	
+	
+	@RequestMapping(value = "/getMightyLogs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getDebugHandler(@RequestBody String received,@RequestHeader(value = MightyAppConstants.HTTP_HEADER_TOKEN_NAME) String xToken ) throws Exception{
+		logger.info(" /POST /getMightyLogs");
+		logger.debug("/getMightyLogs Received",received);
+		logger.debug("/getMightyLogs token",xToken);
+		
+		JSONObject obj=null;
+		ResponseEntity<String> responseEntity = null;
+		MightyDeviceInfo mightyDeviceInfo=null;
+		List<MightyDeviceUserMapping> md=null;
+		
+		
+		try{		
+						obj=new JSONObject();
+						obj=(JSONObject)new JSONParser().parse(received);
+		}catch(Exception e){
+						logger.debug("Exception during parser '/getMightyLogs'");
+						return new ResponseEntity<String>("Empty received body '/getMightyLogs' ", HttpStatus.NO_CONTENT);
+		}
+
+		
+				
+		try {
+			//logger.debug("file_content",file_content);
+			logger.debug("file_content",Base64.decodeBase64(obj.get("file_content").toString()).length);
+			logger.debug("log_type",obj.get("log_type").toString());
+			logger.debug("desc",obj.get("desc").toString());
+			logger.debug("deviceId",obj.get("deviceId").toString());
+			logger.debug("userId",obj.get("userId").toString());
+			Mightylog log=null;
+			
+			//Validate X-MIGHTY-TOKEN Value
+			//JWTKeyGenerator.validateXToken(xToken);
+			
+			// Validate Expriy Date
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			
+			mightyDeviceInfo=consumerInstrumentServiceImpl.getMightyOnHwId(obj.get("deviceId").toString());
+			if(mightyDeviceInfo!=null){
+				
+				long userId = 0;
+				
+				try{
+					userId=Long.parseLong(obj.get("userId").toString());
+				}catch(Exception e){
+					;
+				}
+				MightyUserInfo mu=consumerInstrumentServiceImpl.getMightyUserByUser(userId);  
+				logger.debug("UserId SendReport",userId);
+								if(mu!=null && userId!=0){
+												log=new Mightylog();
+												log.setFileName("MightyLogs");
+												log.setFileContent(new javax.sql.rowset.serial.SerialBlob(Base64.decodeBase64(obj.get("file_content").toString())));
+												log.setLogType(obj.get("log_type").toString());
+												log.setTicket(obj.get("ticket").toString());
+												log.setDescription(obj.get("desc").toString());
+												log.setUsername(mu.getUserName());
+												log.setEmailId(mu.getEmailId());
+												//log.setDevReg(mu.getMightyUsrDevMaps1().get(0).getRegistrationStatus());
+												log.setDevReg("Y");
+												log.setDeviceId(obj.get("deviceId").toString());
+												log.setDeviceType(obj.get("DeviceType").toString());
+												log.setPhoneDeviceOSVersion(obj.get("DeviceOSVersion").toString());
+												log.setCreatedDt(new Date(System.currentTimeMillis()));
+												log.setUpdatedDt(new Date(System.currentTimeMillis()));
+											Mightylog logs=consumerInstrumentServiceImpl.updateMightyLogs(log);
+											
+												try{	
+													if(logs!=null){
+															logger.debug("/inside MightyLogs send Mail");
+															String subject="";
+																if(logs.getTicket()!=null && !logs.getTicket().isEmpty()){
+																	subject = "Log received from "+logs.getUsername()+""+"-"+""+"Ticket#"+logs.getTicket();
+																}else{
+																	subject = "Log received from "+logs.getUsername();
+																}
+															String message = consumerInstrumentServiceImpl.getMightyLogsMsg(logs);
+																		
+																SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
+																String[] arr={"heyo@bemighty.com","mightynotification@gmail.com"};
+																logger.debug("subject",subject);
+																for(String s :arr){
+																	logger.debug("mailing dest",s);
+																	mail.send(s, subject, message);
+																}
+															
+													}
+											
+												}catch(Exception e){
+													logger.error("/Sending Mightylog notification",e);
+												}
+											
+												responseEntity = new ResponseEntity<String>(HttpStatus.OK);	
+												return responseEntity;
+								       }else{
+								    	   responseEntity = new ResponseEntity<String>("userId not exist or incorrect", HttpStatus.BAD_REQUEST);
+								       }
 			}else{
 				responseEntity = new ResponseEntity<String>("Empty deviceId", HttpStatus.BAD_REQUEST);
 			}

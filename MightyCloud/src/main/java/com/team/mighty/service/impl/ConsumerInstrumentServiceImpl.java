@@ -1103,6 +1103,11 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 			return mightyUserInfoDAO.getMightyUserDetails();
 	}
 
+	
+	public MightyUserInfo getMightyUserByUser(long userId) throws MightyAppException {
+				return mightyUserInfoDAO.getMightyUserById(userId);
+	}
+
 
 	
 
