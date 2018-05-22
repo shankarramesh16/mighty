@@ -204,6 +204,15 @@ public class ConsumerInstrumentController {
 								consumerDeviceDTO.setGender(obj.get("Gender").toString());	
 								
 									mightyUserInfo=consumerInstrumentServiceImpl.mightyFBUserLogin(consumerDeviceDTO);
+									try{
+										if(mightyUserInfo!=null){
+											mightyUserInfo.setUpdatedDt(new Date(System.currentTimeMillis()));
+											consumerInstrumentServiceImpl.updateUserEmail(mightyUserInfo);
+										}
+									}catch(Exception e){
+										logger.debug("/Error while in updating update_dt in mightyReg/login");
+										e.printStackTrace();
+									}
 									responseEntity = new ResponseEntity<String>(String.valueOf(mightyUserInfo.getId()), HttpStatus.OK);
 								}else{
 									responseEntity = new ResponseEntity<String>("Null value passing in 'F' '/mightyAppLogin'", HttpStatus.NOT_ACCEPTABLE);
@@ -222,6 +231,16 @@ public class ConsumerInstrumentController {
 									    consumerDeviceDTO.setUserIndicator(obj.get("UserIndicator").toString());
 									    
 									       mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
+									       try{
+												if(mightyUserInfo!=null){
+													mightyUserInfo.setUpdatedDt(new Date(System.currentTimeMillis()));
+													consumerInstrumentServiceImpl.updateUserEmail(mightyUserInfo);
+												}
+											}catch(Exception e){
+												logger.debug("/Error while in updating update_dt in mightyReg/login");
+												e.printStackTrace();
+											}
+									       
 									       responseEntity = new ResponseEntity<String>(String.valueOf(mightyUserInfo.getId()), HttpStatus.OK);
 									}else{
 										responseEntity = new ResponseEntity<String>("Null value passing in 'L' '/mightyAppLogin'", HttpStatus.NOT_ACCEPTABLE);
@@ -237,6 +256,16 @@ public class ConsumerInstrumentController {
 								    consumerDeviceDTO.setPassword(obj.get("Password").toString());
 								    consumerDeviceDTO.setUserIndicator("L");
 								    mightyUserInfo=consumerInstrumentServiceImpl.mightyUserLogin(consumerDeviceDTO);
+								    
+								    try{
+										if(mightyUserInfo!=null){
+											mightyUserInfo.setUpdatedDt(new Date(System.currentTimeMillis()));
+											consumerInstrumentServiceImpl.updateUserEmail(mightyUserInfo);
+										}
+									}catch(Exception e){
+										logger.debug("/Error while in updating update_dt in mightyReg/login");
+										e.printStackTrace();
+									}
 								    responseEntity = new ResponseEntity<String>(String.valueOf(mightyUserInfo.getId()), HttpStatus.OK);
 							 }
 													
