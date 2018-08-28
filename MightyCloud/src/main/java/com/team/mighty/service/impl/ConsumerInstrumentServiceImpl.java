@@ -923,12 +923,13 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 	public String getUserAccountMessage(UserDeviceRegistrationDTO dto) throws MightyAppException {
 		return "Heyo "
 				+dto.getUserName().toLowerCase()	
-				+",<br/><br/>I heard that you just created a Mighty account. You're just a few steps away from taking your favorite playlists on-the-go, no phone or connection required. Super exciting."
-				+"<br/><br/>You'll remain logged into your Mighty account unless you login with a different account or uninstall the app. If you happen to get logged out and can't remember your password, click the Forgot Password link on the Mighty login screen to reset it."
-				+"<br/><br/>If you have any questions about anything related to Mighty, please check out our Help Center. You can also email the Mighty team at heyo@bemighty.com"
+				+",<br/><br/>Thanks for creating your Mighty account. You're just a few steps away from taking your streaming playlists on-the-go, no phone needed. I'm excited for you to start breaking free."
+				+"<br/><br/>You'll remain logged into your Mighty account until you switch accounts or uninstall the app. If you happen to get logged out and can't remember your password, click the Forgot Password link on the Mighty login screen to reset it."
+				+"<br/><br/>Most importantly, I'm here to help if you have any issues with the setup process or questions about using your Mighty. Simply respond to this email and I'll get back to you within one business day. I really enjoy helping users get the most out of their Mighty, so please do not hesitate to email me at any point."
 				+"<br/><br/>Much love,"
-				+"<br/>The Mighty Robot"
-				+"<br/><br/><em>I'm a robot and my owners won't let me receive inbound messages. If you have any questions, please send my owners an email at heyo@bemighty.com.</em>"; 
+				+"<br/>Charlie"
+				+"<br/>Community Manager";
+				
 				
 		
 	}

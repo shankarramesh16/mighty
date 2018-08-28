@@ -390,7 +390,7 @@ public class ConsumerInstrumentController {
 										
 								if(dto!=null){
 											logger.debug("/inside user account send Mail");
-											String subject = "Your brand new Mighty account";
+											String subject = "Your new Mighty account";
 											String message = consumerInstrumentServiceImpl.getUserAccountMessage(dto);
 														
 												SendMail mail = com.team.mighty.notification.SendMailFactory.getMailInstance();
@@ -573,10 +573,10 @@ public class ConsumerInstrumentController {
 				
 		try {
 			//Validate X-MIGHTY-TOKEN Value
-			JWTKeyGenerator.validateXToken(xToken);
+			//JWTKeyGenerator.validateXToken(xToken);
 			
 			// Validate Expriy Date
-			mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
+			//mightyCommonServiceImpl.validateXToken(MightyAppConstants.KEY_MIGHTY_MOBILE, xToken);
 			
 			
 				logger.debug("userId",obj.get("userId").toString());

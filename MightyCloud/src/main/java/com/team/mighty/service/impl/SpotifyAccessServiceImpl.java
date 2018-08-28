@@ -265,7 +265,8 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 	
 	public String spotifyAccessToken(String code, String client_id,String client_secret, String redirect_uri) throws Exception {
 		String tokens=null;
-		
+		 try
+		    {
 		 String url = "https://accounts.spotify.com/api/token";
 		 SSLContext context = SSLContext.getInstance("TLS"); 
 	     context.init(null, new X509TrustManager[]{new X509TrustManager(){ 
@@ -298,8 +299,7 @@ public class SpotifyAccessServiceImpl implements SpotifyAccessService {
 	    con.setFixedLengthStreamingMode(out.length);
 	    con.connect();
 	    
-			    try
-			    {
+			   
 			        OutputStream os = con.getOutputStream();
 			        os.write(out);
 			        

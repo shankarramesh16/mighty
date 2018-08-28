@@ -37,7 +37,7 @@ public class SpotifyAccessController {
 	
 	private static final MightyLogger logger = MightyLogger.getLogger(SpotifyAccessController.class);
 	
-	@RequestMapping(value = "/spotifyToken", method = RequestMethod.POST)
+	@RequestMapping(value = "/spotifyToken", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> spotifyTokenOnCodeHandler(@RequestBody String received) throws Exception {
 		logger.info(" /POST /spotifyToken");
 		logger.debug("/spotifyToken Received",received);
@@ -159,10 +159,10 @@ public class SpotifyAccessController {
 		logger.info("/GET authorizeSpotify");
 		ResponseEntity<String> responseEntity = null;
 		try{
-			String client_id="8cda18d9034947759f0b09e68e17c7c1";
+			String client_id="4bc99d2980a141fb91e8c44317ccbd34";
 			String response_type="code";
 			String scope="user-read-private user-read-email streaming";
-			String redirect_uri="https://mighty2.cloudaccess.host/test1/spotifyaccess/RedirectedSpotifyAccess";
+			String redirect_uri="http://localhost:8089/MightyCloud/spotifyaccess/RedirectedSpotifyAccess";
 			//String redirect_uri="http://192.168.0.11:8080/MightyCloud/spotifyaccess/RedirectedSpotifyAccess";
 			String url = "https://accounts.spotify.com/authorize?client_id="+client_id+"&response_type="+response_type+"&redirect_uri="+redirect_uri+"&scope="+scope;
 			logger.debug("status",response.getStatus());

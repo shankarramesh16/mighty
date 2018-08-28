@@ -22,8 +22,11 @@ import com.team.mighty.logger.MightyLogger;
 public class SendGmail implements Runnable, SendMail {
 	
 	private static final MightyLogger logger = MightyLogger.getLogger(SendGmail.class);
-	public static String sourceMail = "robot@bemighty.com";
-	public static String password = "#grodt2016@";
+/*	public static String sourceMail = "robot@bemighty.com";
+	public static String password = "#grodt2016@";*/
+	
+	public static String sourceMail = "heyo@bemighty.com";
+	public static String password = "grodt2016";
 	
 	/*public static String sourceMail1 = "mightynotification@gmail.com";
 	public static String password1 = "mighty@123";*/

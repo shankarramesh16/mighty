@@ -582,7 +582,7 @@ public class AdminInstrumentController {
 								String response = JsonUtil.objToJson(deviceFirmWareDTO);
 								responseEntity = new ResponseEntity<String>(response, HttpStatus.OK);
 								return responseEntity;
-							} else if(val<1.44){
+							} else if(val<1.65){
 								//Public release conditions
 								logger.debug("Else Part for HWSerialNumber: ",HWSerialNumber);
 								reqMightyDeviceFirmware = adminInstrumentServiceImpl.getMightyDeviceFirmware(HWSerialNumber,SWVersion,AppVersion,AppBuild);

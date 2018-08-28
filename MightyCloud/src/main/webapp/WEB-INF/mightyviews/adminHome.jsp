@@ -14,8 +14,8 @@
 <body>
 
         <%
-    	AdminUser adminUserObj = (AdminUser) request.getSession().getAttribute("adminUser");
-        if (adminUserObj == null) {
+    	AdminUser adminUser=  (AdminUser) request.getSession().getAttribute("adminUser");
+        if (adminUser == null){
 			response.sendRedirect("/");
 		} else {
 		%>
