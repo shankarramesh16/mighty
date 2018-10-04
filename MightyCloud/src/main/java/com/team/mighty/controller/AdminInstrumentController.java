@@ -489,6 +489,9 @@ public class AdminInstrumentController {
 										String URL="http://mighty2.cloudaccess.host/test1/rest/admin/download/"+reqMightyDeviceFirmware.getId()+"/devId/"+HWSerialNumber;
 										deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
 										deviceFirmWareDTO.setFileDownloadUrl(URL);
+										if(reqMightyDeviceFirmware.getReleaseNote()!=null){
+											deviceFirmWareDTO.setReleaseNote(new String(reqMightyDeviceFirmware.getReleaseNote().getBytes(1l, (int) reqMightyDeviceFirmware.getReleaseNote().length())));
+										}										
 										deviceFirmWareDTO.setReqHashValue(reqMightyDeviceFirmware.getHashValue().trim());
 										deviceFirmWareDTO.setReqHT(String.valueOf(reqMightyDeviceFirmware.getHashType()));
 										deviceFirmWareDTO.setReqCompatibleIOS(reqMightyDeviceFirmware.getCompatibleIOS());
@@ -522,6 +525,9 @@ public class AdminInstrumentController {
 											String URL="http://mighty2.cloudaccess.host/test1/rest/admin/download/"+otaReq.getId()+"/devId/"+HWSerialNumber;
 											deviceFirmWareDTO.setReqLatestVersion(otaReq.getVersion().trim());
 											deviceFirmWareDTO.setFileDownloadUrl(URL);
+											if(otaReq.getReleaseNote()!=null){
+												deviceFirmWareDTO.setReleaseNote(new String(otaReq.getReleaseNote().getBytes(1l, (int) otaReq.getReleaseNote().length())));
+											}
 											deviceFirmWareDTO.setReqHashValue(otaReq.getHashValue().trim());
 											deviceFirmWareDTO.setReqHT(String.valueOf(otaReq.getHashType()));
 											deviceFirmWareDTO.setReqCompatibleIOS(otaReq.getCompatibleIOS());
@@ -596,6 +602,9 @@ public class AdminInstrumentController {
 									
 									deviceFirmWareDTO.setReqLatestVersion(reqMightyDeviceFirmware.getVersion().trim());
 									deviceFirmWareDTO.setFileDownloadUrl(URL);
+									if(reqMightyDeviceFirmware.getReleaseNote()!=null){
+										deviceFirmWareDTO.setReleaseNote(new String(reqMightyDeviceFirmware.getReleaseNote().getBytes(1l, (int) reqMightyDeviceFirmware.getReleaseNote().length())));
+									}									
 									deviceFirmWareDTO.setReqHashValue(reqMightyDeviceFirmware.getHashValue().trim());
 									deviceFirmWareDTO.setReqHT(String.valueOf(reqMightyDeviceFirmware.getHashType()));
 									deviceFirmWareDTO.setReqCompatibleIOS(reqMightyDeviceFirmware.getCompatibleIOS());

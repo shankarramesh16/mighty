@@ -66,6 +66,11 @@
 				document.getElementById("errortag3").innerHTML = "";
 						
 			});
+			
+			$("#file3").click(function(){
+				document.getElementById("errortag4").innerHTML = "";
+						
+			});
 	});
 	
 
@@ -73,6 +78,7 @@
 		
 	    var input1 = document.getElementById("file1");
 	    var input2 = document.getElementById("file2");
+	    var input3 = document.getElementById("file3");
 	    var fromDate = $("input[name=fromDate]").val();
 		var flag = true;
 		
@@ -109,7 +115,14 @@
 			 $('.san').show();
 			 document.getElementById("file2").focus();
 			   flag=false;
-		} else  if (validExts.indexOf(fileExt) < 0) {
+		}else if (!input3.files[0]) {
+			document.getElementById("errortag3").innerHTML = "";
+			 document.getElementById("errortag4").innerHTML = "Please select a Release note text file!";
+			 $('.validation-required').removeClass("validation-required").addClass("form-control");
+			 $('.san').show();
+			 document.getElementById("file3").focus();
+			   flag=false;
+		}else  if (validExts.indexOf(fileExt) < 0) {
 			document.getElementById("errortag3").innerHTML = "";
 			document.getElementById("errortag").innerHTML = "Invalid file selected, valid files are of " +
             validExts.toString() + " types.";
@@ -325,6 +338,14 @@
 									</div>
 									
 									</div>	
+									
+									<div class="row">
+									
+									<div class="col-md-12 mar-top-15  " style="text-align: left;"><i class="fa fa-file-text"></i>&nbsp;<b>Release Note:</b>
+										 <input type="file" name="file3" id="file3" accept="text/plain"/> <span id="errortag3" class="text-bold text-red " ></span> 
+									</div>
+									
+									</div>
 									
 									<div>	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									</div>			 

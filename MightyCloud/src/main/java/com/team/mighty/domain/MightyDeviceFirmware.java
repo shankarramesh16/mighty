@@ -17,11 +17,21 @@ import javax.persistence.Transient;
 @Table(name = "TBL_MIGHTY_DEVICE_FIRMWARE")
 public class MightyDeviceFirmware implements Serializable {
 
+	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	public Blob getReleaseNote() {
+		return releaseNote;
+	}
+
+	public void setReleaseNote(Blob releaseNote) {
+		this.releaseNote = releaseNote;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")
@@ -45,6 +55,10 @@ public class MightyDeviceFirmware implements Serializable {
 
 	@Column(name = "VERSION")
 	private String version;
+	
+	@Column(name="releaseNote")
+	@Lob
+	private Blob releaseNote;
 	
 	@Column(name = "FILE_NAME")
 	private String fileName;

@@ -40,7 +40,7 @@ public class DeviceFirmwareController {
  
  		
 	@RequestMapping(value = "/deviceFirmwareSubmit",method=RequestMethod.POST)
-	public String deviceFirmwareSubmitHandler(HttpServletRequest request,Map<String,Object> map,@RequestParam("file1") MultipartFile file1,@RequestParam("file2") MultipartFile file2,RedirectAttributes redirectAttributes) throws Exception {
+	public String deviceFirmwareSubmitHandler(HttpServletRequest request,Map<String,Object> map,@RequestParam("file1") MultipartFile file1,@RequestParam("file2") MultipartFile file2,@RequestParam("file3") MultipartFile file3,RedirectAttributes redirectAttributes) throws Exception {
 		logger.debug("In submitting DeviceFirmware details");
 		String effectiveDate=request.getParameter("fromDate");
 		
@@ -53,6 +53,9 @@ public class DeviceFirmwareController {
 		mightyDevFirmware.setFileName(file1.getOriginalFilename());
 		mightyDevFirmware.setFile(new javax.sql.rowset.serial.SerialBlob(file1.getBytes()));
 		String[] str1=new String(file2.getBytes()).split("\\n");
+		//String releaseNotes=new String(file3.getBytes(), "UTF-8");
+		mightyDevFirmware.setReleaseNote(new javax.sql.rowset.serial.SerialBlob(file3.getBytes()));
+		
 		String versionContain="";
 		String hashValue="";
 		int hashType=0;

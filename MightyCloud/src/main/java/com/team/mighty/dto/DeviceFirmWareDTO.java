@@ -30,6 +30,15 @@ public class DeviceFirmWareDTO extends BaseResponseDTO {
 	private String fileDownloadUrl;
 	private String fileSize;
 	private String hashValue;
+	private String releaseNote;
+	public String getReleaseNote() {
+		return releaseNote;
+	}
+
+	public void setReleaseNote(String releaseNote) {
+		this.releaseNote = releaseNote;
+	}
+
 	private int hashType;
 	private String ht;
 	public String getHt() {

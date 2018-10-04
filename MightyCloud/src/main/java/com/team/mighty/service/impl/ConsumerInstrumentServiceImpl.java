@@ -907,25 +907,29 @@ public class ConsumerInstrumentServiceImpl implements ConsumerInstrumentService 
 
 	
 	public String getPasswordResetMessage(MightyUserInfo mightyUser) throws MightyAppException {
-		return "Heyo "
+		return "<img src=\"http://mighty2.cloudaccess.host/test1/images/mighty.png\" />"
+				+"<br/><br/>Heyo "
 				+mightyUser.getUserName().toLowerCase()	
-				+",<br/><br/>I heard that you forgot your Mighty account password. Fear not, we're here to help."
-				+"<br/><br/>I've generated a new password for you below. It has some crazy characters, so I recommend that you change your password after you log back into the Mighty mobile app. To change your password, navigate to the User tab and click the Change Password link.<br/><br/> "
-				+"Username - "+mightyUser.getUserName().toLowerCase()
+				+",<br/><br/>I heard that you forgot your Mighty account password. Fear not, I'm here to help."
+				+"<br/><br/>I've generated a new password for you below. Please update your password when you log back into the Mighty app by navigating to the User tab and tapping the Change Password link."
+				+"<br/><br/>Username - "+mightyUser.getUserName().toLowerCase()
 				+"<br/>Password - "+mightyUser.getPassword()
+				+"<br/><br/>If you need help with anything else check out our Help Center at <a href='https://bemighty.com/help'>www.bemighty.com/help</a> or email me directly at <a href='heyo@bemighty.com'>heyo@bemighty.com</a>."
 				+"<br/><br/>Much love,"
-				+"<br/>The Mighty Robot"
-				+"<br/><br/><em>I'm a robot and my owners won't let me receive inbound messages. If you have any questions, please send my owners an email at heyo@bemighty.com.</em>"; 
-				
+				+"<br/>Charlie"
+				+"<br/>Community Manager";
 		
 	}
 	
 	public String getUserAccountMessage(UserDeviceRegistrationDTO dto) throws MightyAppException {
-		return "Heyo "
+		return "<img src=\"http://mighty2.cloudaccess.host/test1/images/mighty.png\" />"
+				+"<br/><br/>Heyo "
 				+dto.getUserName().toLowerCase()	
-				+",<br/><br/>Thanks for creating your Mighty account. You're just a few steps away from taking your streaming playlists on-the-go, no phone needed. I'm excited for you to start breaking free."
-				+"<br/><br/>You'll remain logged into your Mighty account until you switch accounts or uninstall the app. If you happen to get logged out and can't remember your password, click the Forgot Password link on the Mighty login screen to reset it."
-				+"<br/><br/>Most importantly, I'm here to help if you have any issues with the setup process or questions about using your Mighty. Simply respond to this email and I'll get back to you within one business day. I really enjoy helping users get the most out of their Mighty, so please do not hesitate to email me at any point."
+				+",<br/><br/>Thanks for creating a Mighty account. You're just a few steps away from taking your streaming playlists on-the-go, no phone needed. I'm excited for you to start breaking free."
+				+"<br/><br/>Here are links to resources that will help you get started with your Mighty:"
+				+"<br/><br/>- Getting Started: <a href='https://bemighty.com/setup'>www.bemighty.com/setup</a>"
+				+"<br/>- Help Center: <a href='https://bemighty.com/help'>www.bemighty.com/help</a>"				
+				+"<br/><br/>I'm also personally available to answer any questions you may have about setting up or using your Mighty. Simply respond to this email and I'll get back to you within 1-2 business days. I really enjoy helping users get the most out of their Mighty, so please do not hesitate to email me at any point."
 				+"<br/><br/>Much love,"
 				+"<br/>Charlie"
 				+"<br/>Community Manager";
